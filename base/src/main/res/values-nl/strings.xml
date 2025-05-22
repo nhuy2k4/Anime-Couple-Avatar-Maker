@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="loading_text">Laden…</string>
+    <string name="visit_site">Bezoek de site</string>
+    <string name="next_text">Volgende</string>
+    <string name="yes">Ja</string>
+    <string name="no">Nee</string>
+    <string name="connection_lost">Verbonden verbroken</string>
+    <string name="connection_lost_description">Controleer je internetverbinding en probeer het opnieuw</string>
+    <string name="do_you_like_quick_draw">Vind je deze applicatie leuk?</string>
+    <string name="rate_app_description">Je beoordeling helpt ons de applicatie nog beter te maken.</string>
+    <string name="enter_your_feedback">Voer je feedback in</string>
+    <string name="txt_empty" />
+    <string name="setting">Instellingen</string>
+    <string name="downloading">Downloaden %s..</string>
+    <string name="text_ob_1">4K Kwaliteit Live Achtergrond</string>
+    <string name="text_ob_2">Verscheidenheid aan leuke live achtergronden</string>
+    <string name="text_ob_3">Unieke personalisatie</string>
+    <string name="sticker">Sticker</string>
+</resources>

@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="loading_text">Đang tải…</string>
+    <string name="visit_site">Thăm trang web</string>
+    <string name="next_text">Tiếp theo</string>
+    <string name="yes">Có</string>
+    <string name="no">Không</string>
+    <string name="connection_lost">Mất kết nối</string>
+    <string name="connection_lost_description">Kiểm tra kết nối Internet của bạn và thử lại</string>
+    <string name="do_you_like_quick_draw">Bạn có thích ứng dụng này không?</string>
+    <string name="rate_app_description">Đánh giá của bạn sẽ giúp chúng tôi làm ứng dụng tốt hơn.</string>
+    <string name="enter_your_feedback">Nhập phản hồi của bạn</string>
+    <string name="txt_empty" />
+    <string name="setting">Cài đặt</string>
+    <string name="downloading">Đang tải %s..</string>
+    <string name="text_ob_1">Hình nền trực tiếp chất lượng 4K</string>
+    <string name="text_ob_2">Nhiều hình nền trực tiếp thú vị</string>
+    <string name="text_ob_3">Tự thiết kế cá nhân độc đáo</string>
+    <string name="sticker">Nhãn dán</string>
+</resources>

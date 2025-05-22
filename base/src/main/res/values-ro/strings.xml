@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="loading_text">Se încarcă…</string>
+    <string name="visit_site">Vizitează site-ul</string>
+    <string name="next_text">Următorul</string>
+    <string name="yes">Da</string>
+    <string name="no">Nu</string>
+    <string name="connection_lost">Conexiune pierdută</string>
+    <string name="connection_lost_description">Verifică-ți conexiunea la internet și încearcă din nou</string>
+    <string name="do_you_like_quick_draw">Îți place această aplicație?</string>
+    <string name="rate_app_description">Evaluarea ta ne va ajuta să îmbunătățim aplicația.</string>
+    <string name="enter_your_feedback">Introdu feedback-ul tău</string>
+    <string name="txt_empty" />
+    <string name="setting">Setări</string>
+    <string name="downloading">Se descarcă %s..</string>
+    <string name="text_ob_1">Wallpaper live 4K</string>
+    <string name="text_ob_2">Varietate de wallpaper-uri live amuzante</string>
+    <string name="text_ob_3">Personalizare unică</string>
+    <string name="sticker">Autocolant</string>
+</resources>

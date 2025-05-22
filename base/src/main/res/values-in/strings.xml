@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="loading_text">Memuat…</string>
+    <string name="visit_site">Kunjungi situs</string>
+    <string name="next_text">Berikutnya</string>
+    <string name="yes">Ya</string>
+    <string name="no">Tidak</string>
+    <string name="connection_lost">Koneksi terputus</string>
+    <string name="connection_lost_description">Periksa internet Anda dan coba lagi</string>
+    <string name="do_you_like_quick_draw">Apakah Anda suka aplikasi ini?</string>
+    <string name="rate_app_description">Penilaian Anda akan membantu kami membuat aplikasi ini lebih baik.</string>
+    <string name="enter_your_feedback">Masukkan umpan balik Anda</string>
+    <string name="txt_empty" />
+    <string name="setting">Pengaturan</string>
+    <string name="downloading">Mengunduh %s..</string>
+    <string name="text_ob_1">Wallpaper Hidup Kualitas 4K</string>
+    <string name="text_ob_2">Beragam wallpaper hidup yang menyenangkan</string>
+    <string name="text_ob_3">Personalisasi unik</string>
+    <string name="sticker">Stiker</string>
+</resources>

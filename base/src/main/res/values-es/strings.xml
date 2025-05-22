@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="loading_text">Cargando…</string>
+    <string name="visit_site">Visitar sitio</string>
+    <string name="next_text">Siguiente</string>
+    <string name="yes">Sí</string>
+    <string name="no">No</string>
+    <string name="connection_lost">Conexión perdida</string>
+    <string name="connection_lost_description">Verifica tu internet y vuelve a intentarlo</string>
+    <string name="do_you_like_quick_draw">¿Te gusta esta aplicación?</string>
+    <string name="rate_app_description">Tu calificación nos ayudará a mejorar la aplicación.</string>
+    <string name="enter_your_feedback">Ingresa tu comentario</string>
+    <string name="txt_empty" />
+    <string name="setting">Ajustes</string>
+    <string name="downloading">Descargando %s..</string>
+    <string name="text_ob_1">Fondo de pantalla en vivo 4K</string>
+    <string name="text_ob_2">Variedad de fondos de pantalla en vivo divertidos</string>
+    <string name="text_ob_3">Personaliza de manera única</string>
+    <string name="sticker">Etiqueta</string>
+</resources>

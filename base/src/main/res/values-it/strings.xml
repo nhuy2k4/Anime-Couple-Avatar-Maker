@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="loading_text">Caricamento…</string>
+    <string name="visit_site">Visita il sito</string>
+    <string name="next_text">Prossimo</string>
+    <string name="yes">Sì</string>
+    <string name="no">No</string>
+    <string name="connection_lost">Connessione persa</string>
+    <string name="connection_lost_description">Verifica la tua connessione a Internet e riprova</string>
+    <string name="do_you_like_quick_draw">Ti piace questa applicazione?</string>
+    <string name="rate_app_description">La tua valutazione ci aiuterà a migliorare l\'applicazione.</string>
+    <string name="enter_your_feedback">Inserisci il tuo feedback</string>
+    <string name="txt_empty" />
+    <string name="setting">Impostazioni</string>
+    <string name="downloading">Scaricando %s..</string>
+    <string name="text_ob_1">Wallpaper Live 4K</string>
+    <string name="text_ob_2">Varietà di wallpaper live divertenti</string>
+    <string name="text_ob_3">Personalizzazione unica</string>
+    <string name="sticker">Adesivo</string>
+</resources>

@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="loading_text">Chargement…</string>
+    <string name="visit_site">Visiter le site</string>
+    <string name="next_text">Suivant</string>
+    <string name="yes">Oui</string>
+    <string name="no">Non</string>
+    <string name="connection_lost">Connexion perdue</string>
+    <string name="connection_lost_description">Vérifiez votre connexion Internet et réessayez</string>
+    <string name="do_you_like_quick_draw">Aimez-vous cette application ?</string>
+    <string name="rate_app_description">Votre évaluation nous aidera à améliorer l\'application.</string>
+    <string name="enter_your_feedback">Entrez vos commentaires</string>
+    <string name="txt_empty" />
+    <string name="setting">Paramètres</string>
+    <string name="downloading">Téléchargement %s..</string>
+    <string name="text_ob_1">Fond d\'écran animé 4K</string>
+    <string name="text_ob_2">Variété de fonds d\'écran animés amusants</string>
+    <string name="text_ob_3">Personnalisation unique</string>
+    <string name="sticker">Autocollant</string>
+
+</resources>

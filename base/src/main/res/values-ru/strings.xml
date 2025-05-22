@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="loading_text">Загрузка…</string>
+    <string name="visit_site">Посетить сайт</string>
+    <string name="next_text">Далее</string>
+    <string name="yes">Да</string>
+    <string name="no">Нет</string>
+    <string name="connection_lost">Соединение потеряно</string>
+    <string name="connection_lost_description">Проверьте ваше интернет-соединение и попробуйте снова</string>
+    <string name="do_you_like_quick_draw">Вам нравится это приложение?</string>
+    <string name="rate_app_description">Ваша оценка поможет нам сделать приложение еще лучше.</string>
+    <string name="enter_your_feedback">Введите ваш отзыв</string>
+    <string name="txt_empty" />
+    <string name="setting">Настройки</string>
+    <string name="downloading">Загрузка %s..</string>
+    <string name="text_ob_1">4K качество живого обоев</string>
+    <string name="text_ob_2">Разнообразие веселых живых обоев</string>
+    <string name="text_ob_3">Уникальная персонализация</string>
+    <string name="sticker">Стикер</string>
+</resources>
