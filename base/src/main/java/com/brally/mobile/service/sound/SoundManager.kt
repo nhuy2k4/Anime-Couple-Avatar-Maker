@@ -6,7 +6,12 @@ import com.brally.mobile.base.R
 import com.brally.mobile.base.application.getBaseApplication
 import com.brally.mobile.service.session.isMusic
 import com.brally.mobile.service.session.isSound
-import kotlinx.coroutines.*
+import kotlinx.coroutines.CoroutineExceptionHandler
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.SupervisorJob
+import kotlinx.coroutines.cancel
+import kotlinx.coroutines.launch
 
 sealed class SoundType(val res: Int) {
     data object Click : SoundType(R.raw.sound_click)

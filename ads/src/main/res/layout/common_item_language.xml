@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:paddingVertical="@dimen/_10dp"
+    android:layout_marginVertical="@dimen/_6dp"
+    android:background="@drawable/bg_sound_unselect"
+    android:paddingHorizontal="@dimen/_14dp">
+
+    <com.google.android.material.card.MaterialCardView
+        android:id="@+id/cardViewLanguage"
+        android:layout_width="wrap_content"
+        android:layout_centerVertical="true"
+        app:cardCornerRadius="@dimen/_4dp"
+        app:cardElevation="0dp"
+        app:cardBackgroundColor="@android:color/transparent"
+        android:layout_height="wrap_content">
+
+        <ImageView
+            android:id="@+id/ivLanguage"
+            android:layout_centerVertical="true"
+            android:layout_height="@dimen/_24dp"
+            android:layout_width="@dimen/_32dp"
+            android:scaleType="centerCrop"
+            tools:src="@tools:sample/avatars" />
+
+    </com.google.android.material.card.MaterialCardView>
+
+    <TextView
+        android:id="@+id/tvLanguage"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerVertical="true"
+        android:layout_marginHorizontal="@dimen/_12dp"
+        android:layout_toStartOf="@id/ivCheck"
+        android:layout_toEndOf="@id/cardViewLanguage"
+        android:fontFamily="@font/poppins_medium"
+        android:textColor="@color/black"
+        tools:text="@tools:sample/lorem" />
+
+    <ImageView
+        android:id="@+id/ivCheck"
+        android:layout_width="@dimen/_24dp"
+        android:layout_height="@dimen/_22dp"
+        android:scaleType="fitCenter"
+        android:padding="3dp"
+        android:layout_alignParentEnd="true"
+        android:layout_centerInParent="true"
+        tools:src="@drawable/ic_uncheck" />
+
+</RelativeLayout>

@@ -2,7 +2,6 @@ package com.brally.mobile.base.adapter
 
 import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.RecyclerView
-import com.brally.mobile.base.adapter.ItemTouchListener
 
 class ItemTouchHelperCallback(private var adapter: ItemTouchListener) :
     ItemTouchHelper.Callback() {

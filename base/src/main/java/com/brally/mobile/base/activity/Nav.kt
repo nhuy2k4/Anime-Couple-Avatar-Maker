@@ -11,8 +11,8 @@ import androidx.navigation.findNavController
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.navOptions
 import com.brally.mobile.base.R
+import com.brally.ads.interf.BralyResultConsentForm
 import com.brally.mobile.service.ads.AdManager
-import com.braly.ads.ads.interf.BralyResultConsentForm
 import kotlinx.coroutines.launch
 
 fun Fragment.navigate(
@@ -108,5 +108,5 @@ fun Fragment.showPrivacyOptionForm(resultConsentForm: BralyResultConsentForm) {
 fun Fragment.isCmpRequired(): Boolean {
     return activity?.let {
         AdManager.isCmpRequired(it)
-    } != false
+    } ?: true
 }

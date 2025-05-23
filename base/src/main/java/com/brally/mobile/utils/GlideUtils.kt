@@ -8,11 +8,9 @@ import android.widget.ImageView
 import com.brally.mobile.base.R
 import com.brally.mobile.base.application.appInfo
 import com.brally.mobile.base.application.getBaseApplication
-import com.brally.mobile.service.event.IMAGE_LOADING_FAIL
-import com.brally.mobile.service.event.IMAGE_LOADING_SUCCESS
 import com.brally.mobile.service.firebase.AppRemoteConfig
 import com.brally.mobile.service.firebase.AppRemoteConfig.DataResourceType
-import com.braly.analytics.event.BralyTracking
+//import com.braly.analytics.event.BralyTracking
 import com.bumptech.glide.Glide
 import com.bumptech.glide.RequestBuilder
 import com.bumptech.glide.load.DataSource
@@ -182,7 +180,7 @@ fun ImageView.loadImageUrl(
                 target: Target<Drawable?>,
                 isFirstResource: Boolean
             ): Boolean {
-                BralyTracking.logEvent(this@loadImageUrl.context, IMAGE_LOADING_FAIL)
+                //BralyTracking.logEvent(this@loadImageUrl.context, IMAGE_LOADING_FAIL)
                 return false
             }
 
@@ -194,10 +192,7 @@ fun ImageView.loadImageUrl(
                 isFirstResource: Boolean
             ): Boolean {
                 if (dataSource == DataSource.REMOTE) {
-                    BralyTracking.logEvent(
-                        this@loadImageUrl.context,
-                        IMAGE_LOADING_SUCCESS
-                    )
+                    //BralyTracking.logEvent(this@loadImageUrl.context, IMAGE_LOADING_SUCCESS)
                 }
                 return false
             }

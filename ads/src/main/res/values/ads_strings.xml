@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="title_ad_choce">Ad</string>
+    <string name="common_title_confirm_exit">Do you want to exit app?</string>
+    <string name="common_action_no">No</string>
+    <string name="common_action_yes">Yes</string>
+    <string name="title_install">Install</string>
+    <string name="message_load_error">Load ads failed...</string>
+    <string name="applovin_sdk_key">PXSBQaC4Qx1gltovRrJUrnND5gL5r7oUNlgBODHB6kRwt5WSlFLbKVrcsda5PwxpcVgIPF-uR3CWfixOlo9k9s</string>
+</resources>

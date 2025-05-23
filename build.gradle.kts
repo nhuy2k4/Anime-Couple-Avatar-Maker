@@ -5,6 +5,7 @@ buildscript {
         classpath(libs.google.services)
         classpath(libs.firebase.crashlytics.gradle)
         classpath(libs.androidx.navigation.safe.args.gradle.plugin)
+        classpath(libs.androidx.navigation.safe.args.gradle.plugin.v277)
     }
 }
 

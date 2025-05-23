@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="common_action_rate_app">Rate app</string>
+    <string name="common_action_rate_app_short">Rate</string>
+    <string name="common_send_feedback">Send us a feedback</string>
+    <string name="common_action_cancel">Cancel</string>
+    <string name="rate_app_title">We are working hard for better user experience, if you love us, please rate us 5 stars.</string>
+    <string name="rate_app_title_app_name">Do you like\n%s</string>
+    <string name="thanks_for_rating">Thanks for your rating.</string>
+    <string name="title_do_you_like_our_app">Do you like our app?</string>
+    <string name="title_the_best_we_can_get">The best we can get</string>
+    <string name="title_next">Next</string>
+    <string name="title_started">Get Started</string>
+    <string name="later">Later</string>
+    <string name="rate_for_us">Rate for us</string>
+    <string name="thanks_for">Thanks for leaving a nice review,\nIt helps us a lot</string>
+
+    <string name="title_thanks_for_using">Thanks for using   Time Warp Scanner</string>
+    <string name="text_share_your_exp">Share your experience &amp; feedback with us</string>
+    <string name="thanks_for_using_app_text">Thanks for using\n%s</string>
+    <string name="ads_loading_text">Ads loading....</string>
+    <string name="advertisement">advertisement</string>
+    <string name="text_choose_language">Choose Language</string>
+    <string name="comon_visit_site">Visit site</string>
+    <string name="common_text_ad">Ad</string>
+    <string name="common_next_text">Next</string>
+    <string name="common_ad_text">Ad</string>
+
+    <string name="facebook_app_id" />
+    <string name="fb_login_protocol_scheme" />
+    <string name="facebook_client_token" />
+</resources>

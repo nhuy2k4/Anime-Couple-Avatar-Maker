@@ -26,6 +26,7 @@ lifecycleLivedataKtx = "2.8.7"
 lottie = "6.3.0"
 navigationFragmentKtx = "2.8.8"
 navigationSafeArgsGradlePlugin = "2.9.0"
+navigationSafeArgsGradlePluginVersion = "2.7.7"
 permissionx = "1.8.1"
 recyclerview = "1.4.0"
 roundedimageview = "2.3.0"
@@ -35,11 +36,14 @@ swiperefreshlayout = "1.1.0"
 utilcodex = "1.31.1"
 navigationFragmentKtxVersion = "2.8.9"
 navigationUiKtx = "2.8.9"
+androidxNavigationFragmentKtx = "2.9.0"
+navigationUiKtxVersion = "2.9.0"
 
 [libraries]
 ads = { module = "com.braly.component:ads", version.ref = "ads" }
 androidx-core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "coreKtx" }
 androidx-navigation-safe-args-gradle-plugin = { module = "androidx.navigation:navigation-safe-args-gradle-plugin", version.ref = "navigationSafeArgsGradlePlugin" }
+androidx-navigation-safe-args-gradle-plugin-v277 = { module = "androidx.navigation:navigation-safe-args-gradle-plugin", version.ref = "navigationSafeArgsGradlePluginVersion" }
 junit = { group = "junit", name = "junit", version.ref = "junit" }
 androidx-junit = { group = "androidx.test.ext", name = "junit", version.ref = "junitVersion" }
 androidx-espresso-core = { group = "androidx.test.espresso", name = "espresso-core", version.ref = "espressoCore" }
@@ -73,6 +77,8 @@ ssp-android = { module = "com.intuit.ssp:ssp-android", version.ref = "sspAndroid
 utilcodex = { module = "com.blankj:utilcodex", version.ref = "utilcodex" }
 navigation-fragment-ktx = { group = "androidx.navigation", name = "navigation-fragment-ktx", version.ref = "navigationFragmentKtxVersion" }
 navigation-ui-ktx = { group = "androidx.navigation", name = "navigation-ui-ktx", version.ref = "navigationUiKtx" }
+androidx-navigation-navigation-fragment-ktx = { group = "androidx.navigation", name = "navigation-fragment-ktx", version.ref = "androidxNavigationFragmentKtx" }
+androidx-navigation-navigation-ui-ktx = { group = "androidx.navigation", name = "navigation-ui-ktx", version.ref = "navigationUiKtxVersion" }
 
 [plugins]
 android-application = { id = "com.android.application", version.ref = "agp" }

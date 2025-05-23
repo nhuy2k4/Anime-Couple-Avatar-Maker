@@ -12,7 +12,6 @@ import android.util.AttributeSet;
 
 import com.brally.mobile.base.R;
 
-
 public class StrokedTextView extends androidx.appcompat.widget.AppCompatTextView {
     private static final float DEFAULT_STROKE_WIDTH = 0;
     private final Paint mOutlinePaint = new Paint();

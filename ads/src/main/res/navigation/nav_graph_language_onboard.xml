@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/nav_onboarding"
+    app:startDestination="@id/obParentFragment">
+
+    <fragment
+        android:id="@+id/onboardingFragment"
+        android:name="com.language_onboard.ui.fragment.onboarding.CommonOnBoardingModuleFragment"
+        android:label="fragment_onboarding"
+        tools:layout="@layout/fragment_onboarding_module_common">
+
+        <argument
+            android:name="onboardingConfig"
+            app:argType="com.language_onboard.data.model.OnboardingConfig" />
+    </fragment>
+
+    <fragment
+        android:id="@+id/languageFragment"
+        android:name="com.language_onboard.ui.fragment.language.CommonLanguageFragment"
+        android:label="fragment_language_common"
+        tools:layout="@layout/fragment_language_common">
+
+        <argument
+            android:name="onboardingConfig"
+            app:argType="com.language_onboard.data.model.OnboardingConfig" />
+
+    </fragment>
+    <fragment
+        android:id="@+id/obParentFragment"
+        android:name="com.language_onboard.ui.fragment.OBParentFragment"
+        android:label="OBParentFragment">
+        <argument
+            android:name="onboardingConfig"
+            app:argType="com.language_onboard.data.model.OnboardingConfig" />
+
+    </fragment>
+
+
+</navigation>

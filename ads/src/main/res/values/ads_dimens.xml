@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <dimen name="banner_height">56dp</dimen>
+    <dimen name="margin_12">12dp</dimen>
+    <dimen name="margin_2">2dp</dimen>
+    <dimen name="padding_huge">4dp</dimen>
+    <dimen name="native_ad_choise_width">34dp</dimen>
+    <dimen name="native_ad_choice_height">22dp</dimen>
+
+    <dimen name="native_ad_choise_small_width">15dp</dimen>
+    <dimen name="native_ad_choice_small_height">15dp</dimen>
+    <dimen name="margin_small">8dp</dimen>
+    <dimen name="button_normal_radius">16dp</dimen>
+    <dimen name="margin_8">8dp</dimen>
+    <dimen name="common_margin_normal">16dp</dimen>
+
+    <dimen name="margin_20dp">20dp</dimen>
+    <dimen name="button_size_normal">48dp</dimen>
+    <dimen name="margin_32">32dp</dimen>
+    <dimen name="margin_4">4dp</dimen>
+</resources>

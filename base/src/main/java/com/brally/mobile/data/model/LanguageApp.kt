@@ -8,6 +8,7 @@ enum class LanguageApp(
     val language: String,
     @DrawableRes val flag: Int,
     val languageCode: String,
+    var countryCode: String = ""
 ) {
     ENGLISH(
         language = "English",
@@ -67,4 +68,5 @@ enum class LanguageApp(
 data class LanguageSelector(
     val language: LanguageApp,
     var isCheck: Boolean = false,
+
 )

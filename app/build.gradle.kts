@@ -66,6 +66,9 @@ android {
 }
 
 dependencies {
+    implementation(project(":base"))
+    implementation(project(":ads"))
+
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.appcompat)
     implementation(libs.material)
