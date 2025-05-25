@@ -2,7 +2,7 @@ package com.brally.mobile.service.event
 
 import android.content.Context
 import androidx.fragment.app.Fragment
-import com.braly.analytics.event.BralyTracking
+//import com.braly.analytics.event.BralyTracking
 
 const val IMAGE_LOADING_FAIL = "image_loading_fail"
 const val IMAGE_LOADING_SUCCESS = "image_loading_success"
@@ -46,6 +46,7 @@ const val SETTING_CLICK_CHECK_FOR_UPDATE = "setting_click_check_for_update"
 
 // CMP
 const val SETTING_CLICK_CMP = "setting_click_cmp"
+const val SETTING_CLICK_TERM = "setting_click_term"
 const val CMP_MESSAGE_SHOW = "cmp_message_show"
 const val CONSENT_ALL_SUCCESS = "consent_all_success"
 const val CONSENT_SOME_OPTIONS = "consent_some_options"
@@ -59,9 +60,9 @@ fun Fragment.tracking(
     params: HashMap<String, String>? = null,
     useAppMetrica: Boolean = false
 ) {
-    context?.let {
-        BralyTracking.logEvent(it, eventName, params, useAppMetrica)
-    }
+//    context?.let {
+//        BralyTracking.logEvent(it, eventName, params, useAppMetrica)
+//    }
 }
 
 fun tracking(
@@ -70,5 +71,5 @@ fun tracking(
     params: HashMap<String, String>? = null,
     useAppMetrica: Boolean = false
 ) {
-    BralyTracking.logEvent(context, eventName, params, useAppMetrica)
+    //BralyTracking.logEvent(context, eventName, params, useAppMetrica)
 }

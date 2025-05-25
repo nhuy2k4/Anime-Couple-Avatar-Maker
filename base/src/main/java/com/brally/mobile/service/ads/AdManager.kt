@@ -4,40 +4,48 @@ import android.app.Activity
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
+import com.brally.ads.NativeAdView
+import com.brally.ads.SmallDelayCallback
+import com.brally.ads.interf.BralyResultConsentForm
+import com.brally.ads.service.ads.BralyAdvertisement
+import com.brally.ads.service.ads.BralyRewardItem
+import com.brally.ads.service.ads.BralyRewardManagement
+import com.brally.ads.data.ConfigManager
 import com.brally.mobile.utils.callSafeFragment
-import com.braly.ads.NativeAdView
-import com.braly.ads.SmallDelayCallback
-import com.braly.ads.ads.BralyAdvertisement
-import com.braly.ads.ads.BralyRewardManagement
-import com.braly.ads.ads.interf.BralyResultConsentForm
-import com.braly.ads.ads.interf.BralyRewardItem
-import com.braly.ads.data.ConfigManager
 import com.language_onboard.utils.gone
 
 object AdManager {
-    private const val ADS_CONFIG_KEY = "ads_config_unit_pixel_art"
-    private const val PLACEMENT_KEY = "ads_config_placement_pixel_art"
+    private const val ADS_CONFIG_KEY = "ads_config_unit_glow_spinner"
+    private const val PLACEMENT_KEY = "ads_config_placement_glow_spinner"
 
-    const val OPEN_APP = "open_app"
-    const val SPLASH = "SPLASH"
+    const val OPEN = "open"
+    const val SPLASH = "splash"
+
     const val FULL_GETSTARTED = "full_getstarted"
+    const val FULL_HOME = "full_home"
+    const val FULL_TEMPLATE = "full_template"
+    const val FULL_DRAW = "full_draw"
+    const val FULL_BACK = "full_back"
+    const val FULL_DONE = "full_done"
     const val FULL_BACKUP = "full_backup"
 
-    const val FULL_HOME = "full_home"
-
-    const val NATIVE_LANGUAGE = "native_language"
     const val NATIVE_ONBOARD1 = "native_onboard1"
     const val NATIVE_ONBOARD2 = "native_onboard2"
     const val NATIVE_ONBOARD3 = "native_onboard3"
     const val NATIVE_ONBOARD_FULL = "native_onboard_full"
-    const val NATIVE_BACKUP = "native_backup"
-
+    const val NATIVE_LANGUAGE = "native_language"
+    const val NATIVE_HOME = "native_home"
+    const val NATIVE_TEMPLATE = "native_template"
+    const val NATIVE_BG = "native_bg"
+    const val NATIVE_DRAW = "native_draw"
+    const val NATIVE_RESULT = "native_result"
+    const val NATIVE_ARTWORK = "native_artwork"
 
 
     fun fetchAndShowAds(
         activity: Activity, fragment: Fragment, onAdDismiss: Runnable, bannerView: ViewGroup?
     ) {
-        val bralyAdvertisement = BralyAdvertisement.getInstance(activity)
+        val bralyAdvertisement = BralyAdvertisement.Companion.getInstance(activity)
         bralyAdvertisement.fetchConfig(
             activity, ADS_CONFIG_KEY, PLACEMENT_KEY
         ) {
@@ -53,13 +61,13 @@ object AdManager {
     }
 
     fun showBanner(activity: Activity, view: ViewGroup, key: String) {
-        BralyAdvertisement.getInstance(activity).loadAndShowBanner(activity, view, key)
+        BralyAdvertisement.Companion.getInstance(activity).loadAndShowBanner(activity, view, key)
     }
 
     fun showNative(
         activity: Activity, view: NativeAdView, placementKey: String, fragment: Fragment
     ) {
-        val advertisement = BralyAdvertisement.getInstance(activity)
+        val advertisement = BralyAdvertisement.Companion.getInstance(activity)
         val enableNative = isAdsPlacementEnable(activity, placementKey)
         if (enableNative) {
             if (advertisement.isNativeLoaded(placementKey)) {
@@ -74,7 +82,7 @@ object AdManager {
     fun showReward(
         activity: Activity, key: String, onGrantReward: Runnable, onLoadFail: Runnable
     ) {
-        val management = BralyAdvertisement.getInstance(activity)
+        val management = BralyAdvertisement.Companion.getInstance(activity)
         val rewardListener = object : BralyRewardManagement.RewardListener() {
             override fun onRewardAdded(rewardItem: BralyRewardItem?) {
                 onGrantReward.run()
@@ -97,33 +105,33 @@ object AdManager {
 
 
     fun showFull(activity: Activity, placementKey: String, runnable: Runnable) {
-        BralyAdvertisement.getInstance(activity)
+        BralyAdvertisement.Companion.getInstance(activity)
             .showInterstitialAndReload(activity, placementKey, SmallDelayCallback(runnable))
     }
 
     fun checkToRegisterOpenAdsOnMain(activity: Activity) {
-        BralyAdvertisement.getInstance(activity).checkToRegisterOpenAdsOnMain(activity)
+        BralyAdvertisement.Companion.getInstance(activity).checkToRegisterOpenAdsOnMain(activity)
     }
 
 
     fun onIronSourceResume(activity: Activity) {
-        BralyAdvertisement.getInstance(activity).onIronSourceResume(activity)
+        BralyAdvertisement.Companion.getInstance(activity).onIronSourceResume(activity)
     }
 
     fun resumeShowAdsSplash(activity: Activity) {
-        BralyAdvertisement.getInstance(activity).resumeShowSplashAds(activity)
+        BralyAdvertisement.Companion.getInstance(activity).resumeShowSplashAds(activity)
     }
 
     fun blockShowAdsSplash(activity: Activity) {
-        BralyAdvertisement.getInstance(activity).blockShowAdsSplash()
+        BralyAdvertisement.Companion.getInstance(activity).blockShowAdsSplash()
     }
 
     fun unregisterOpenAds(activity: Activity) {
-        BralyAdvertisement.getInstance(activity).unregisterOpenAds(activity)
+        BralyAdvertisement.Companion.getInstance(activity).unregisterOpenAds(activity)
     }
 
     fun onIronSourcePause(activity: Activity) {
-        BralyAdvertisement.getInstance(activity).onIronSourcePause(activity)
+        BralyAdvertisement.Companion.getInstance(activity).onIronSourcePause(activity)
     }
 
     fun showConsentForm(
@@ -132,7 +140,7 @@ object AdManager {
         isForceShowConsentWhenRejectBefore: Boolean,
         resultConsentForm: BralyResultConsentForm
     ) {
-        BralyAdvertisement.getInstance(activity).showConsentForm(
+        BralyAdvertisement.Companion.getInstance(activity).showConsentForm(
             activity, testDeviceId, isForceShowConsentWhenRejectBefore, resultConsentForm
         )
     }
@@ -140,7 +148,7 @@ object AdManager {
     fun showPrivacyOptionForm(
         activity: Activity, testDeviceId: String? = null, resultConsentForm: BralyResultConsentForm
     ) {
-        BralyAdvertisement.getInstance(activity).showPrivacyOptionForm(
+        BralyAdvertisement.Companion.getInstance(activity).showPrivacyOptionForm(
             activity, testDeviceId, resultConsentForm
         )
     }
@@ -151,7 +159,7 @@ object AdManager {
     }
 
     fun isCmpRequired(activity: Activity): Boolean {
-        return BralyAdvertisement.getInstance(activity).canShowCMPSetting(activity)
+        return BralyAdvertisement.Companion.getInstance(activity).canShowCMPSetting(activity)
     }
 }
 
@@ -225,3 +233,4 @@ fun Fragment.showBannerOrNative(
         collapsibleIcon?.gone()
     }
 }
+

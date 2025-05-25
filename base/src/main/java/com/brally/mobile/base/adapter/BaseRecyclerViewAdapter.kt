@@ -9,6 +9,7 @@ import androidx.annotation.NonNull
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.RecyclerView
 import androidx.viewbinding.ViewBinding
+import com.brally.mobile.base.databinding.EmptyViewBinding
 import com.brally.mobile.base.adapter.animation.AlphaInAnimation
 import com.brally.mobile.base.adapter.animation.AnimationType
 import com.brally.mobile.base.adapter.animation.ItemAnimator
@@ -16,7 +17,6 @@ import com.brally.mobile.base.adapter.animation.ScaleInAnimation
 import com.brally.mobile.base.adapter.animation.SlideInBottomAnimation
 import com.brally.mobile.base.adapter.animation.SlideInLeftAnimation
 import com.brally.mobile.base.adapter.animation.SlideInRightAnimation
-import com.brally.mobile.base.databinding.EmptyViewBinding
 import com.brally.mobile.utils.BindingReflex
 
 abstract class BaseRecyclerViewAdapter<T, VB : ViewBinding> :

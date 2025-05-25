@@ -39,6 +39,7 @@ android {
 }
 
 dependencies {
+    implementation(project(":ads"))
     // Android
     api(libs.androidx.core.ktx)
     api(libs.androidx.appcompat)
@@ -65,10 +66,9 @@ dependencies {
     api(libs.glide)
     api(libs.dotsindicator)
     api(libs.lottie)
+//    api(libs.ads)
     api(libs.roundedimageview)
     api(libs.sdp.android)
     api(libs.ssp.android)
     api(libs.permissionx)
-
-    api(libs.ads)
 }

@@ -2,7 +2,6 @@ package com.brally.mobile.data.model
 
 import android.os.Parcelable
 import androidx.annotation.Keep
-import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
 import com.google.gson.annotations.SerializedName
 import kotlinx.parcelize.Parcelize

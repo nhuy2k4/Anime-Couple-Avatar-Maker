@@ -7,7 +7,7 @@ import com.brally.mobile.utils.Constant
 import com.brally.mobile.utils.Constant.DEFAULT_ITEM_HOME_ORDER
 import com.brally.mobile.utils.gsonStrToList
 import com.brally.mobile.utils.readAssetsFile
-import com.braly.analytics.config.BralyRemoteConfigImpl
+import com.brally.ads.analytics.config.BralyRemoteConfigImpl
 import com.google.gson.JsonArray
 import com.google.gson.JsonParser
 

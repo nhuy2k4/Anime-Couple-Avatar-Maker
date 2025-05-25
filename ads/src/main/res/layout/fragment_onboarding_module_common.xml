@@ -1,0 +1,87 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/white">
+
+    <androidx.viewpager2.widget.ViewPager2
+        android:id="@+id/viewPager"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_marginBottom="@dimen/_8dp"
+        app:layout_constraintBottom_toTopOf="@+id/btnNextModule"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <com.tbuonomo.viewpagerdotsindicator.DotsIndicator
+        android:id="@+id/dotIndicator"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginHorizontal="@dimen/_20dp"
+        app:dotsColor="@color/gray_4a"
+        app:dotsCornerRadius="@dimen/_24dp"
+        app:dotsSize="@dimen/_8dp"
+        app:dotsSpacing="@dimen/_4dp"
+        app:dotsWidthFactor="2.5"
+        app:layout_constraintBottom_toBottomOf="@id/btnNextModule"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="@id/btnNextModule"
+        app:selectedDotColor="@color/cyan" />
+
+    <TextView
+        android:id="@+id/btnNextModule"
+        android:layout_width="wrap_content"
+        android:layout_height="@dimen/_48dp"
+        android:layout_marginBottom="@dimen/_8dp"
+        android:background="?android:attr/selectableItemBackground"
+        android:fontFamily="@font/poppins_bold"
+        android:gravity="center"
+        android:paddingHorizontal="@dimen/_16dp"
+        android:text="@string/title_next"
+        android:textColor="@color/blue1"
+        android:textSize="@dimen/_18sp"
+        app:layout_constraintBottom_toTopOf="@+id/native_ad"
+        app:layout_constraintEnd_toEndOf="parent"
+        tools:visibility="visible" />
+
+    <com.brally.ads.NativeAdView
+        android:id="@+id/native_ad"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:layout_constraintBottom_toBottomOf="parent" />
+
+    <com.airbnb.lottie.LottieAnimationView
+        android:id="@+id/lottieAnim"
+        android:layout_width="@dimen/_150dp"
+        android:layout_height="@dimen/_150dp"
+        android:layout_marginEnd="@dimen/_40dp"
+        android:visibility="visible"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:lottie_autoPlay="true"
+        app:lottie_loop="true"
+        app:lottie_rawRes="@raw/lottie_onboard" />
+
+    <TextView
+        android:id="@+id/common_next_button"
+        android:layout_width="wrap_content"
+        android:layout_height="@dimen/_50dp"
+        android:layout_gravity="end"
+        android:layout_marginTop="@dimen/_30dp"
+        android:layout_marginEnd="@dimen/_20dp"
+        android:background="?android:attr/selectableItemBackground"
+        android:gravity="center"
+        android:paddingHorizontal="16dp"
+        android:text="@string/common_next_text"
+        android:textColor="@color/blue1"
+        android:textSize="@dimen/_20dp"
+        android:textStyle="bold"
+        android:visibility="visible"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+</androidx.constraintlayout.widget.ConstraintLayout>
