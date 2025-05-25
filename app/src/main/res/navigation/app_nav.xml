@@ -16,10 +16,11 @@
         android:id="@+id/homeFragment"
         android:name="com.tuanlvt.base.ui.home.HomeFragment"
         tools:layout="@layout/fragment_home" />
-<!--    <fragment-->
-<!--        android:id="@+id/categoryFragment"-->
-<!--        android:name="com.braly.outlaw.ui.fragment.category.CategoryFragment"-->
-<!--        tools:layout="@layout/fragment_category" />-->
+
+    <fragment
+        android:id="@+id/categoryFragment"
+        android:name="com.tuanlvt.base.ui.category.CategoryFragment"
+        tools:layout="@layout/fragment_category" />
 
     <fragment
         android:id="@+id/settingFragment"
