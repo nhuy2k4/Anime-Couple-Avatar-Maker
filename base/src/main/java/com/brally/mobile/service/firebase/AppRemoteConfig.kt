@@ -60,7 +60,9 @@ object AppRemoteConfig {
 
         } catch (e: Exception) {
             e.printStackTrace()
-            emptyList()
+//            emptyList()
+            val json = getBaseApplication().assets.readAssetsFile("$key.json")
+            gsonStrToList(json, claszz)
         }
     }
 
@@ -78,7 +80,9 @@ object AppRemoteConfig {
 
         } catch (e: Exception) {
             e.printStackTrace()
-            emptyList()
+//            emptyList()
+            val json = getBaseApplication().assets.readAssetsFile("$DATA_CATEGORIES.json")
+            convertJsonToCategoryList(json, languageKey)
         }
     }
 

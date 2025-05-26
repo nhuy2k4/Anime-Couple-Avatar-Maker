@@ -27,7 +27,7 @@ class HomeFragment : BaseFragment<FragmentHomeBinding, HomeViewModel>() {
 
     override fun initListener() {
         binding.imvMenuDraw.singleClick {
-//            navigate(R.id.categoryFragment)
+            navigate(R.id.categoryFragment)
         }
 
         binding.imvMenuCollection.singleClick {
