@@ -6,10 +6,10 @@ import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import com.brally.ads.NativeAdView
 import com.brally.ads.SmallDelayCallback
-import com.brally.ads.interf.BralyResultConsentForm
-import com.brally.ads.service.ads.BralyAdvertisement
-import com.brally.ads.service.ads.BralyRewardItem
-import com.brally.ads.service.ads.BralyRewardManagement
+import com.brally.ads.ads.interf.BralyResultConsentForm
+import com.braly.ads.service.ads.BralyAdvertisement
+import com.braly.ads.service.ads.BralyRewardItem
+import com.braly.ads.service.ads.BralyRewardManagement
 import com.brally.ads.data.ConfigManager
 import com.brally.mobile.utils.callSafeFragment
 import com.language_onboard.utils.gone
@@ -107,6 +107,15 @@ object AdManager {
     fun showFull(activity: Activity, placementKey: String, runnable: Runnable) {
         BralyAdvertisement.Companion.getInstance(activity)
             .showInterstitialAndReload(activity, placementKey, SmallDelayCallback(runnable))
+    }
+
+
+    fun Fragment.showFull(key: String, runnable: Runnable) {
+        activity?.let {
+            showFull(it, key) {
+                runnable.run()
+            }
+        }
     }
 
     fun checkToRegisterOpenAdsOnMain(activity: Activity) {

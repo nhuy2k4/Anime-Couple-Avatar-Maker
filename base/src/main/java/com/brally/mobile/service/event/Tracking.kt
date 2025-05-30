@@ -7,6 +7,11 @@ import androidx.fragment.app.Fragment
 const val IMAGE_LOADING_FAIL = "image_loading_fail"
 const val IMAGE_LOADING_SUCCESS = "image_loading_success"
 
+//Rate
+const val RATE_APP_SHOW = "rate_app_show"
+const val RATE_APP_CLICK_LATER = "rate_app_click_later"
+const val RATE_APP_CLICK_RATE = "rate_app_click_rate - "
+
 const val SPLASH_SHOW = "splash_show"
 const val SPLASH_SHOW_0 = "splash_show_0"
 

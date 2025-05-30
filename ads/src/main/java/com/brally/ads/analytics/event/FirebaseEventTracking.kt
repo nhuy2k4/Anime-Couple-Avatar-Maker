@@ -4,8 +4,8 @@ import android.annotation.SuppressLint
 import android.content.Context
 import android.os.Bundle
 import androidx.core.os.bundleOf
+import com.braly.ads.analytics.event.BralyEventTracking
 import com.google.firebase.analytics.FirebaseAnalytics
-import java.util.HashMap
 
 @SuppressLint("MissingPermission")
 class FirebaseEventTracking constructor(

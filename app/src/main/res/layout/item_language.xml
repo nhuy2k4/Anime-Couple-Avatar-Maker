@@ -36,7 +36,7 @@
         android:layout_toStartOf="@id/imvCheck"
         android:layout_toEndOf="@id/cardViewLanguage"
         android:fontFamily="@font/font_medium"
-        android:textColor="@color/white"
+        android:textColor="@color/colorText"
         android:textSize="@dimen/_16ssp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toStartOf="@id/imvCheck"
