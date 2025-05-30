@@ -1,12 +1,12 @@
 package com.tuanlvt.base
 
 import androidx.core.content.ContextCompat
-import com.brally.ads.BralyMobileAds
-import com.brally.ads.data.Configuration
 import com.brally.mobile.base.application.BaseApplication
 import com.brally.mobile.data.model.AppInfo
 import com.brally.mobile.service.firebase.AppRemoteConfig
 import com.brally.mobile.utils.Constant
+import com.braly.ads.ads.BralyMobileAds
+import com.braly.ads.data.Configuration
 import com.language_onboard.data.local.CommonAppSharePref
 import com.language_onboard.di.commonViewModelModule
 import com.tuanlvt.base.ui.home.HomeFragment

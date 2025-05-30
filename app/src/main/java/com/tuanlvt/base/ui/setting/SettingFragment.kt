@@ -1,14 +1,15 @@
 package com.tuanlvt.base.ui.setting
 
 import androidx.core.view.isVisible
-import com.brally.ads.interf.BralyResultConsentForm
+import com.bg.common.Common
+import com.brally.ads.ads.interf.BralyResultConsentForm
 import com.brally.mobile.base.activity.BaseFragment
 import com.brally.mobile.base.activity.isCmpRequired
 import com.brally.mobile.base.activity.navigate
-import com.brally.mobile.base.activity.onBackPressed
 import com.brally.mobile.base.activity.popBackStack
 import com.brally.mobile.base.activity.showDialog
 import com.brally.mobile.base.activity.showPrivacyOptionForm
+import com.brally.mobile.base.application.appInfo
 import com.brally.mobile.service.event.CMP_MESSAGE_SHOW
 import com.brally.mobile.service.event.CONSENT_ALL_FAILED
 import com.brally.mobile.service.event.CONSENT_ALL_SUCCESS
@@ -53,7 +54,8 @@ class SettingFragment : BaseFragment<FragmentSettingBinding, SettingViewModel>()
 
     override fun initListener() {
         binding.imvBack.singleClick {
-            handleBack()
+            tracking(SETTING_CLICK_BACK)
+            popBackStack()
         }
         binding.llMusic.singleClick {
             saveMusic(!isMusic())
@@ -79,7 +81,7 @@ class SettingFragment : BaseFragment<FragmentSettingBinding, SettingViewModel>()
         binding.llShare.singleClick {
             tracking(SETTING_CLICK_SHARE)
             activity?.let {
-//                Common.shareApp(it, getString(R.string.app_name))
+                Common.shareApp(it, getString(R.string.app_name))
             }
         }
         binding.llRate.singleClick {
@@ -89,13 +91,20 @@ class SettingFragment : BaseFragment<FragmentSettingBinding, SettingViewModel>()
         binding.llFeedback.singleClick {
             tracking(SETTING_CLICK_FEEDBACK)
             activity?.let {
-//                Common.sendFeedback(it, getString(R.string.app_name), appInfo().emailFeedback, null)
+                Common.sendFeedback(it, getString(R.string.app_name), appInfo().emailFeedback, null)
             }
         }
         binding.llPolicy.singleClick {
             tracking(SETTING_CLICK_POLICY)
             activity?.let {
-//                Common.openWebView(it, appInfo().privacy)
+                Common.openWebView(it, appInfo().privacy)
+            }
+        }
+
+        binding.llTerm.singleClick {
+            tracking(SETTING_CLICK_TERM)
+            activity?.let {
+                Common.openWebView(it, appInfo().term)
             }
         }
 
@@ -104,26 +113,10 @@ class SettingFragment : BaseFragment<FragmentSettingBinding, SettingViewModel>()
             tracking(SETTING_CLICK_CMP)
             showPrivacyOptionForm(this)
         }
-
-        binding.llTerm.singleClick {
-            tracking(SETTING_CLICK_TERM)
-            activity?.let {
-//                Common.openWebView(it, appInfo().term)
-            }
-        }
-
-        onBackPressed {
-            handleBack()
-        }
-    }
-
-    override fun initData() {
         updateView()
     }
 
-    private fun handleBack() {
-        tracking(SETTING_CLICK_BACK)
-        popBackStack()
+    override fun initData() {
     }
 
     private fun checkPlaySound() {

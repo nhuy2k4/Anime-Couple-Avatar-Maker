@@ -6,7 +6,7 @@ import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import com.brally.ads.NativeAdView
 import com.brally.ads.data.ConfigManager
-import com.brally.ads.service.ads.BralyAdvertisement
+import com.braly.ads.service.ads.BralyAdvertisement
 
 object AdManager {
     // placement

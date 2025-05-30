@@ -66,7 +66,6 @@ dependencies {
     api(libs.glide)
     api(libs.dotsindicator)
     api(libs.lottie)
-//    api(libs.ads)
     api(libs.roundedimageview)
     api(libs.sdp.android)
     api(libs.ssp.android)

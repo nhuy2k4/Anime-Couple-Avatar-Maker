@@ -6,6 +6,7 @@ import androidx.viewbinding.ViewBinding
 import com.brally.mobile.base.R
 import com.brally.mobile.base.activity.BaseFragment
 import com.brally.mobile.base.viewmodel.BaseViewModel
+import com.brally.mobile.service.ads.AdManager
 import com.brally.mobile.service.event.SPLASH_SHOW
 import com.brally.mobile.service.event.SPLASH_SHOW_0
 import com.brally.mobile.service.event.subscribeEventNetwork
@@ -82,13 +83,18 @@ abstract class BaseSplashFragment<VB : ViewBinding, VM : BaseViewModel> :
 
     private fun fetchAndInitAds() {
         activity?.let {
-            lifecycleScope.launch {
-                if (isFirst()) {
-                    openOnboardingScreen()
-                } else {
-                    openHome()
-                }
-            }
+            AdManager.fetchAndShowAds(activity = it,
+                fragment = this,
+                bannerView = bannerView(),
+                onAdDismiss = {
+                    lifecycleScope.launch {
+                        if (isFirst()) {
+                            openOnboardingScreen()
+                        } else {
+                            openHome()
+                        }
+                    }
+                })
         }
     }
 

@@ -1,0 +1,119 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/background"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:padding="6dp">
+
+    <FrameLayout
+        android:id="@+id/media_view"
+        android:layout_width="0dp"
+        android:layout_height="120dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/ad_notification_view"
+        tools:background="#5c5c5c" />
+
+    <TextView
+        android:id="@+id/body"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:ellipsize="end"
+        android:fontFamily="@font/poppins_regular"
+        android:gravity="start"
+        android:maxLines="1"
+        android:paddingStart="@dimen/padding_huge"
+        android:textColor="@color/black"
+        android:textSize="10sp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toEndOf="@id/icon"
+        app:layout_constraintTop_toBottomOf="@+id/primary"
+        tools:text="@tools:sample/lorem/random" />
+
+    <ImageView
+        android:id="@+id/icon"
+        android:layout_width="52dp"
+        android:layout_height="52dp"
+        android:scaleType="fitCenter"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        tools:src="@tools:sample/avatars" />
+
+    <TextView
+        android:id="@+id/primary"
+        android:layout_width="0dp"
+        android:layout_height="18dp"
+        android:ellipsize="end"
+        android:fontFamily="@font/poppins_medium"
+        android:lines="1"
+        android:paddingStart="@dimen/padding_huge"
+        android:textColor="@color/black"
+        android:textSize="14sp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toEndOf="@id/icon"
+        app:layout_constraintTop_toTopOf="@id/icon"
+        tools:text="@tools:sample/lorem" />
+
+    <TextView
+        android:id="@+id/ad_notification_view"
+        android:layout_width="@dimen/native_ad_choise_width"
+        android:layout_height="@dimen/native_ad_choice_height"
+        android:layout_marginStart="4dp"
+        android:gravity="center"
+        android:text="@string/title_ad_choce"
+        android:textColor="@color/green_300"
+        android:textSize="12sp"
+        app:layout_constraintStart_toEndOf="@+id/icon"
+        app:layout_constraintTop_toBottomOf="@+id/body" />
+
+    <RatingBar
+        android:id="@+id/rating_bar"
+        style="?android:attr/ratingBarStyleSmall"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="@dimen/margin_small"
+        android:lines="1"
+        android:visibility="gone"
+        android:numStars="5"
+        app:layout_constraintBottom_toBottomOf="@id/secondary"
+        app:layout_constraintStart_toEndOf="@id/secondary"
+        app:layout_constraintTop_toTopOf="@id/secondary" />
+
+    <TextView
+        android:id="@+id/secondary"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:fontFamily="@font/poppins_regular"
+        android:gravity="top"
+        android:lines="1"
+        android:paddingStart="4dp"
+        android:textColor="@color/black"
+        android:textSize="10sp"
+        app:layout_constraintBottom_toBottomOf="@+id/ad_notification_view"
+        app:layout_constraintStart_toEndOf="@+id/ad_notification_view"
+        app:layout_constraintTop_toBottomOf="@+id/body"
+        tools:text="@tools:sample/lorem" />
+
+    <android.widget.Button
+        android:id="@+id/cta"
+        android:layout_width="0dp"
+        android:layout_height="40dp"
+        android:layout_marginTop="4dp"
+        android:backgroundTint="@color/blue_400"
+        android:fontFamily="@font/poppins_medium"
+        android:gravity="center"
+        android:lines="1"
+        android:paddingHorizontal="16dp"
+        android:textAllCaps="true"
+        android:textColor="@color/white"
+        android:textSize="12sp"
+        android:textStyle="bold"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/media_view"
+        tools:text="Visit site" />
+
+</androidx.constraintlayout.widget.ConstraintLayout>

@@ -5,8 +5,8 @@ import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
 import androidx.recyclerview.widget.DefaultItemAnimator
 import com.brally.ads.SmallDelayCallback
-import com.brally.ads.analytics.event.BralyTracking
 import com.braly.ads.R
+import com.braly.ads.analytics.event.BralyTracking
 import com.braly.ads.databinding.FragmentLanguageCommonBinding
 import com.language_onboard.data.local.CommonAppSharePref
 import com.language_onboard.data.model.Language
