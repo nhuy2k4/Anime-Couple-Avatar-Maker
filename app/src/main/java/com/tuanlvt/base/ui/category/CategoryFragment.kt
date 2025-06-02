@@ -1,5 +1,6 @@
 package com.tuanlvt.base.ui.category
 
+import androidx.navigation.fragment.navArgs
 import com.brally.mobile.base.activity.BaseFragment
 import com.brally.mobile.base.activity.onBackPressed
 import com.brally.mobile.base.activity.popBackStack
@@ -12,6 +13,8 @@ import com.tuanlvt.base.ui.main.MainViewModel
 import org.koin.androidx.viewmodel.ext.android.activityViewModel
 
 class CategoryFragment : BaseFragment<FragmentCategoryBinding, CategoryViewModel>() {
+
+    private val args by navArgs<CategoryFragmentArgs>()
     private val mainViewModel by activityViewModel<MainViewModel>()
     private val artAdapter by lazy { ArtAdapter() }
     private val categoryTabAdapter by lazy {
@@ -20,6 +23,8 @@ class CategoryFragment : BaseFragment<FragmentCategoryBinding, CategoryViewModel
             viewModel.getArtsByCategory(viewModel.getCategoryPosition(it))
         })
     }
+
+    private val categoryId by lazy { args.categoryId }
 
     override fun initView() {
         if (isFirstScene(clazz = this)) {

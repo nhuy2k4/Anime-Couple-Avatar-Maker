@@ -14,6 +14,7 @@ import com.tuanlvt.base.component.dialog.ExitsAppDialog
 import com.tuanlvt.base.databinding.FragmentHomeBinding
 import com.tuanlvt.base.session.isFirstScene
 import com.tuanlvt.base.session.setFirstScene
+import com.tuanlvt.base.ui.category.CategoryFragmentArgs
 
 class HomeFragment : BaseFragment<FragmentHomeBinding, HomeViewModel>() {
     override fun initView() {
@@ -27,7 +28,7 @@ class HomeFragment : BaseFragment<FragmentHomeBinding, HomeViewModel>() {
 
     override fun initListener() {
         binding.imvMenuDraw.singleClick {
-            navigate(R.id.categoryFragment)
+            navigate(R.id.categoryFragment, CategoryFragmentArgs(categoryId = 1).toBundle())
         }
 
         binding.imvMenuCollection.singleClick {

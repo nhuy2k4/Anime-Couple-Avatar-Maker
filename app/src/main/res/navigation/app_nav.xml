@@ -20,7 +20,13 @@
     <fragment
         android:id="@+id/categoryFragment"
         android:name="com.tuanlvt.base.ui.category.CategoryFragment"
-        tools:layout="@layout/fragment_category" />
+        tools:layout="@layout/fragment_category" >
+
+        <argument
+            android:name="categoryId"
+            app:argType="integer"
+            android:defaultValue="-1" />
+    </fragment>
 
     <fragment
         android:id="@+id/settingFragment"
