@@ -60,7 +60,7 @@ android {
 
     bundle {
         language {
-            enableSplit = true
+            enableSplit = false
         }
     }
 }
