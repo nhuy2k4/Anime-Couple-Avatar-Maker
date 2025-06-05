@@ -9,17 +9,17 @@
 
     <fragment
         android:id="@+id/splashFragment"
-        android:name="com.tuanlvt.base.ui.splash.SplashFragment"
+        android:name="com.app.base.ui.splash.SplashFragment"
         tools:layout="@layout/fragment_splash" />
 
     <fragment
         android:id="@+id/homeFragment"
-        android:name="com.tuanlvt.base.ui.home.HomeFragment"
+        android:name="com.app.base.ui.home.HomeFragment"
         tools:layout="@layout/fragment_home" />
 
     <fragment
         android:id="@+id/categoryFragment"
-        android:name="com.tuanlvt.base.ui.category.CategoryFragment"
+        android:name="com.app.base.ui.category.CategoryFragment"
         tools:layout="@layout/fragment_category" >
 
         <argument
@@ -30,11 +30,11 @@
 
     <fragment
         android:id="@+id/settingFragment"
-        android:name="com.tuanlvt.base.ui.setting.SettingFragment"
+        android:name="com.app.base.ui.setting.SettingFragment"
         tools:layout="@layout/fragment_setting" />
 
     <fragment
         android:id="@+id/languageAppFragment"
-        android:name="com.tuanlvt.base.ui.language.LanguageAppFragment"
+        android:name="com.app.base.ui.language.LanguageAppFragment"
         tools:layout="@layout/fragment_language_app" />
 </navigation>

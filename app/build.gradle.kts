@@ -8,11 +8,11 @@ plugins {
 }
 
 android {
-    namespace = "com.tuanlvt.base"
+    namespace = "com.app.base"
     compileSdk = 35
 
     defaultConfig {
-        applicationId = "com.tuanlvt.base"
+        applicationId = "com.app.base"
         minSdk = 28
         targetSdk = 35
         versionCode = 1
@@ -37,7 +37,7 @@ android {
     productFlavors {
         create("dev") {
             dimension = "env"
-            applicationId = "dev.tuanlvt.base"
+            applicationId = "dev.app.base"
         }
         create("prod") {
             dimension = "env"

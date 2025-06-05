@@ -42,7 +42,7 @@
             android:textSize="@dimen/_12ssp"
             app:layout_constraintTop_toBottomOf="@+id/tvRatingTitle" />
 
-        <com.tuanlvt.base.component.widget.ApplicationRatingBar
+        <com.app.base.component.widget.ApplicationRatingBar
             android:id="@+id/ratingBar"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
