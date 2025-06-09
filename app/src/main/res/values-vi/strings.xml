@@ -1,6 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="app_name">Pixel Art</string>
     <string name="delete_this_item">Xóa mục này?</string>
     <string name="delete_now">Xóa ngay</string>
     <string name="next">Tiếp theo</string>

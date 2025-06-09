@@ -1,6 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="app_name">Pixel Art</string>
     <string name="delete_this_item">Eliminare questo elemento?</string>
     <string name="delete_now">Elimina ora</string>
     <string name="next">Avanti</string>
