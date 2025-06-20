@@ -33,7 +33,9 @@ class ConfigManager private constructor(
         runnable: Runnable?
     ) {
         val remoteConfig = BralyRemoteConfigImpl()
+//        remoteConfig.fetchConfig {
             if (runnable != null && !activity.isFinishing) activity.runOnUiThread { runnable.run() }
+//        }
     }
 
     companion object {
