@@ -10,6 +10,8 @@ import com.app.base.databinding.FragmentCategoryBinding
 import com.app.base.session.isFirstScene
 import com.app.base.session.setFirstScene
 import com.app.base.ui.main.MainViewModel
+import com.brally.mobile.service.ads.AdManager
+import com.brally.mobile.service.ads.AdManager.showFull
 import org.koin.androidx.viewmodel.ext.android.activityViewModel
 
 class CategoryFragment : BaseFragment<FragmentCategoryBinding, CategoryViewModel>() {
@@ -52,7 +54,9 @@ class CategoryFragment : BaseFragment<FragmentCategoryBinding, CategoryViewModel
     }
 
     private fun handleBack() {
-        popBackStack()
+        showFull(AdManager.FULL_DRAW) {
+            popBackStack()
+        }
     }
 
     override fun initData() {

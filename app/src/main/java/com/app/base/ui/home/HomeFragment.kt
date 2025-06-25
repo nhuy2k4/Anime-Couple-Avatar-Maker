@@ -15,6 +15,9 @@ import com.app.base.databinding.FragmentHomeBinding
 import com.app.base.session.isFirstScene
 import com.app.base.session.setFirstScene
 import com.app.base.ui.category.CategoryFragmentArgs
+import com.brally.mobile.service.ads.AdManager
+import com.brally.mobile.service.ads.showFull
+import com.brally.mobile.service.ads.showNative
 import com.braly.analytics.notification.UpdateAppUtils
 
 class HomeFragment : BaseFragment<FragmentHomeBinding, HomeViewModel>() {
@@ -26,15 +29,20 @@ class HomeFragment : BaseFragment<FragmentHomeBinding, HomeViewModel>() {
         tracking(HOME_SHOW)
         adjustInsetsForBottomNavigation(binding.imvSetting)
         checkUpdate()
+        showNative(AdManager.NATIVE_HOME, binding.nativeAdsView)
     }
 
     override fun initListener() {
         binding.imvMenuDraw.singleClick {
-            navigate(R.id.categoryFragment, CategoryFragmentArgs(categoryId = 1).toBundle())
+           showFull(AdManager.FULL_HOME) {
+               navigate(R.id.categoryFragment, CategoryFragmentArgs(categoryId = 1).toBundle())
+           }
         }
 
         binding.imvMenuCollection.singleClick {
-//            navigate(R.id.collectionFragment)
+            showFull(AdManager.FULL_HOME) {
+                //            navigate(R.id.collectionFragment)
+            }
         }
 
         binding.imvSetting.singleClick {

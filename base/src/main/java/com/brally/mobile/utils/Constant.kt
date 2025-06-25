@@ -4,7 +4,7 @@ object Constant {
     // app info
     const val KEY_APPSFLYER = ""
     const val KEY_APPMETRICA = ""
-    const val DATA_BASE_URL_GITHUB = ""
+    const val DATA_BASE_URL_GITHUB = "https://raw.githubusercontent.com/Braly-Danang/project_name/main/"
     const val DATA_BASE_URL_CLOUDFLARE = ""
     const val EMAIL_FEEDBACK = "bralydanangtest@gmail.com" // Update this email to your actual feedback email
     const val TERM = "https://neli-creative.com/" // Update this URL to your actual terms of service
