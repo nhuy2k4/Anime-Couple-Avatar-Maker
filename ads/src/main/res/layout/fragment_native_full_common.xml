@@ -5,7 +5,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
-    <com.brally.ads.NativeAdView
+    <com.braly.ads.NativeAdView
         android:id="@+id/nativeAdView"
         android:layout_width="match_parent"
         android:layout_height="match_parent" />

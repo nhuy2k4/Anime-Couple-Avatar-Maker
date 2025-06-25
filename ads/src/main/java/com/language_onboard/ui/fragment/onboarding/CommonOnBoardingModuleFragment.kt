@@ -74,7 +74,6 @@ class CommonOnBoardingModuleFragment : BaseLanguageOnboardFragment<FragmentOnboa
             if (currentItem.type == OnboardingType.ADVERTISEMENT.type) {
                 reloadNativeSmallHandler.removeCallbacksAndMessages(null)
                 binding.btnNextModule.gone()
-                binding.nativeAd.gone()
                 binding.dotIndicator.gone()
                 setupCtaButton(false)
                 binding.commonNextButton.apply {
@@ -87,48 +86,46 @@ class CommonOnBoardingModuleFragment : BaseLanguageOnboardFragment<FragmentOnboa
                 viewModel.setSwipePage(currentItem.type)
                 tracking(Tracking.SHOW_FULL_NATIVE_ONBOARDING_MD)
             } else if (position == appOnboardingItems.size - 1) {
-                binding.nativeAd.visible()
                 binding.dotIndicator.visible()
                 binding.btnNextModule.visible()
                 binding.commonNextButton.gone()
                 setupCtaButton(true)
                 reloadNativeSmallHandler.removeCallbacksAndMessages(null)
-                AdManager.showNativeWithHandler(
-                    requireActivity(),
-                    this@CommonOnBoardingModuleFragment,
-                    reloadNativeSmallHandler,
-                    binding.nativeAd,
-                    AdManager.NATIVE_OB3,
-                    currentItem.nativeAdsLayoutRes
-                )
+//                AdManager.showNativeWithHandler(
+//                    requireActivity(),
+//                    this@CommonOnBoardingModuleFragment,
+//                    reloadNativeSmallHandler,
+//                    binding.nativeAd,
+//                    AdManager.NATIVE_OB3,
+//                    currentItem.nativeAdsLayoutRes
+//                )
                 viewModel.setSwipePage(currentItem.type)
                 tracking(Tracking.SHOW_ONBOARDING_3_MD)
             } else {
-                binding.nativeAd.visible()
                 when (position) {
                     0 -> {
                         reloadNativeSmallHandler.removeCallbacksAndMessages(null)
-                        AdManager.showNativeWithHandler(
-                            requireActivity(),
-                            this@CommonOnBoardingModuleFragment,
-                            reloadNativeSmallHandler,
-                            binding.nativeAd,
-                            AdManager.NATIVE_OB1,
-                            layoutRes
-                        )
+//                        AdManager.showNativeWithHandler(
+//                            requireActivity(),
+//                            this@CommonOnBoardingModuleFragment,
+//                            reloadNativeSmallHandler,
+//                            binding.nativeAd,
+//                            AdManager.NATIVE_OB1,
+//                            layoutRes
+//                        )
                         tracking(Tracking.SHOW_ONBOARDING_1_MD)
                     }
 
                     1 -> {
                         reloadNativeSmallHandler.removeCallbacksAndMessages(null)
-                        AdManager.showNativeWithHandler(
-                            requireActivity(),
-                            this@CommonOnBoardingModuleFragment,
-                            reloadNativeSmallHandler,
-                            binding.nativeAd,
-                            AdManager.NATIVE_OB2,
-                            currentItem.nativeAdsLayoutRes
-                        )
+//                        AdManager.showNativeWithHandler(
+//                            requireActivity(),
+//                            this@CommonOnBoardingModuleFragment,
+//                            reloadNativeSmallHandler,
+//                            binding.nativeAd,
+//                            AdManager.NATIVE_OB2,
+//                            currentItem.nativeAdsLayoutRes
+//                        )
                         tracking(Tracking.SHOW_ONBOARDING_2_MD)
                     }
                 }

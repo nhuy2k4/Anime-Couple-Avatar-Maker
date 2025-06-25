@@ -1,7 +1,7 @@
 package com.language_onboard.utils
 
+import com.braly.analytics.config.BralyRemoteConfigImpl
 import com.braly.ads.BuildConfig
-import com.braly.ads.analytics.config.BralyRemoteConfigImpl
 import com.language_onboard.data.model.CommonEnableConfig
 import com.squareup.moshi.JsonAdapter
 import com.squareup.moshi.Moshi

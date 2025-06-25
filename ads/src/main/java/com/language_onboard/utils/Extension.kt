@@ -12,9 +12,9 @@ import androidx.core.view.WindowInsetsCompat
 import androidx.core.view.WindowInsetsControllerCompat
 import androidx.fragment.app.Fragment
 import androidx.navigation.fragment.findNavController
-import com.brally.ads.NativeAdView
+import com.braly.ads.NativeAdView
 import com.braly.ads.R
-import com.braly.ads.analytics.event.BralyTracking
+import com.braly.analytics.event.BralyTracking
 import com.bumptech.glide.Glide
 import com.bumptech.glide.RequestBuilder
 import com.language_onboard.data.model.OnboardingConfig

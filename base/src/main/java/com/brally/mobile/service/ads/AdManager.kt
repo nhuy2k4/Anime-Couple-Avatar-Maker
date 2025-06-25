@@ -4,14 +4,14 @@ import android.app.Activity
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
-import com.brally.ads.NativeAdView
-import com.brally.ads.SmallDelayCallback
-import com.brally.ads.ads.interf.BralyResultConsentForm
-import com.braly.ads.service.ads.BralyAdvertisement
-import com.braly.ads.service.ads.BralyRewardItem
-import com.braly.ads.service.ads.BralyRewardManagement
-import com.brally.ads.data.ConfigManager
 import com.brally.mobile.utils.callSafeFragment
+import com.braly.ads.NativeAdView
+import com.braly.ads.SmallDelayCallback
+import com.braly.ads.ads.BralyAdvertisement
+import com.braly.ads.ads.BralyRewardManagement
+import com.braly.ads.ads.interf.BralyResultConsentForm
+import com.braly.ads.ads.interf.BralyRewardItem
+import com.braly.ads.data.ConfigManager
 import com.language_onboard.utils.gone
 
 object AdManager {

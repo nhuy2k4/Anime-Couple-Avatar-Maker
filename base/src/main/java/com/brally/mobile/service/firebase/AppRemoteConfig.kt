@@ -2,13 +2,13 @@ package com.brally.mobile.service.firebase
 
 import com.brally.mobile.base.application.appInfo
 import com.brally.mobile.base.application.getBaseApplication
-import com.brally.mobile.data.model.CategoryItem
 import com.brally.mobile.data.model.ArtItem
+import com.brally.mobile.data.model.CategoryItem
 import com.brally.mobile.utils.Constant
 import com.brally.mobile.utils.Constant.DEFAULT_ITEM_HOME_ORDER
 import com.brally.mobile.utils.gsonStrToList
 import com.brally.mobile.utils.readAssetsFile
-import com.braly.ads.analytics.config.BralyRemoteConfigImpl
+import com.braly.analytics.config.BralyRemoteConfigImpl
 import com.google.gson.JsonArray
 import com.google.gson.JsonParser
 

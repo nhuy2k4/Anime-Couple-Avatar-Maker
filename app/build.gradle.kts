@@ -1,9 +1,10 @@
 plugins {
     alias(libs.plugins.android.application)
     alias(libs.plugins.kotlin.android)
-//    id("com.google.gms.google-services")
+    id("com.google.gms.google-services")
     id("com.google.firebase.crashlytics")
     id("kotlin-kapt")
+    id("kotlin-parcelize")
     id("androidx.navigation.safeargs.kotlin")
 }
 
@@ -16,7 +17,7 @@ android {
         minSdk = 28
         targetSdk = 35
         versionCode = 1
-        versionName = "1.0"
+        versionName = "1.0.1"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
     }

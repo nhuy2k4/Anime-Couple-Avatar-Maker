@@ -15,6 +15,7 @@ import com.app.base.databinding.FragmentHomeBinding
 import com.app.base.session.isFirstScene
 import com.app.base.session.setFirstScene
 import com.app.base.ui.category.CategoryFragmentArgs
+import com.braly.analytics.notification.UpdateAppUtils
 
 class HomeFragment : BaseFragment<FragmentHomeBinding, HomeViewModel>() {
     override fun initView() {
@@ -24,6 +25,7 @@ class HomeFragment : BaseFragment<FragmentHomeBinding, HomeViewModel>() {
         }
         tracking(HOME_SHOW)
         adjustInsetsForBottomNavigation(binding.imvSetting)
+        checkUpdate()
     }
 
     override fun initListener() {
@@ -52,5 +54,11 @@ class HomeFragment : BaseFragment<FragmentHomeBinding, HomeViewModel>() {
 
     override fun initData() {
 
+    }
+
+    private fun checkUpdate() {
+        activity?.let {
+            UpdateAppUtils.checkUpdateApp(it)
+        }
     }
 }

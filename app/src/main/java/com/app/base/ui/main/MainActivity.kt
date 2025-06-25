@@ -3,6 +3,8 @@ package com.app.base.ui.main
 import android.content.Context
 import android.content.ContextWrapper
 import androidx.core.view.isVisible
+import com.app.base.R
+import com.app.base.utils.ContextUtils
 import com.brally.mobile.base.activity.navigate
 import com.brally.mobile.base.databinding.ActivityMainBinding
 import com.brally.mobile.service.event.NO_INTERNET_DIALOG_SHOW
@@ -11,11 +13,9 @@ import com.brally.mobile.service.sound.AppMusicPlayer
 import com.brally.mobile.ui.features.main.BaseMainActivity
 import com.brally.mobile.utils.openSettingNetWork
 import com.brally.mobile.utils.singleClick
-import com.braly.ads.analytics.event.BralyTracking
+import com.braly.analytics.event.BralyTracking
 import com.language_onboard.data.local.CommonAppSharePref
 import com.language_onboard.data.model.Language
-import com.app.base.R
-import com.app.base.utils.ContextUtils
 import org.koin.android.ext.android.inject
 import java.util.Locale
 

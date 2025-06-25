@@ -4,9 +4,9 @@ import android.content.Context
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
 import androidx.recyclerview.widget.DefaultItemAnimator
-import com.brally.ads.SmallDelayCallback
 import com.braly.ads.R
-import com.braly.ads.analytics.event.BralyTracking
+import com.braly.ads.SmallDelayCallback
+import com.braly.analytics.event.BralyTracking
 import com.braly.ads.databinding.FragmentLanguageCommonBinding
 import com.language_onboard.data.local.CommonAppSharePref
 import com.language_onboard.data.model.Language
@@ -14,12 +14,10 @@ import com.language_onboard.data.model.LanguageSelector
 import com.language_onboard.intf.OnboardingHandler
 import com.language_onboard.ui.BaseLanguageOnboardFragment
 import com.language_onboard.ui.adapter.CommonLanguageAdapter
-import com.language_onboard.utils.AdManager
 import com.language_onboard.utils.FeatureConfig
 import com.language_onboard.utils.Tracking
 import com.language_onboard.utils.onBackPressed
 import com.language_onboard.utils.setLocale
-import com.language_onboard.utils.showBannerOrNative
 import com.language_onboard.utils.tracking
 
 class CommonLanguageFragment : BaseLanguageOnboardFragment<FragmentLanguageCommonBinding>() {
@@ -51,7 +49,6 @@ class CommonLanguageFragment : BaseLanguageOnboardFragment<FragmentLanguageCommo
         onBackPressed {}
         tracking(Tracking.LANGUAGE_MODULE_SHOW)
         navArgs.onboardingConfig.onboardingItems
-//        binding.nativeAd.setAdmobTemplateType(languageNativeRes)
         appSharePref.isEnableLanguage = true
         binding.rvLanguage.apply {
             adapter = languageAdapter
@@ -75,15 +72,6 @@ class CommonLanguageFragment : BaseLanguageOnboardFragment<FragmentLanguageCommo
             }
         }
         binding.toolbarWrapper.tvTitle.text = getString(R.string.text_choose_language)
-
-        showBannerOrNative(
-            requireActivity(),
-            AdManager.BANNER_LANGUAGE,
-            AdManager.NATIVE_LANGUAGE,
-            binding.banner,
-            binding.nativeAd,
-            navArgs.onboardingConfig.languageNativeRes
-        )
     }
 
     override fun onResume() {
@@ -125,18 +113,6 @@ class CommonLanguageFragment : BaseLanguageOnboardFragment<FragmentLanguageCommo
         }
 
         languageAdapter.submitList(languages)
-        if (isFirstClick) {
-            isFirstClick = false
-            val isNativeEnabled =
-                AdManager.commonIsAdsPlacementEnable(requireActivity(), AdManager.NATIVE_LANGUAGE)
-            if (isNativeEnabled) {
-                AdManager.showNative(
-                    fragment = this@CommonLanguageFragment,
-                    view = binding.nativeAd,
-                    key = AdManager.NATIVE_LANGUAGE
-                )
-            }
-        }
     }
 
     private fun initLanguages() {

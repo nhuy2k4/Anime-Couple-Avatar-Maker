@@ -53,7 +53,7 @@
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintEnd_toEndOf="parent" />
 
-        <com.brally.ads.NativeAdView
+        <com.braly.ads.NativeAdView
             android:id="@+id/native_ad"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"

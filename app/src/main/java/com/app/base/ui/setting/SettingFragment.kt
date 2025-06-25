@@ -1,8 +1,10 @@
 package com.app.base.ui.setting
 
 import androidx.core.view.isVisible
+import com.app.base.R
+import com.app.base.component.dialog.RateAppBottomDialog
+import com.app.base.databinding.FragmentSettingBinding
 import com.bg.common.Common
-import com.brally.ads.ads.interf.BralyResultConsentForm
 import com.brally.mobile.base.activity.BaseFragment
 import com.brally.mobile.base.activity.isCmpRequired
 import com.brally.mobile.base.activity.navigate
@@ -38,11 +40,9 @@ import com.brally.mobile.service.session.saveSound
 import com.brally.mobile.service.session.saveVibrate
 import com.brally.mobile.service.sound.AppMusicPlayer
 import com.brally.mobile.utils.singleClick
+import com.braly.ads.ads.interf.BralyResultConsentForm
 import com.google.android.ump.FormError
 import com.language_onboard.utils.tracking
-import com.app.base.R
-import com.app.base.component.dialog.RateAppBottomDialog
-import com.app.base.databinding.FragmentSettingBinding
 
 class SettingFragment : BaseFragment<FragmentSettingBinding, SettingViewModel>(),
     BralyResultConsentForm {

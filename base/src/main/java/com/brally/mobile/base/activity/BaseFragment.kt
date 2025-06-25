@@ -19,7 +19,7 @@ import com.brally.mobile.base.viewmodel.BaseViewModel
 import com.brally.mobile.service.session.saveFirst
 import com.brally.mobile.utils.BindingReflex
 import com.brally.mobile.utils.logApp
-import com.braly.ads.analytics.event.BralyTracking
+import com.braly.analytics.event.BralyTracking
 import java.lang.reflect.ParameterizedType
 
 @Suppress("unused")
