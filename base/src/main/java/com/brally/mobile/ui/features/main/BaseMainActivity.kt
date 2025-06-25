@@ -11,7 +11,7 @@ import com.brally.mobile.base.viewmodel.BaseViewModel
 import com.brally.mobile.service.event.subscribeEventNetwork
 import com.brally.mobile.utils.openSettingNetWork
 import com.brally.mobile.utils.singleClick
-import com.braly.ads.service.ads.BralyAdvertisement
+import com.braly.ads.ads.BralyAdvertisement
 import com.language_onboard.intf.OnboardingHandler
 
 abstract class BaseMainActivity<VB : ViewBinding, VM : BaseViewModel> : BaseActivity<VB, VM>(),

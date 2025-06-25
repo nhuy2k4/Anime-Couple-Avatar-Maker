@@ -20,7 +20,7 @@ import com.brally.mobile.utils.Constant
 object AppMusicPlayer {
     private var backgroundMusicPlayer: ExoPlayer? = null
     private var fxMusicPlayer: ExoPlayer? = null
-    private var currentMusic = AppRemoteConfig.getDataResourceType().domainUrl + Constant.DEFAULT_BACKGROUND_SOUND
+    private var currentMusic = Constant.DEFAULT_BACKGROUND_SOUND
 
     fun getCurrentMusic(): String {
         return currentMusic
