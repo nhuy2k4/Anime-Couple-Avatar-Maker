@@ -85,7 +85,6 @@ abstract class BaseSplashFragment<VB : ViewBinding, VM : BaseViewModel> :
         activity?.let {
             AdManager.fetchAndShowAds(activity = it,
                 fragment = this,
-                bannerView = bannerView(),
                 onAdDismiss = {
                     lifecycleScope.launch {
                         if (isFirst()) {

@@ -15,8 +15,9 @@ import com.braly.ads.data.ConfigManager
 import com.language_onboard.utils.gone
 
 object AdManager {
-    private const val ADS_CONFIG_KEY = "ads_config_unit_glow_spinner"
-    private const val PLACEMENT_KEY = "ads_config_placement_glow_spinner"
+    private const val ADS_CONFIG_KEY = "ads_config_unit"
+    private const val PLACEMENT_KEY = "ads_config_placement"
+    private const val ITEM_KEY = "ads_config_item"
 
     const val OPEN = "open"
     const val SPLASH = "splash"
@@ -43,17 +44,17 @@ object AdManager {
 
 
     fun fetchAndShowAds(
-        activity: Activity, fragment: Fragment, onAdDismiss: Runnable, bannerView: ViewGroup?
+        activity: Activity, fragment: Fragment, onAdDismiss: Runnable,
     ) {
         val bralyAdvertisement = BralyAdvertisement.Companion.getInstance(activity)
         bralyAdvertisement.fetchConfig(
-            activity, ADS_CONFIG_KEY, PLACEMENT_KEY
+            activity, ADS_CONFIG_KEY, PLACEMENT_KEY, ITEM_KEY
         ) {
 
             bralyAdvertisement.initAdsAndLoadSplashHasBanner(
                 application = activity.application,
                 fragment = fragment,
-                bannerView = bannerView,
+                bannerView = null,
                 onAdsDismiss = {
                     onAdDismiss.run()
                 })
@@ -163,7 +164,7 @@ object AdManager {
     }
 
     fun isAdsPlacementEnable(activity: Activity, adKey: String): Boolean {
-        return ConfigManager.getInstance(activity).adManagement?.adPlacements?.getOrElse(adKey) { null }?.enable
+        return ConfigManager.getInstance(activity).adManagement?.adPlacements?.getOrElse(adKey) { null }?.placementConfig?.enable
             ?: false
     }
 

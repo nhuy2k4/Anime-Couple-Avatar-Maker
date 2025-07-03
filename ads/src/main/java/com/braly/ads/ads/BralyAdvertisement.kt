@@ -35,7 +35,7 @@ class BralyAdvertisement private constructor(context: Context) {
     private fun isShowDirectFull(activity: Activity, placementKey: String) = true
 
     fun fetchConfig(
-        activity: Activity, unitConfig: String, placementConfig: String, callback: Runnable?
+        activity: Activity, unitConfig: String, placementConfig: String, itemConfig: String, callback: Runnable?
     ): BralyAdvertisement = apply {
         ConfigManager.Companion.getInstance(activity)
             .fetchConfig(activity, unitConfig, placementConfig, callback)

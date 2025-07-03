@@ -3,10 +3,12 @@ package com.app.base.ui.main
 import android.content.Context
 import android.content.ContextWrapper
 import androidx.core.view.isVisible
+import androidx.lifecycle.lifecycleScope
 import com.app.base.R
 import com.app.base.utils.ContextUtils
 import com.brally.mobile.base.activity.navigate
 import com.brally.mobile.base.databinding.ActivityMainBinding
+import com.brally.mobile.service.ads.AdManager
 import com.brally.mobile.service.event.NO_INTERNET_DIALOG_SHOW
 import com.brally.mobile.service.event.subscribeEventNetwork
 import com.brally.mobile.service.sound.AppMusicPlayer
@@ -16,6 +18,7 @@ import com.brally.mobile.utils.singleClick
 import com.braly.analytics.event.BralyTracking
 import com.language_onboard.data.local.CommonAppSharePref
 import com.language_onboard.data.model.Language
+import kotlinx.coroutines.launch
 import org.koin.android.ext.android.inject
 import java.util.Locale
 
@@ -58,7 +61,17 @@ class MainActivity : BaseMainActivity<ActivityMainBinding, MainViewModel>() {
     }
 
     override fun onFlowFinished() {
-        navigate(R.id.homeFragment, isPopAll = true)
+        AdManager.showFull(this@MainActivity, AdManager.FULL_GETSTARTED) {
+            lifecycleScope.launch {
+                lifecycleScope.launchWhenStarted {
+                    try {
+                        navigate(R.id.homeFragment, isPopAll = true)
+                    } catch (e: Exception) {
+                        e.printStackTrace()
+                    }
+                }
+            }
+        }
     }
 
     override fun onResume() {
