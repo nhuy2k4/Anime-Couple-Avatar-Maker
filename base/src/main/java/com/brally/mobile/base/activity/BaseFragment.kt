@@ -19,6 +19,7 @@ import com.brally.mobile.base.viewmodel.BaseViewModel
 import com.brally.mobile.service.session.saveFirst
 import com.brally.mobile.utils.BindingReflex
 import com.brally.mobile.utils.logApp
+import com.brally.mobile.utils.trackingScreen
 import com.braly.analytics.event.BralyTracking
 import java.lang.reflect.ParameterizedType
 
@@ -76,6 +77,7 @@ abstract class BaseFragment<VB : ViewBinding, VM : BaseViewModel> : Fragment(),
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         try {
+            trackingScreen()
             initView()
             initListener()
             viewModel.isLoading.observe { showLoading(it) }

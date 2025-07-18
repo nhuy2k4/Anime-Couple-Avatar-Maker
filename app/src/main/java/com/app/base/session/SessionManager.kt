@@ -4,15 +4,6 @@ import com.brally.mobile.base.activity.BaseFragment
 import com.brally.mobile.utils.gsonStrToList
 import com.brally.mobile.utils.pref.LocalCache
 
-
-fun setFirstScene(clazz: BaseFragment<*, *>, isFirst: Boolean) {
-    LocalCache.getInstance().put(clazz::class.java.name, isFirst)
-}
-
-fun isFirstScene(clazz: BaseFragment<*, *>): Boolean {
-    return LocalCache.getInstance().getData(clazz::class.java.name, Boolean::class.java) ?: true
-}
-
 private const val KEY_FIRST_TUTORIAL = "first_tutorial"
 
 fun setFirstTutorial(isFirst: Boolean) {

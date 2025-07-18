@@ -1,5 +1,6 @@
 package com.brally.mobile.service.session
 
+import com.brally.mobile.base.activity.BaseFragment
 import com.brally.mobile.data.model.DrawResult
 import com.brally.mobile.utils.gsonObjToStr
 import com.brally.mobile.utils.gsonStrToList
@@ -11,6 +12,15 @@ private const val IS_VIBRATE = "IS_VIBRATE"
 private const val IS_FIRST_SPLASH = "IS_FIRST_SPLASH"
 private const val IS_FIRST = "IS_FIRST"
 private const val IS_RANDOM_COLOR = "IS_RANDOM_COLOR"
+
+fun setFirstScene(clazz: BaseFragment<*, *>, isFirst: Boolean) {
+    LocalCache.getInstance().put(clazz::class.java.name, isFirst)
+}
+
+fun isFirstScene(clazz: BaseFragment<*, *>): Boolean {
+    return LocalCache.getInstance().getData(clazz::class.java.name, Boolean::class.java) ?: true
+}
+
 
 fun saveFirst(isFirst: Boolean) {
     LocalCache.getInstance().put(IS_FIRST, isFirst)

@@ -55,6 +55,18 @@ import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 import kotlin.math.roundToInt
 import androidx.core.graphics.createBitmap
+import com.brally.mobile.base.activity.BaseFragment
+import com.brally.mobile.service.session.isFirstScene
+import com.brally.mobile.service.session.setFirstScene
+import com.language_onboard.utils.tracking
+
+fun BaseFragment<*, *>.trackingScreen() {
+    if (isFirstScene(clazz = this)) {
+        setFirstScene(clazz = this, isFirst = false)
+        tracking((this::class.java.simpleName.replace("Fragment", "_SHOW") + "_0").lowercase())
+    }
+    tracking((this::class.java.simpleName.replace("Fragment", "_SHOW")).lowercase())
+}
 
 fun View?.removeParentViewGroup() {
     this?.let { view ->

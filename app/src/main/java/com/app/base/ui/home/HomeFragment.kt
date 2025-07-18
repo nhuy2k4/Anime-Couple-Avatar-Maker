@@ -1,32 +1,23 @@
 package com.app.base.ui.home
 
-import com.brally.mobile.base.activity.BaseFragment
-import com.brally.mobile.base.activity.navigate
-import com.brally.mobile.base.activity.onBackPressed
-import com.brally.mobile.service.event.EXIT_DIALOG_SHOW
-import com.brally.mobile.service.event.HOME_CLICK_BACK
-import com.brally.mobile.service.event.HOME_SHOW
-import com.brally.mobile.service.event.HOME_SHOW_0
-import com.brally.mobile.utils.singleClick
-import com.language_onboard.utils.tracking
 import com.app.base.R
 import com.app.base.component.dialog.ExitsAppDialog
 import com.app.base.databinding.FragmentHomeBinding
-import com.app.base.session.isFirstScene
-import com.app.base.session.setFirstScene
 import com.app.base.ui.category.CategoryFragmentArgs
+import com.brally.mobile.base.activity.BaseFragment
+import com.brally.mobile.base.activity.navigate
+import com.brally.mobile.base.activity.onBackPressed
 import com.brally.mobile.service.ads.AdManager
 import com.brally.mobile.service.ads.showFull
 import com.brally.mobile.service.ads.showNative
+import com.brally.mobile.service.event.EXIT_DIALOG_SHOW
+import com.brally.mobile.service.event.HOME_CLICK_BACK
+import com.brally.mobile.utils.singleClick
 import com.braly.analytics.notification.UpdateAppUtils
+import com.language_onboard.utils.tracking
 
 class HomeFragment : BaseFragment<FragmentHomeBinding, HomeViewModel>() {
     override fun initView() {
-        if (isFirstScene(clazz = this)) {
-            setFirstScene(clazz = this, isFirst = false)
-            tracking(HOME_SHOW_0)
-        }
-        tracking(HOME_SHOW)
         adjustInsetsForBottomNavigation(binding.imvSetting)
         checkUpdate()
         showNative(AdManager.NATIVE_HOME, binding.nativeAdsView)

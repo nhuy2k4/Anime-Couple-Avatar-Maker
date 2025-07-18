@@ -1,17 +1,15 @@
 package com.app.base.ui.category
 
 import androidx.navigation.fragment.navArgs
+import com.app.base.databinding.FragmentCategoryBinding
+import com.app.base.ui.main.MainViewModel
 import com.brally.mobile.base.activity.BaseFragment
 import com.brally.mobile.base.activity.onBackPressed
 import com.brally.mobile.base.activity.popBackStack
-import com.brally.mobile.utils.collectLatestFlow
-import com.brally.mobile.utils.singleClick
-import com.app.base.databinding.FragmentCategoryBinding
-import com.app.base.session.isFirstScene
-import com.app.base.session.setFirstScene
-import com.app.base.ui.main.MainViewModel
 import com.brally.mobile.service.ads.AdManager
 import com.brally.mobile.service.ads.AdManager.showFull
+import com.brally.mobile.utils.collectLatestFlow
+import com.brally.mobile.utils.singleClick
 import org.koin.androidx.viewmodel.ext.android.activityViewModel
 
 class CategoryFragment : BaseFragment<FragmentCategoryBinding, CategoryViewModel>() {
@@ -29,9 +27,6 @@ class CategoryFragment : BaseFragment<FragmentCategoryBinding, CategoryViewModel
     private val categoryId by lazy { args.categoryId }
 
     override fun initView() {
-        if (isFirstScene(clazz = this)) {
-            setFirstScene(clazz = this, isFirst = false)
-        }
         adjustInsetsForBottomNavigation(binding.top)
         updateUI()
 

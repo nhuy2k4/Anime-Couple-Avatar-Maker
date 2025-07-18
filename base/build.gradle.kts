@@ -39,7 +39,7 @@ android {
 }
 
 dependencies {
-    implementation(project(":ads"))
+    api(project(":ads"))
     // Android
     api(libs.androidx.core.ktx)
     api(libs.androidx.appcompat)
@@ -70,4 +70,5 @@ dependencies {
     api(libs.sdp.android)
     api(libs.ssp.android)
     api(libs.permissionx)
+    api(libs.androidx.media3.exoplayer.v131)
 }
