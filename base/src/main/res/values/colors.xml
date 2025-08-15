@@ -4,10 +4,22 @@
     <color name="colorPrimaryLight">#B1E8FF</color>
     <color name="colorPrimaryDark">#2196F3</color>
     <color name="colorAccent">#4CCCFB</color>
+
     <color name="colorText">#232323</color>
     <color name="colorTextTitle">#000000</color>
     <color name="colorTextButton">#000000</color>
     <color name="colorBackground">#F9F9F9</color>
+
+    <!--    Ads template-->
+    <color name="colorButtonAds">#2196F3</color>
+    <color name="colorButtonAdsEnd">#00B2FF</color>
+    <color name="colorBorderButtonAds">#2196F3</color>
+    <color name="colorTitleButtonAds">#FFFFFF</color>
+    <color name="colorTextTitleAds">#000000</color>
+    <color name="colorTextContentAds">#5B5B5B</color>
+    <color name="colorBackgroundAds">#FFFFFF</color>
+    <color name="colorBorderAds">#2196F3</color>
+
     <color name="purple_200">#FFBB86FC</color>
     <color name="purple_500">#FF6200EE</color>
     <color name="purple_700">#FF3700B3</color>
