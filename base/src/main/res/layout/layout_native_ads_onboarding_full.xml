@@ -47,7 +47,7 @@
             android:lines="1"
             android:paddingStart="@dimen/_8dp"
             android:paddingEnd="@dimen/_16dp"
-            android:textColor="#15AEFF"
+            android:textColor="@color/colorTextTitleAds"
             android:textSize="@dimen/_16sp"
             app:layout_constraintBottom_toTopOf="@+id/body"
             app:layout_constraintEnd_toEndOf="parent"
@@ -84,7 +84,7 @@
             android:includeFontPadding="false"
             android:maxLines="1"
             android:paddingHorizontal="@dimen/_6dp"
-            android:textColor="#666666"
+            android:textColor="@color/colorTextContentAds"
             android:textSize="12sp"
             app:layout_constraintBottom_toTopOf="@id/fl_cta"
             app:layout_constraintEnd_toEndOf="parent"
@@ -99,9 +99,9 @@
             android:layout_marginHorizontal="@dimen/_16dp"
             android:layout_marginTop="@dimen/_8dp"
             android:layout_marginBottom="@dimen/_10dp"
+            android:background="@drawable/bg_button_ads"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
-            android:background="@drawable/bg_button_ads"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintWidth_percent="0.4">
 
@@ -115,15 +115,11 @@
                 android:gravity="center"
                 android:includeFontPadding="false"
                 android:paddingHorizontal="@dimen/_2sdp"
-                android:shadowColor="#1583FE"
-                android:shadowDy="7"
-                android:shadowRadius=".1"
                 android:text="@string/title_install"
+                android:textAllCaps="true"
                 android:textColor="@color/white"
                 android:textFontWeight="900"
-                android:textSize="@dimen/_16ssp"
-                app:textStrokeColor="#0084E4"
-                app:textStrokeWidth="1" />
+                android:textSize="@dimen/_16ssp" />
         </FrameLayout>
 
 

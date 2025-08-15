@@ -4,5 +4,9 @@
         android:topLeftRadius="@dimen/_6dp"
         android:topRightRadius="@dimen/_6dp" />
 
-    <solid android:color="#2F2E42" />
+    <solid android:color="@color/colorBackgroundAds" />
+
+    <stroke
+        android:width="@dimen/dp_1"
+        android:color="@color/colorBorderAds" />
 </shape>

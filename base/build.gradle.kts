@@ -39,8 +39,8 @@ android {
 }
 
 dependencies {
-    api(project(":ads"))
     // Android
+    api(libs.ads)
     api(libs.androidx.core.ktx)
     api(libs.androidx.appcompat)
     api(libs.androidx.appcompat.resources)

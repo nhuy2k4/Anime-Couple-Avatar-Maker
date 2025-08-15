@@ -21,12 +21,42 @@ import android.widget.EditText
 import androidx.fragment.app.Fragment
 import com.brally.mobile.base.application.appInfo
 import com.brally.mobile.base.application.getBaseApplication
+import com.brally.mobile.data.model.AdStyle
+import com.brally.mobile.data.model.ItemListAds
 import com.bumptech.glide.Glide
 import com.bumptech.glide.request.RequestOptions
 import com.bumptech.glide.request.target.CustomTarget
 import com.bumptech.glide.request.target.Target
 import com.bumptech.glide.request.transition.Transition
 import java.io.File
+
+enum class RecyclerViewType(val value: Int) {
+    TYPE_DATA(0), TYPE_AD_FULL(1), TYPE_AD_ONE(2), TYPE_PLACEHOLDER(3);
+}
+
+fun MutableList<ItemListAds<Object>>.insertAdsWithRowAlign(
+    original: List<ItemListAds<Object>>, interval: Int
+): MutableList<ItemListAds<Object>> {
+    val result = mutableListOf<ItemListAds<Object>>()
+    var columnIndex = 0
+    var count = 0
+
+    for (item in original) {
+        result.add(item)
+        columnIndex = (columnIndex + 1) % 2
+        count++
+
+        if (count % interval == 0) {
+            if (columnIndex != 0) {
+//                    result.add(ItemListAds.Placeholder)
+                columnIndex = 0
+            }
+            (ItemListAds.Ad(AdStyle.FULL_ITEMS) as? ItemListAds<Object>)?.let { result.add(it) }
+            columnIndex = 0
+        }
+    }
+    return result
+}
 
 
 object Common {
@@ -43,8 +73,8 @@ object Common {
     fun getScreenWidth(activity: Activity): Int {
         return if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
             val windowMetrics = activity.windowManager.currentWindowMetrics
-            val insets: Insets = windowMetrics.windowInsets
-                .getInsetsIgnoringVisibility(WindowInsets.Type.systemBars())
+            val insets: Insets =
+                windowMetrics.windowInsets.getInsetsIgnoringVisibility(WindowInsets.Type.systemBars())
             windowMetrics.bounds.width() - insets.left - insets.right
         } else {
             val displayMetrics = DisplayMetrics()
@@ -84,8 +114,7 @@ object Common {
 
     private fun scanFile(file: File) {
         MediaScannerConnection.scanFile(
-            getBaseApplication(), arrayOf(file.toString()),
-            null, null
+            getBaseApplication(), arrayOf(file.toString()), null, null
         )
     }
 
@@ -168,8 +197,7 @@ object Common {
     }
 
     fun Context.preloadSketchGlide(
-        path: String,
-        onResourceReady: ((Bitmap?) -> Unit)? = null
+        path: String, onResourceReady: ((Bitmap?) -> Unit)? = null
     ) {
         Glide.with(this).asBitmap().load(getUrlSketch(path))
             .apply(RequestOptions.overrideOf(Target.SIZE_ORIGINAL, Target.SIZE_ORIGINAL))

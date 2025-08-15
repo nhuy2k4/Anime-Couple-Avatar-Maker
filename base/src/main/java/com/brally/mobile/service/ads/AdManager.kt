@@ -21,6 +21,7 @@ object AdManager {
 
     const val OPEN = "open"
     const val SPLASH = "splash"
+    const val NATIVE_VIEW_LIST = "native_view_list"
 
     const val FULL_GETSTARTED = "full_getstarted"
     const val FULL_HOME = "full_home"
