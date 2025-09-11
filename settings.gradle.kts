@@ -21,14 +21,6 @@ dependencyResolutionManagement {
         maven(url = "https://android-sdk.is.com/")
         maven(url = "https://dl-maven-android.mintegral.com/repository/mbridge_android_sdk_oversea")
         maven(url = "https://cboost.jfrog.io/artifactory/chartboost-ads/")
-        maven(url = "https://maven.pkg.github.com/Braly-Ltd/Common-Libraries") {
-            credentials {
-                val props = java.util.Properties()
-                file("local.properties").inputStream().use { props.load(it) }
-                username = props.getProperty("github_username")
-                password = props.getProperty("github_token")
-            }
-        }
     }
 }
 
