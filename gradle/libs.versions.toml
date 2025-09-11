@@ -20,7 +20,6 @@ kotlinxCoroutinesCore = "1.9.0"
 kotlinxCoroutinesAndroid = "1.9.0"
 ksp = "2.0.20-1.0.24"
 library = "2.4"
-ads = "v4.1.8"
 lifecycleExtensions = "2.2.0"
 lifecycleLivedataKtx = "2.8.7"
 lottie = "6.3.0"
@@ -65,7 +64,6 @@ androidx-recyclerview = { module = "androidx.recyclerview:recyclerview", version
 androidx-swiperefreshlayout = { module = "androidx.swiperefreshlayout:swiperefreshlayout", version.ref = "swiperefreshlayout" }
 dotsindicator = { module = "com.tbuonomo:dotsindicator", version.ref = "dotsindicator" }
 firebase-crashlytics-gradle = { module = "com.google.firebase:firebase-crashlytics-gradle", version.ref = "firebaseCrashlyticsGradle" }
-ads = { module = "com.braly.component:ads", version.ref = "ads" }
 glide = { module = "com.github.bumptech.glide:glide", version.ref = "glide" }
 google-services = { module = "com.google.gms:google-services", version.ref = "googleServices" }
 kotlinx-coroutines-android = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-android", version.ref = "kotlinxCoroutinesAndroid" }
