@@ -4,71 +4,115 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@drawable/img_background_app">
+    android:background="@drawable/bg_gradient">
 
-    <androidx.appcompat.widget.AppCompatImageView
-        android:id="@+id/imgBackground"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:scaleType="fitXY"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
-
-    <View
-        android:id="@+id/top"
-        android:layout_width="match_parent"
-        android:layout_height="@dimen/_1sdp"
-        app:layout_constraintTop_toTopOf="parent" />
-
-    <androidx.appcompat.widget.AppCompatImageView
-        android:id="@+id/btn_back"
-        android:layout_width="@dimen/_36sdp"
-        android:layout_height="@dimen/_36sdp"
-        android:padding="@dimen/_6sdp"
-        android:src="@drawable/ic_back"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/top" />
-
-    <androidx.appcompat.widget.AppCompatTextView
-        android:id="@+id/tv_title"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:ellipsize="end"
-        android:maxLines="1"
-        android:paddingHorizontal="@dimen/_12sdp"
-        android:text="Library"
-        android:fontFamily="@font/font_bold"
-        android:textSize="@dimen/_18ssp"
-        android:textColor="@color/colorTextTitle"
-        app:layout_constraintBottom_toBottomOf="@+id/btn_back"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toEndOf="@+id/btn_back"
-        app:layout_constraintTop_toBottomOf="@+id/top" />
-
-    <androidx.recyclerview.widget.RecyclerView
-        android:id="@+id/rcvCategoriesTab"
+    <androidx.appcompat.widget.LinearLayoutCompat
+        android:id="@+id/top_nav"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginTop="@dimen/_10sdp"
-        android:clipToPadding="false"
+        android:gravity="center"
         android:orientation="horizontal"
-        android:paddingHorizontal="@dimen/_6sdp"
-        app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
-        app:layout_constraintTop_toBottomOf="@+id/btn_back"
-        tools:listitem="@layout/item_category_tab" />
+        android:paddingTop="20dp"
+        app:layout_constraintTop_toTopOf="parent">
 
-    <androidx.recyclerview.widget.RecyclerView
-        android:id="@+id/rcvArts"
+        <androidx.appcompat.widget.AppCompatImageView
+            android:id="@+id/btnProfile"
+            android:layout_width="80dp"
+            android:layout_height="80dp"
+            android:scaleType="centerCrop"
+            android:src="@drawable/profile" />
+
+        <Space
+            android:layout_width="150dp"
+            android:layout_height="1dp" />
+
+        <androidx.appcompat.widget.AppCompatImageView
+            android:id="@+id/btnDiamond"
+            android:layout_width="120dp"
+            android:layout_height="60dp"
+            android:scaleType="centerCrop"
+            android:src="@drawable/diamond" />
+
+        <androidx.appcompat.widget.AppCompatImageView
+            android:id="@+id/btnSetting"
+            android:layout_width="45dp"
+            android:layout_height="45dp"
+            android:layout_marginLeft="5dp"
+            android:scaleType="centerCrop"
+            android:src="@drawable/setting" />
+    </androidx.appcompat.widget.LinearLayoutCompat>
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/mid_avatar"
         android:layout_width="match_parent"
-        android:layout_height="0dp"
-        android:layout_marginHorizontal="@dimen/_10sdp"
-        android:layout_marginTop="@dimen/_10sdp"
-        android:orientation="vertical"
-        app:layoutManager="androidx.recyclerview.widget.GridLayoutManager"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/rcvCategoriesTab"
-        app:spanCount="2"
-        tools:listitem="@layout/item_art" />
+        android:layout_height="300dp"
+        android:layout_marginTop="50dp"
+        app:layout_constraintTop_toBottomOf="@id/top_nav"
+        app:layout_constraintBottom_toTopOf="@id/rcvChoice">
+
+        <androidx.appcompat.widget.AppCompatImageView
+            android:id="@+id/canvas"
+            android:layout_width="match_parent"
+            android:layout_height="300dp"
+            android:background="@drawable/bg_gradient" />
+
+        <androidx.appcompat.widget.AppCompatImageButton
+            android:id="@+id/btnChangeMale"
+            android:layout_width="80dp"
+            android:layout_height="80dp"
+            android:scaleType="fitCenter"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintBottom_toBottomOf="parent"
+            android:background="@null"
+            android:src="@drawable/change_male" />
+        <Space
+            android:layout_width="100dp"
+            android:layout_height="wrap_content" />
+
+        <androidx.appcompat.widget.LinearLayoutCompat
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            app:layout_constraintEnd_toEndOf="parent">
+
+            <androidx.appcompat.widget.AppCompatImageButton
+                android:id="@+id/btnChangeSkin"
+                android:layout_width="60dp"
+                android:layout_height="60dp"
+                android:scaleType="centerCrop"
+                android:background="@null"
+                android:src="@drawable/change_skin" />
+
+            <androidx.appcompat.widget.AppCompatImageButton
+                android:id="@+id/btnReset"
+                android:layout_width="60dp"
+                android:layout_height="60dp"
+                android:scaleType="centerCrop"
+                android:background="@null"
+                android:src="@drawable/reset" />
+        </androidx.appcompat.widget.LinearLayoutCompat>
+        <androidx.appcompat.widget.AppCompatImageButton
+            android:id="@+id/btnCamera"
+            android:layout_width="80dp"
+            android:layout_height="80dp"
+            android:scaleType="fitCenter"
+            android:background="@null"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            android:src="@drawable/camera" />
+    </androidx.constraintlayout.widget.ConstraintLayout>
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/rcvChoice"
+        android:layout_width="match_parent"
+        android:layout_height="70dp"
+        android:orientation="horizontal"
+        app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
+        tools:listitem="@layout/item_category_tab"
+        app:layout_constraintBottom_toTopOf="@id/rcvItem"/>
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/rcvItem"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:layout_constraintTop_toBottomOf="@id/rcvChoice" />
+
 </androidx.constraintlayout.widget.ConstraintLayout>
