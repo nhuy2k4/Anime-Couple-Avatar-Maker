@@ -22,17 +22,6 @@
         android:layout_height="wrap_content"
         android:orientation="horizontal"
         app:layout_constraintGuide_percent=".1" />
-
-    <androidx.appcompat.widget.AppCompatImageView
-        android:id="@+id/imvLogo"
-        android:layout_width="@dimen/_120sdp"
-        android:layout_height="@dimen/_120sdp"
-        android:scaleType="centerCrop"
-        android:src="@drawable/img_logo_app"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/guideline" />
-
     <androidx.appcompat.widget.AppCompatImageView
         android:id="@+id/imvLogoText"
         android:layout_width="0dp"
@@ -42,8 +31,19 @@
         app:layout_constraintDimensionRatio="285:180"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/imvLogo"
+        app:layout_constraintTop_toBottomOf="@+id/guideline"
+
         app:layout_constraintWidth_percent=".8" />
+    <androidx.appcompat.widget.AppCompatImageView
+        android:id="@+id/imvLogo"
+        android:layout_width="@dimen/_200sdp"
+        android:layout_height="@dimen/_200sdp"
+        android:scaleType="centerCrop"
+        android:src="@drawable/img_logo_app"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/imvLogoText"
+         />
 
     <com.google.android.material.textview.MaterialTextView
         android:id="@+id/tvLoading"
