@@ -7,7 +7,7 @@ plugins {
 
 android {
     namespace = "com.brally.mobile.base"
-    compileSdk = 35
+    compileSdk = 36
 
     defaultConfig {
         minSdk = 24
