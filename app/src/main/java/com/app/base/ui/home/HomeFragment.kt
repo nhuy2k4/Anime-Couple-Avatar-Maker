@@ -36,7 +36,7 @@ class HomeFragment : BaseFragment<FragmentHomeBinding, HomeViewModel>() {
             }
         }
 
-        binding.imvSetting.singleClick {
+        binding.btnSetting.singleClick {
             navigate(R.id.settingFragment)
         }
 
