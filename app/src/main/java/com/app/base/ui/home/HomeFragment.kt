@@ -18,23 +18,23 @@ import com.language_onboard.utils.tracking
 
 class HomeFragment : BaseFragment<FragmentHomeBinding, HomeViewModel>() {
     override fun initView() {
-        adjustInsetsForBottomNavigation(binding.imvSetting)
+        adjustInsetsForBottomNavigation(binding.btnSetting)
         checkUpdate()
-        showNative(AdManager.NATIVE_HOME, binding.nativeAdsView)
+//        showNative(AdManager.NATIVE_HOME, binding.nativeAdsView)
     }
 
     override fun initListener() {
-        binding.imvMenuDraw.singleClick {
-           showFull(AdManager.FULL_HOME) {
-               navigate(R.id.categoryFragment, CategoryFragmentArgs(categoryId = 1).toBundle())
-           }
-        }
-
-        binding.imvMenuCollection.singleClick {
-            showFull(AdManager.FULL_HOME) {
-                //            navigate(R.id.collectionFragment)
-            }
-        }
+//        binding.imvMenuDraw.singleClick {
+//           showFull(AdManager.FULL_HOME) {
+//               navigate(R.id.categoryFragment, CategoryFragmentArgs(categoryId = 1).toBundle())
+//           }
+//        }
+//
+//        binding.imvMenuCollection.singleClick {
+//            showFull(AdManager.FULL_HOME) {
+//                //            navigate(R.id.collectionFragment)
+//            }
+//        }
 
         binding.btnSetting.singleClick {
             navigate(R.id.settingFragment)
