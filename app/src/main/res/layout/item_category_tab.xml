@@ -1,26 +1,25 @@
 <?xml version="1.0" encoding="utf-8"?>
-<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:id="@+id/cardCategory"
     android:layout_width="wrap_content"
-    android:layout_height="wrap_content"
-    android:layout_marginHorizontal="@dimen/_4sdp"
-    app:cardCornerRadius="@dimen/_4dp"
-    app:cardElevation="@dimen/_2sdp">
+    android:layout_height="70dp"
+    android:layout_marginHorizontal="@dimen/_4sdp">
 
-        <androidx.appcompat.widget.AppCompatTextView
-            android:id="@+id/tvCategory"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center"
-            android:paddingBottom="@dimen/_8dp"
-            android:fontFamily="@font/font_bold"
-            android:gravity="center"
-            android:paddingHorizontal="@dimen/_32dp"
-            android:textColor="@color/black"
-            android:textSize="@dimen/_14sp"
-            android:textStyle="bold"
-            app:fontFamily="@font/font_semi_bold"
-            tools:text="Animals" />
-</FrameLayout>
+        <androidx.appcompat.widget.AppCompatImageView
+            android:id="@+id/imvCategory"
+            android:layout_width="80dp"
+            android:layout_height="60dp" android:scaleType="fitCenter"
+            android:contentDescription="@string/app_name"
+            android:clickable="false"
+            android:focusable="false"
+            android:foreground="@null"
+            android:padding="0dp"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            tools:src="@tools:sample/avatars" />
+
+</androidx.constraintlayout.widget.ConstraintLayout>
