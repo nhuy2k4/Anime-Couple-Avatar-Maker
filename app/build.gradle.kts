@@ -19,7 +19,7 @@ android {
         versionCode = 1
         versionName = "1.0.0"
 
-        testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
+        testInstrumentationRunner = "test.TestRunner"
     }
 
     buildTypes {
@@ -67,8 +67,8 @@ android {
 }
 
 dependencies {
+    implementation("com.burhanrashid52:photoeditor:3.0.2")
     implementation(project(":base"))
-
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.appcompat)
     implementation(libs.material)
