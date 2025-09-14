@@ -57,4 +57,9 @@
         <item name="android:includeFontPadding">false</item>
         <item name="android:textFontWeight" >700</item>
     </style>
+    <style name="ShapeAppearance.Circle" parent="">
+        <item name="cornerFamily">rounded</item>
+        <item name="cornerSize">20%</item>
+    </style>
+
 </resources>
