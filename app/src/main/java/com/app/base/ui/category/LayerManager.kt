@@ -24,8 +24,10 @@ class LayerManager(private val container: FrameLayout, private val context: Cont
         resId: Int,
         widthRatio: Float = 1f,
         heightRatio: Float = 1f,
+        leftMarginRatio: Float = 0f,
         topMarginRatio: Float = 0f,
-        gravity: Int = Gravity.TOP or Gravity.CENTER_HORIZONTAL
+        rightMarginRatio: Float = 0f,   // thêm right margin
+        gravity: Int = Gravity.TOP or Gravity.START
     ) {
         // Remove layer cũ nếu đã có
         layers[type]?.let { container.removeView(it) }
@@ -33,20 +35,36 @@ class LayerManager(private val container: FrameLayout, private val context: Cont
         val containerWidth = container.width
         val containerHeight = container.height
 
+        // Tính toán width nếu both left & right margin được dùng
+        val viewWidth = if (leftMarginRatio > 0f && rightMarginRatio > 0f) {
+            (containerWidth * (1f - leftMarginRatio - rightMarginRatio)).toInt()
+        } else {
+            (containerWidth * widthRatio).toInt()
+        }
+
         val view = ImageView(context).apply {
             setImageResource(resId)
             layoutParams = FrameLayout.LayoutParams(
-                (containerWidth * widthRatio).toInt(),
+                viewWidth,
                 (containerHeight * heightRatio).toInt()
             ).apply {
                 this.gravity = gravity
                 topMargin = (containerHeight * topMarginRatio).toInt()
+                leftMargin = (containerWidth * leftMarginRatio).toInt()
+                rightMargin = (containerWidth * rightMarginRatio).toInt()
             }
         }
 
         container.addView(view)
         layers[type] = view
     }
+    fun getLayerView(type: String): ImageView? {
+        return layers[type]
+    }
+    fun getLayersForCharacter(character: String): List<ImageView> {
+        return layers.filterKeys { it.startsWith("$character-") }.values.toList()
+    }
+
 
     /**
      * Remove layer theo type
