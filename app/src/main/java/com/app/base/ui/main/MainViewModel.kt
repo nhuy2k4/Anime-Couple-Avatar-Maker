@@ -13,12 +13,19 @@ import com.brally.mobile.base.viewmodel.BaseViewModel
 import com.brally.mobile.data.model.DrawResult
 import com.brally.mobile.service.session.saveDrawCollection
 import com.app.base.R
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
 import java.io.File
 import java.io.FileOutputStream
 import java.io.IOException
 
 class MainViewModel : BaseViewModel() {
+    private val _outfitState = MutableStateFlow<Map<String, Map<String, Int>>>(emptyMap())
+    val outfitState: StateFlow<Map<String, Map<String, Int>>> = _outfitState
 
+    fun saveOutfit(outfit: Map<String, Map<String, Int>>) {
+        _outfitState.value = outfit
+    }
     fun saveBitmapToCached(bitmap: Bitmap): File? {
         try {
             showLoading()
