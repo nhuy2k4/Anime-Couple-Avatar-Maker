@@ -1,31 +1,42 @@
-<?xml version="1.0" encoding="utf-8"?>
-<androidx.cardview.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
+<com.google.android.material.card.MaterialCardView
+    xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    android:layout_width="match_parent"
+    android:layout_width="wrap_content"
     android:layout_height="wrap_content"
-    android:layout_marginHorizontal="@dimen/_6sdp"
-    android:layout_marginBottom="@dimen/_8sdp"
-    app:cardBackgroundColor="@color/transparent"
-    app:cardCornerRadius="@dimen/_10dp"
-    app:cardElevation="@dimen/_12dp">
+    android:layout_margin="8dp"
+    app:cardCornerRadius="12dp"
+    app:cardElevation="4dp"
+    app:strokeColor="@color/stroke_pink"
+    app:strokeWidth="2dp"
+    app:cardPreventCornerOverlap="true">
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
-        android:background="@drawable/img_background_item_art"
-        android:layout_height="wrap_content">
+        android:layout_height="wrap_content"
+        android:padding="8dp">
 
-        <com.makeramen.roundedimageview.RoundedImageView
+        <com.google.android.material.imageview.ShapeableImageView
             android:id="@+id/imvArt"
-            android:layout_width="0dp"
-            android:layout_height="0dp"
-            android:padding="@dimen/_1dp"
-            android:scaleType="centerCrop"
+            android:layout_width="50dp"
+            android:layout_height="50dp"
+            android:adjustViewBounds="true"
+            android:scaleType="fitCenter"
             android:src="@drawable/img_placeholder"
-            app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintDimensionRatio="1:1"
+            app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <ImageView
+            android:id="@+id/checkView"
+            android:layout_width="10dp"
+            android:layout_height="10dp"
+            android:src="@drawable/check_box"
+            android:visibility="gone"
+            app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintTop_toTopOf="parent"
-            app:riv_corner_radius="@dimen/_12dp" />
+            android:layout_margin="2dp" />
+
     </androidx.constraintlayout.widget.ConstraintLayout>
-</androidx.cardview.widget.CardView>
+</com.google.android.material.card.MaterialCardView>
