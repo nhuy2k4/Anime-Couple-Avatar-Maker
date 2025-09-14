@@ -1,5 +1,5 @@
 package com.app.base.ui.category
-
+import com.app.base.R
 import android.view.View
 import androidx.navigation.fragment.navArgs
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -13,6 +13,7 @@ import com.brally.mobile.service.ads.AdManager.showFull
 import com.brally.mobile.utils.collectLatestFlow
 import org.koin.androidx.viewmodel.ext.android.activityViewModel
 import com.app.base.ui.main.MainViewModel
+import com.brally.mobile.base.activity.navigate
 
 class CategoryFragment : BaseFragment<FragmentCategoryBinding, CategoryViewModel>() {
 
@@ -28,7 +29,6 @@ class CategoryFragment : BaseFragment<FragmentCategoryBinding, CategoryViewModel
     }
 
     override fun initListener() {
-        setupBackPress()
         setupHomeButton()
         setupResetButton()
         setupSwitchCharacterButton()
@@ -39,14 +39,12 @@ class CategoryFragment : BaseFragment<FragmentCategoryBinding, CategoryViewModel
         observeViewModel()
     }
 
-    // ---------------------- Init LayerHelper ----------------------
     private fun initLayerHelper() {
         layerHelper = CategoryLayerHelper(binding)
         layerHelper.setupFeatureAdapter()
         layerHelper.setupInitialLayers()
     }
 
-    // ---------------------- RecyclerView ----------------------
     private fun setupRecyclerViews() {
         binding.rcvCategoriesTab.apply {
             layoutManager = LinearLayoutManager(context, LinearLayoutManager.HORIZONTAL, false)
@@ -54,13 +52,15 @@ class CategoryFragment : BaseFragment<FragmentCategoryBinding, CategoryViewModel
         }
     }
 
-    // ---------------------- Listeners ----------------------
-    private fun setupBackPress() = onBackPressed { handleBackPress() }
-    private fun setupHomeButton() = binding.btnHome.setOnClickListener { handleBackPress() }
+
+    private fun setupHomeButton() {
+        binding.btnHome.setOnClickListener {
+            handleBack()
+        }
+    }
     private fun setupResetButton() = binding.btnReset.setOnClickListener { layerHelper.resetToInitialState() }
     private fun setupSwitchCharacterButton() = binding.btnChangeMale.setOnClickListener { layerHelper.switchCharacter() }
 
-    // ---------------------- Category Selection ----------------------
     private fun onCategorySelected(category: CategoryItem) {
         scrollArtsToStart()
         loadArtsByCategory()
@@ -75,12 +75,17 @@ class CategoryFragment : BaseFragment<FragmentCategoryBinding, CategoryViewModel
         viewModel.getArtsByCategory(categoryTabAdapter.getSelectedPosition())
     }
 
-    // ---------------------- Back Press ----------------------
-    private fun handleBackPress() {
-        showFull(AdManager.FULL_DRAW) { popBackStack() }
+    private fun handleNext() {
+        val outfit = layerHelper.getAllOutfits()
+        mainViewModel.saveOutfit(outfit)
+        //navigate(R.id.photographFragment)
+    }
+    private fun handleBack() {
+        val outfit = layerHelper.getAllOutfits()
+        mainViewModel.saveOutfit(outfit)
+        popBackStack()
     }
 
-    // ---------------------- ViewModel ----------------------
     private fun loadViewModelData() {
         viewModel.loadInitialData()
     }

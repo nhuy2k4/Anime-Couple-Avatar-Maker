@@ -32,7 +32,6 @@ class CategoryLayerHelper(private val binding: FragmentCategoryBinding) {
         "female" to mutableMapOf<String, Int>()
     )
 
-    // ---------------------- Setup ----------------------
     fun setupFeatureAdapter() {
         featureAdapter = LayerItemAdapter(mutableListOf()) { resId -> onFeatureSelected(resId) }
         binding.rcvArts.apply {
@@ -105,7 +104,6 @@ class CategoryLayerHelper(private val binding: FragmentCategoryBinding) {
         }
     }
 
-    // ---------------------- Feature Selection ----------------------
     private fun onFeatureSelected(resId: Int) {
         currentFeatureType?.let { type ->
             val leftMargin = if (currentCharacter == "male") 0f - 0.15f else 0.15f
@@ -135,7 +133,6 @@ class CategoryLayerHelper(private val binding: FragmentCategoryBinding) {
         }
     }
 
-    // ---------------------- Switch Character ----------------------
     fun switchCharacter() {
         currentCharacter = if (currentCharacter == "male") "female" else "male"
         currentFeatureType?.let { type ->
@@ -155,12 +152,16 @@ class CategoryLayerHelper(private val binding: FragmentCategoryBinding) {
         }
     }
 
-    // ---------------------- Reset Features ----------------------
     fun resetToInitialState() {
         // Xóa tất cả layer, kể cả feature, nhưng sau đó thêm lại body + hair + eye mặc định
         layerManager.clearLayers(keepBase = false)
 
        setFullBodies()
     }
+
+    fun getAllOutfits(): Map<String, Map<String, Int>> {
+        return selectedFeatures.mapValues { it.value.toMap() }
+    }
+
 }
 
