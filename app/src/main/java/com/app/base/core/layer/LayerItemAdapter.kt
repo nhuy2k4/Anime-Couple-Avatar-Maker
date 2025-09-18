@@ -1,4 +1,4 @@
-package com.app.base.ui.category
+package com.app.base.core.layer
 
 import android.view.LayoutInflater
 import android.view.View

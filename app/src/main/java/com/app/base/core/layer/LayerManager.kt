@@ -1,4 +1,4 @@
-package com.app.base.ui.category
+package com.app.base.core.layer
 
 import android.content.Context
 import android.widget.FrameLayout
@@ -69,6 +69,10 @@ class LayerManager(private val container: FrameLayout, private val context: Cont
     /**
      * Remove layer theo type
      */
+    fun hasLayer(key: String): Boolean {
+        return layers.containsKey(key)
+    }
+
     fun removeLayer(type: String) {
         layers[type]?.let { container.removeView(it) }
         layers.remove(type)
@@ -84,4 +88,13 @@ class LayerManager(private val container: FrameLayout, private val context: Cont
             removeLayer(key)
         }
     }
+    fun applyOutfit(outfit: Map<String, Int>) {
+        outfit.forEach { (key, resId) ->
+            setLayer(key, resId)
+        }
+    }
+    fun getCurrentOutfit(): Map<String, Int> {
+        return layers.mapValues { it.value.id }
+    }
+
 }
