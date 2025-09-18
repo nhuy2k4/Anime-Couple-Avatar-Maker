@@ -42,7 +42,7 @@ class GalleryAdapter(
         RecyclerView.ViewHolder(binding.root) {
 
         fun bind(item: GalleryItem) {
-            binding.imageView.setImageResource(item.iconResId)
+
             binding.root.setOnClickListener { onItemClicked(item) }
         }
     }

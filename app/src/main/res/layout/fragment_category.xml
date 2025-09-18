@@ -9,14 +9,14 @@
     android:theme="@style/Theme.App"
     tools:context=".ui.category.CategoryFragment">
 
-    <androidx.appcompat.widget.LinearLayoutCompat
+    <androidx.constraintlayout.widget.ConstraintLayout
         android:id="@+id/top_nav"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:gravity="center"
+        android:layout_marginHorizontal="@dimen/_10dp"
         android:orientation="horizontal"
         android:layout_marginTop="@dimen/_20dp"
-        android:paddingTop="20dp"
         app:layout_constraintTop_toTopOf="parent">
 
         <androidx.appcompat.widget.AppCompatImageView
@@ -24,27 +24,30 @@
             android:layout_width="70dp"
             android:layout_height="70dp"
             android:scaleType="centerCrop"
+            app:layout_constraintStart_toStartOf="parent"
             android:src="@drawable/home" />
-
-        <Space
-            android:layout_width="150dp"
-            android:layout_height="1dp" />
 
         <androidx.appcompat.widget.AppCompatImageView
             android:id="@+id/btnDiamond"
             android:layout_width="120dp"
             android:layout_height="60dp"
             android:scaleType="centerCrop"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toStartOf="@id/btnSetting"
+            app:layout_constraintEnd_toEndOf="parent"
             android:src="@drawable/diamond" />
 
         <androidx.appcompat.widget.AppCompatImageView
             android:id="@+id/btnSetting"
             android:layout_width="45dp"
             android:layout_height="45dp"
-            android:layout_marginStart="5dp"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
             android:scaleType="centerCrop"
             android:src="@drawable/setting" />
-    </androidx.appcompat.widget.LinearLayoutCompat>
+    </androidx.constraintlayout.widget.ConstraintLayout>
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:id="@+id/mid_avatar"

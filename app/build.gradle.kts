@@ -10,12 +10,12 @@ plugins {
 
 android {
     namespace = "com.app.base"
-    compileSdk = 35
+    compileSdk = 36
 
     defaultConfig {
         applicationId = "com.app.base"
         minSdk = 28
-        targetSdk = 35
+        targetSdk = 36
         versionCode = 1
         versionName = "1.0.0"
 
@@ -68,6 +68,7 @@ android {
 
 dependencies {
     implementation("com.burhanrashid52:photoeditor:3.0.2")
+    implementation("com.google.code.gson:gson:2.10.1")
     implementation(project(":base"))
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.appcompat)

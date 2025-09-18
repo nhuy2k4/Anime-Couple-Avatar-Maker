@@ -24,20 +24,15 @@ class HomeFragment : BaseFragment<FragmentHomeBinding, HomeViewModel>() {
     }
 
     override fun initListener() {
-//        binding.imvMenuDraw.singleClick {
-//           showFull(AdManager.FULL_HOME) {
-//               navigate(R.id.categoryFragment, CategoryFragmentArgs(categoryId = 1).toBundle())
-//           }
-//        }
-//
-//        binding.imvMenuCollection.singleClick {
-//            showFull(AdManager.FULL_HOME) {
-//                //            navigate(R.id.collectionFragment)
-//            }
-//        }
 
         binding.btnSetting.singleClick {
             navigate(R.id.settingFragment)
+        }
+        binding.btnAvatar.singleClick {
+            navigate(R.id.categoryFragment)
+        }
+        binding.btnGallery.singleClick {
+            navigate(R.id.galleryFragment)
         }
 
         onBackPressed {

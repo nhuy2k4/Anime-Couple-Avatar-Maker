@@ -20,11 +20,48 @@ import java.io.FileOutputStream
 import java.io.IOException
 
 class MainViewModel : BaseViewModel() {
-    private val _outfitState = MutableStateFlow<Map<String, Map<String, Int>>>(emptyMap())
-    val outfitState: StateFlow<Map<String, Map<String, Int>>> = _outfitState
+    private val _outfitList = MutableStateFlow<List<String>>(listOf())
+    val outfitList: StateFlow<List<String>> = _outfitList
 
-    fun saveOutfit(outfit: Map<String, Map<String, Int>>) {
-        _outfitState.value = outfit
+    private val _currentOutfit = MutableStateFlow("")
+    val currentOutfit: StateFlow<String> = _currentOutfit
+
+    // flag để kiểm soát reset
+    private var resetToDefaultNextTime = true
+
+    fun shouldResetToDefault(): Boolean {
+        return if (resetToDefaultNextTime) {
+            resetToDefaultNextTime = false
+            true
+        } else {
+            false
+        }
+    }
+
+    fun markResetOnNextEnter() {
+        resetToDefaultNextTime = true
+    }
+
+    fun updateCurrentOutfit(json: String) {
+        _currentOutfit.value = json
+    }
+
+    fun commitCurrentOutfit() {
+        val current = _outfitList.value.toMutableList()
+        val json = _currentOutfit.value
+        if (json.isNotEmpty() && !current.contains(json)) {
+            current.add(json)
+        }
+        _outfitList.value = current
+    }
+
+    fun setDefaultOutfit(json: String) {
+        val current = _outfitList.value.toMutableList()
+        if (current.isEmpty() || current.first() != json) {
+            current.add(0, json)
+        }
+        _outfitList.value = current
+        _currentOutfit.value = json
     }
     fun saveBitmapToCached(bitmap: Bitmap): File? {
         try {
