@@ -1,41 +1,60 @@
 package com.app.base.ui.main
 
 import android.content.ContentValues
+import android.content.Context
 import android.content.Intent
 import android.graphics.Bitmap
 import android.net.Uri
 import android.os.Build
 import android.os.Environment
 import android.provider.MediaStore
-import android.widget.Toast
 import com.brally.mobile.base.application.getBaseApplication
 import com.brally.mobile.base.viewmodel.BaseViewModel
 import com.brally.mobile.data.model.DrawResult
 import com.brally.mobile.service.session.saveDrawCollection
-import com.app.base.R
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import java.io.File
 import java.io.FileOutputStream
-import java.io.IOException
 
 class MainViewModel : BaseViewModel() {
+
+    // --- Data class để lưu cả JSON + bitmap file ---
+    data class OutfitData(
+        val json: String,
+        val bitmapFile: File?
+    )
+
+    private val _outfitListData = MutableStateFlow<List<OutfitData>>(listOf())
+    val outfitListData: StateFlow<List<OutfitData>> = _outfitListData
+
+    // --- Commit outfit với bitmap ---
+    fun commitCurrentOutfitWithBitmap(json: String, bitmapFile: File) {
+        val current = _outfitListData.value.toMutableList()
+        current.add(OutfitData(json, bitmapFile))
+        _outfitListData.value = current
+    }
+
+    // --- Lưu JSON thuần ---
     private val _outfitList = MutableStateFlow<List<String>>(listOf())
     val outfitList: StateFlow<List<String>> = _outfitList
 
     private val _currentOutfit = MutableStateFlow("")
     val currentOutfit: StateFlow<String> = _currentOutfit
 
-    // flag để kiểm soát reset
-    private var resetToDefaultNextTime = true
+    val savedOutfits: StateFlow<List<String>> get() = outfitList
 
+    fun applyOutfit(json: String) {
+        updateCurrentOutfit(json)
+        commitCurrentOutfit()
+    }
+
+    private var resetToDefaultNextTime = true
     fun shouldResetToDefault(): Boolean {
         return if (resetToDefaultNextTime) {
             resetToDefaultNextTime = false
             true
-        } else {
-            false
-        }
+        } else false
     }
 
     fun markResetOnNextEnter() {
@@ -63,152 +82,83 @@ class MainViewModel : BaseViewModel() {
         _outfitList.value = current
         _currentOutfit.value = json
     }
-    fun saveBitmapToCached(bitmap: Bitmap): File? {
+
+    // --- Lưu bitmap vào cache ---
+    fun saveBitmapToGallery(bitmap: Bitmap, onDone: (Uri?) -> Unit) {
+        val resolver = context.contentResolver
         try {
-            showLoading()
-            val imageFile =
-                File(getBaseApplication().cacheDir, "draw_${System.currentTimeMillis()}.png")
-            val fos = FileOutputStream(imageFile)
-            bitmap.compress(Bitmap.CompressFormat.PNG, 100, fos)
-            fos.close()
-            hideLoading(isNow = true)
-            return imageFile
-        } catch (e: IOException) {
-            e.printStackTrace()
-            hideLoading(isNow = true)
-            return null
-        }
-    }
-
-    fun getFileToShare(uri: Uri, onDone: (File) -> Unit) {
-        try {
-            val file = getFileWithUri(uri = uri)
-            onDone.invoke(file)
-        } catch (ex: Exception) {
-            ex.printStackTrace()
-        }
-    }
-
-    fun getFileWithUri(uri: Uri): File {
-        val tempFile = File.createTempFile("tmp_", ".png", context.cacheDir)
-        context.contentResolver.openInputStream(uri)?.use { inputStream ->
-            FileOutputStream(tempFile).use { outputStream ->
-                inputStream.copyTo(outputStream)
-            }
-        }
-        return tempFile
-    }
-
-    fun handleFileImageUri(uri: Uri, onDone: (String?) -> Unit) {
-        val currentFile = getFileWithUri(uri = uri)
-        handleFileImage(currentFile, onDone)
-    }
-
-    fun handleFileImage(file: File, onDone: (String?) -> Unit) {
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
-            // Android 10+ (API 29+) - Use MediaStore with RELATIVE_PATH
-            launchHandler {
-                val fileName = file.name
+            val fileName = "outfit_${System.currentTimeMillis()}.png"
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
                 val contentValues = ContentValues().apply {
                     put(MediaStore.Images.Media.DISPLAY_NAME, fileName)
                     put(MediaStore.Images.Media.MIME_TYPE, "image/png")
-                    put(
-                        MediaStore.Images.Media.RELATIVE_PATH,
-                        Environment.DIRECTORY_PICTURES
-                    )
+                    put(MediaStore.Images.Media.RELATIVE_PATH, Environment.DIRECTORY_PICTURES)
                     put(MediaStore.Images.Media.IS_PENDING, 1)
                 }
-                val resolver = context.contentResolver
-                val videoUri =
-                    resolver.insert(MediaStore.Images.Media.EXTERNAL_CONTENT_URI, contentValues)
-                var savedFilePath: String? = null
-                videoUri?.let { uri ->
-                    resolver.openOutputStream(uri).use { outputStream ->
-                        file.inputStream().use { inputStream ->
-                            outputStream?.let { inputStream.copyTo(it) }
-                        }
+
+                val uri = resolver.insert(MediaStore.Images.Media.EXTERNAL_CONTENT_URI, contentValues)
+                uri?.let {
+                    resolver.openOutputStream(uri)?.use { out -> bitmap.compress(Bitmap.CompressFormat.PNG, 100, out) }
+                    contentValues.clear()
+                    contentValues.put(MediaStore.Images.Media.IS_PENDING, 0)
+                    resolver.update(uri, contentValues, null, null)
+                    onDone(uri)
+                } ?: onDone(null)
+            } else {
+                val picturesDir = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES)
+                val imageFile = File(picturesDir, fileName)
+                FileOutputStream(imageFile).use { bitmap.compress(Bitmap.CompressFormat.PNG, 100, it) }
+                context.sendBroadcast(Intent(Intent.ACTION_MEDIA_SCANNER_SCAN_FILE, Uri.fromFile(imageFile)))
+                onDone(Uri.fromFile(imageFile))
+            }
+        } catch (e: Exception) {
+            e.printStackTrace()
+            onDone(null)
+        }
+    }
+
+
+    // --- Lưu bitmap vào gallery ---
+    fun saveBitmapToGallery(context: Context, bitmap: Bitmap, onDone: (Uri?) -> Unit) {
+        val resolver = context.contentResolver
+        try {
+            val fileName = "outfit_${System.currentTimeMillis()}.png"
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
+                val contentValues = ContentValues().apply {
+                    put(MediaStore.Images.Media.DISPLAY_NAME, fileName)
+                    put(MediaStore.Images.Media.MIME_TYPE, "image/png")
+                    put(MediaStore.Images.Media.RELATIVE_PATH, Environment.DIRECTORY_PICTURES)
+                    put(MediaStore.Images.Media.IS_PENDING, 1)
+                }
+
+                val uri = resolver.insert(MediaStore.Images.Media.EXTERNAL_CONTENT_URI, contentValues)
+                uri?.let {
+                    resolver.openOutputStream(it)?.use { out ->
+                        bitmap.compress(Bitmap.CompressFormat.PNG, 100, out)
                     }
                     contentValues.clear()
                     contentValues.put(MediaStore.Images.Media.IS_PENDING, 0)
                     resolver.update(uri, contentValues, null, null)
-                    savedFilePath = getFilePathFromUri(uri)
-                    activityTopOrNull?.runOnUiThread {
-                        onDone.invoke(savedFilePath)
-                    }
-                } ?: run {
-                    Toast.makeText(
-                        context,
-                        context.getString(R.string.failed_to_save_image_to_gallery),
-                        Toast.LENGTH_SHORT
-                    ).show()
+                    onDone(uri)
+                } ?: onDone(null)
+            } else {
+                val picturesDir = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES)
+                val imageFile = File(picturesDir, fileName)
+                FileOutputStream(imageFile).use {
+                    bitmap.compress(Bitmap.CompressFormat.PNG, 100, it)
                 }
-            }
-        } else
-            // Special handling for Android 9 (API 28)
-            launchHandler {
-                val fileName = file.name
-                val contentValues = ContentValues().apply {
-                    put(MediaStore.Images.Media.DISPLAY_NAME, fileName)
-                    put(MediaStore.Images.Media.MIME_TYPE, "image/png")
-                    // DATA field is used for Android 9 instead of RELATIVE_PATH
-                    put(MediaStore.Images.Media.DATA,
-                        Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES).toString() + File.separator + fileName)
-                }
-
-                val resolver = context.contentResolver
-                val imageUri = resolver.insert(MediaStore.Images.Media.EXTERNAL_CONTENT_URI, contentValues)
-
-                var savedFilePath: String? = null
-                imageUri?.let { uri ->
-                    resolver.openOutputStream(uri).use { outputStream ->
-                        file.inputStream().use { inputStream ->
-                            outputStream?.let { inputStream.copyTo(it) }
-                        }
-                    }
-                    savedFilePath = getFilePathFromUri(uri)
-                    activityTopOrNull?.runOnUiThread {
-                        onDone.invoke(savedFilePath)
-                    }
-                    // Notify the system about the new image
-                    notifyFile(File(savedFilePath ?: ""))
-                } ?: run {
-                    Toast.makeText(
-                        context,
-                        context.getString(R.string.failed_to_save_image_to_gallery),
-                        Toast.LENGTH_SHORT
-                    ).show()
-                }
-            }
-    }
-
-    private fun getFilePathFromUri(uri: Uri): String? {
-        try {
-            val projection = arrayOf(MediaStore.Images.Media.DATA)
-            context.contentResolver.query(uri, projection, null, null, null)?.use { cursor ->
-                val columnIndex = cursor.getColumnIndexOrThrow(MediaStore.Images.Media.DATA)
-                if (cursor.moveToFirst()) {
-                    return cursor.getString(columnIndex)
-                }
+                context.sendBroadcast(
+                    Intent(Intent.ACTION_MEDIA_SCANNER_SCAN_FILE, Uri.fromFile(imageFile))
+                )
+                onDone(Uri.fromFile(imageFile))
             }
         } catch (e: Exception) {
             e.printStackTrace()
-        }
-        return null
-    }
-
-    private fun notifyFile(file: File) {
-        try {
-            val context = getBaseApplication()
-            @Suppress("DEPRECATION")
-            context.sendBroadcast(
-                Intent(Intent.ACTION_MEDIA_SCANNER_SCAN_FILE)
-                    .setData(Uri.fromFile(file))
-            )
-        } catch (e: Exception) {
-            e.printStackTrace()
+            onDone(null)
         }
     }
 
+    // --- Lưu DrawResult ---
     fun saveDrawResult(drawResult: DrawResult) {
         launchHandler {
             flowOnIO {
