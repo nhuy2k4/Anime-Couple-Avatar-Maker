@@ -15,7 +15,11 @@
     <fragment
         android:id="@+id/homeFragment"
         android:name="com.app.base.ui.home.HomeFragment"
-        tools:layout="@layout/fragment_home" />
+        tools:layout="@layout/fragment_home" >
+        <action
+            android:id="@+id/action_homeFragment_to_categoryFragment"
+            app:destination="@id/categoryFragment" />
+    </fragment>
 
     <fragment
         android:id="@+id/categoryFragment"
@@ -26,6 +30,10 @@
             android:name="categoryId"
             app:argType="integer"
             android:defaultValue="-1" />
+        <argument
+            android:name="fromHome"
+            app:argType="boolean"
+            android:defaultValue="false" />
     </fragment>
 
     <fragment

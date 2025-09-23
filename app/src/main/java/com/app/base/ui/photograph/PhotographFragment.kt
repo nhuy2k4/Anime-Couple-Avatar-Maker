@@ -1,65 +1,70 @@
 package com.app.base.ui.photograph
 
-import android.graphics.Bitmap
-import android.graphics.Canvas
+import android.graphics.drawable.Drawable
+import android.net.Uri
+import android.os.Bundle
 import android.util.Log
+import android.view.View
 import android.widget.Toast
 import androidx.core.content.ContextCompat
-import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.GridLayoutManager
+import com.app.base.R
 import com.app.base.core.layer.LayerSetupHelper
+import com.app.base.core.utils.PhotoCommitHelper
+import com.app.base.core.utils.PhotoSaver
 import com.app.base.databinding.FragmentPhotographBinding
 import com.brally.mobile.base.activity.BaseFragment
-import com.brally.mobile.base.activity.popBackStack
 import com.brally.mobile.data.model.PhotographItem
 import com.brally.mobile.utils.collectLatestFlow
 import org.koin.androidx.viewmodel.ext.android.viewModel
 import org.koin.androidx.viewmodel.ext.android.activityViewModel
 import com.app.base.ui.main.MainViewModel
-import kotlinx.coroutines.launch
-import java.io.File
+import com.brally.mobile.base.activity.navigate
 
 class PhotographFragment : BaseFragment<FragmentPhotographBinding, PhotographViewModel>() {
-    private var selectedBackgroundId: Int? = null
 
+    private var selectedBackgroundId: Int? = null
     private val photographViewModel by viewModel<PhotographViewModel>()
     private val mainViewModel by activityViewModel<MainViewModel>()
-
     private val photoAdapter by lazy { PhotographAdapter(onPhotoTapped = ::onPhotoSelected) }
     private lateinit var layerSetupHelper: LayerSetupHelper
+    private var tempOutfitJson: String = "{}"
 
     override fun initView() {
-        // Setup RecyclerView for background selection
         binding.rcvPhotographs.apply {
-            layoutManager = GridLayoutManager(context, 3) // Grid 3 cột
+            layoutManager = GridLayoutManager(context, 3)
             adapter = photoAdapter
         }
+    }
 
-        // Setup LayerSetupHelper với 2 nhân vật
-        layerSetupHelper = LayerSetupHelper(
-            binding.photoContainer,
-            binding.photoEditorView,
-            requireContext()
-        )
+    override fun initListener() {
+        binding.btnBack.setOnClickListener {
+            navigate(R.id.categoryFragment)
+        }
 
-        layerSetupHelper.setupInitialLayers {
-            val outfitJson = mainViewModel.currentOutfit.value
-            if (outfitJson.isNotEmpty()) {
-                layerSetupHelper.setOutfitJson(outfitJson)
+        binding.btnSave.setOnClickListener {
+            val outfitJson = tempOutfitJson
+            PhotoCommitHelper.saveAndCommit(binding.photoContainer, outfitJson, mainViewModel) {
+                Toast.makeText(requireContext(), "Outfit saved!", Toast.LENGTH_SHORT).show()
+                navigate(R.id.homeFragment)
             }
         }
 
-    }
-    fun onUserChangedOutfit(json: String) {
-        mainViewModel.updateCurrentOutfit(json)
-    }
-    override fun initListener() {
-        // Back button
-        binding.btnBack.setOnClickListener { popBackStack() }
-
-        // Save / Download buttons
-        binding.btnSave.setOnClickListener { savePhoto("save") }
-        binding.btnDownload.setOnClickListener { savePhoto("download") }
+        binding.btnDownload.setOnClickListener {
+            val backgroundIdToSave = selectedBackgroundId ?: R.drawable.photo1
+            val outfitJson = layerSetupHelper.getOutfitJsonWithBackground(backgroundIdToSave)
+            PhotoSaver.savePhoto(
+                binding.photoContainer,
+                outfitJson,
+                mainViewModel,
+                onSuccess = {
+                    Toast.makeText(requireContext(), "Outfit downloaded!", Toast.LENGTH_SHORT).show()
+                },
+                onError = {
+                    Toast.makeText(requireContext(), "Error downloading outfit", Toast.LENGTH_SHORT).show()
+                }
+            )
+        }
     }
 
     override fun initData() {
@@ -67,67 +72,79 @@ class PhotographFragment : BaseFragment<FragmentPhotographBinding, PhotographVie
         observeViewModel()
     }
 
-    // ---------------------- ViewModel ----------------------
     private fun loadViewModelData() {
         photographViewModel.loadInitialData()
     }
 
     private fun observeViewModel() {
         collectLatestFlow(photographViewModel.photos) { list: List<PhotographItem> ->
-            if (list.isNotEmpty()) {
-                photoAdapter.setPhotos(list)
-            } else {
-                photoAdapter.clearPhotos()
-            }
+            if (list.isNotEmpty()) photoAdapter.setPhotos(list)
+            else photoAdapter.clearPhotos()
         }
     }
 
-
-    // ---------------------- Events ----------------------
     private fun onPhotoSelected(photo: PhotographItem) {
-        val drawable = ContextCompat.getDrawable(requireContext(), photo.iconResId)
-        binding.photoEditorView.background = drawable
-        selectedBackgroundId = photo.iconResId
-
-        // Cập nhật outfit hiện tại với background
-        val outfitJson = layerSetupHelper.getOutfitJsonWithBackground(selectedBackgroundId)
-        mainViewModel.updateCurrentOutfit(outfitJson)
+        binding.photoEditorView.background = ContextCompat.getDrawable(requireContext(), photo.iconResId)
+        tempOutfitJson = layerSetupHelper.getOutfitJsonWithBackground(photo.iconResId)
     }
 
-    private fun savePhoto(name: String) {
-        // 1. Lấy JSON outfit hiện tại
-        val outfitJson = layerSetupHelper.getOutfitJsonWithBackground(selectedBackgroundId)
-        mainViewModel.updateCurrentOutfit(outfitJson)
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
 
-        // 2. Capture toàn bộ layout cha (FrameLayout chứa tất cả layer)
-        binding.photoContainer.post {
-            val width = binding.photoContainer.width
-            val height = binding.photoContainer.height
-            if (width == 0 || height == 0) return@post
+        layerSetupHelper = LayerSetupHelper(binding.photoContainer, binding.photoEditorView, requireContext())
 
-            val bitmap = Bitmap.createBitmap(width, height, Bitmap.Config.ARGB_8888)
-            val canvas = Canvas(bitmap)
-            binding.photoContainer.draw(canvas)
+        val defaultBackgroundRes = R.drawable.bg_gradient
+        val photoUriFromGallery = arguments?.getString("photo_uri")?.let { Uri.parse(it) }
+        val outfitJsonFromGallery = photoUriFromGallery?.let { PhotoCommitHelper.loadOutfitJson(it, requireContext()) }
 
-            // 3. Lưu bitmap vào gallery
-            mainViewModel.saveBitmapToGallery(bitmap) { uri ->
-                if (uri != null) {
-                    // 4. Lưu JSON kèm path bitmap
-                    mainViewModel.commitCurrentOutfitWithBitmap(outfitJson, File(uri.path!!))
-                    Toast.makeText(requireContext(), "Outfit saved!", Toast.LENGTH_SHORT).show()
-                } else {
-                    Toast.makeText(requireContext(), "Error saving outfit", Toast.LENGTH_SHORT).show()
+        layerSetupHelper.setupInitialLayers {
+            when {
+                // Gallery + outfit JSON đã lưu
+                !outfitJsonFromGallery.isNullOrEmpty() -> {
+                    layerSetupHelper.setOutfitJsonWithBackground(outfitJsonFromGallery)
+                    loadBackground(photoUriFromGallery!!)
+                }
+
+                // Category (đã có currentOutfit)
+                mainViewModel.currentOutfit.value != null -> {
+                    val existingOutfit = mainViewModel.currentOutfit.value!!
+                    layerSetupHelper.setOutfitJsonWithBackground(existingOutfit.json)
+                    if (binding.photoEditorView.background == null) {
+                        binding.photoEditorView.setBackgroundResource(defaultBackgroundRes)
+                    }
+                }
+
+                // Fallback
+                else -> {
+                    val newOutfitJson = "{}"
+                    mainViewModel.createNewOutfit(newOutfitJson)
+                    layerSetupHelper.setOutfitJsonWithBackground(newOutfitJson)
+                    binding.photoEditorView.setBackgroundResource(defaultBackgroundRes)
                 }
             }
         }
+
+        logCurrentOutfits()
     }
 
-    override fun onViewCreated(view: android.view.View, savedInstanceState: android.os.Bundle?) {
-        super.onViewCreated(view, savedInstanceState)
-        val outfitJson = arguments?.getString("outfit_json")
-        if (outfitJson != null) {
-            mainViewModel.applyOutfit(outfitJson)
+    private fun loadBackground(uri: Uri) {
+        try {
+            val inputStream = requireContext().contentResolver.openInputStream(uri)
+            val drawable = Drawable.createFromStream(inputStream, uri.toString())
+            binding.photoEditorView.background = drawable
+            inputStream?.close()
+        } catch (e: Exception) {
+            e.printStackTrace()
+            binding.photoEditorView.setBackgroundResource(R.drawable.bg_gradient)
         }
     }
 
+    private fun logCurrentOutfits() {
+        val outfits = mainViewModel.outfitListData.value
+        Log.d("OutfitListDebug", "=== Current outfits ===")
+        outfits.forEachIndexed { index, outfit ->
+            Log.d("OutfitListDebug", "$index: id=${outfit.id}, json=${outfit.json}, uri=${outfit.uri}")
+        }
+        Log.d("OutfitListDebug", "=== End of list ===")
+    }
 }

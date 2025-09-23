@@ -53,8 +53,9 @@ class PhotographViewModel : BaseViewModel() {
         launchHandler {
             flowOnIO {
                 listOf(
-                    PhotographItem("Photo 1", R.drawable.photo1),
-                    PhotographItem("Photo 2", R.drawable.photo2)
+                    PhotographItem("Photo 1", R.drawable.bg_gradient),
+                    PhotographItem("Photo 2", R.drawable.photo1),
+                    PhotographItem("Photo 3", R.drawable.photo2)
                 )
             }.subscribe { list ->
                 _photos.value = list

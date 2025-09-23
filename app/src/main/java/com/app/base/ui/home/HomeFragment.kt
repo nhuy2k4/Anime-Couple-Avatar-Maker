@@ -1,5 +1,6 @@
 package com.app.base.ui.home
 
+import androidx.navigation.fragment.findNavController
 import com.app.base.R
 import com.app.base.component.dialog.ExitsAppDialog
 import com.app.base.databinding.FragmentHomeBinding
@@ -29,7 +30,11 @@ class HomeFragment : BaseFragment<FragmentHomeBinding, HomeViewModel>() {
             navigate(R.id.settingFragment)
         }
         binding.btnAvatar.singleClick {
-            navigate(R.id.categoryFragment)
+            val action = HomeFragmentDirections.actionHomeFragmentToCategoryFragment(
+                categoryId = -1,
+                fromHome = true
+            )
+            findNavController().navigate(action)
         }
         binding.btnGallery.singleClick {
             navigate(R.id.galleryFragment)
