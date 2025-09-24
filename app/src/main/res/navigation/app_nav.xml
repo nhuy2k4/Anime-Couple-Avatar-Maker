@@ -25,15 +25,15 @@
         android:id="@+id/categoryFragment"
         android:name="com.app.base.ui.category.CategoryFragment"
         tools:layout="@layout/fragment_category" >
-
+        <action
+            android:id="@+id/actionCategoryFragmentToPhotographFragment"
+            app:destination="@id/photographFragment"
+            app:enterAnim="@anim/slide_in_right"
+            app:exitAnim="@anim/slide_out_left"/>
         <argument
-            android:name="categoryId"
-            app:argType="integer"
-            android:defaultValue="-1" />
-        <argument
-            android:name="backgroundUri"
-            app:argType="string"
-            android:defaultValue="" />
+            android:name="outfitId"
+            app:argType="long"
+            android:defaultValue="-1L"/>
         <argument
             android:name="fromHome"
             app:argType="boolean"
@@ -53,14 +53,12 @@
         android:id="@+id/photographFragment"
         android:name="com.app.base.ui.photograph.PhotographFragment"
         tools:layout="@layout/fragment_photograph" >
+        <action
+            android:id="@+id/action_photographFragment_to_categoryFragment"
+            app:destination="@id/categoryFragment" />
         <argument
-            android:name="photoUri"
-            app:argType="string"
-            android:defaultValue=""/>
-        <argument
-            android:name="outfitJson"
-            app:argType="string"
-            android:defaultValue=""/>
+            android:name="outfitId"
+            app:argType="long" />
     </fragment>
     <fragment
         android:id="@+id/galleryFragment"

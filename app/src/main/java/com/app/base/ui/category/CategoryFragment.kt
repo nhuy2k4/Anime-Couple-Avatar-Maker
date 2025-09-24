@@ -1,74 +1,89 @@
 package com.app.base.ui.category
 
+import android.net.Uri
 import android.os.Bundle
 import android.util.Log
 import android.view.View
+import androidx.lifecycle.lifecycleScope
+import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.app.base.R
 import com.app.base.core.layer.CategoryLayerHelper
 import com.app.base.core.layer.LayerSetupHelper
-import com.app.base.core.utils.PhotoCommitHelper
+import com.app.base.database.AppDatabase
+import com.app.base.database.OutfitEntity
 import com.app.base.databinding.FragmentCategoryBinding
 import com.app.base.ui.dialog.DialogSaveFragment
 import com.brally.mobile.base.activity.BaseFragment
 import com.brally.mobile.base.activity.navigate
 import com.brally.mobile.data.model.CategoryItem
 import com.brally.mobile.utils.collectLatestFlow
-import org.koin.androidx.viewmodel.ext.android.activityViewModel
-import com.app.base.ui.main.MainViewModel
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 
 class CategoryFragment : BaseFragment<FragmentCategoryBinding, CategoryViewModel>() {
-
     private val args: CategoryFragmentArgs by navArgs()
-    private val mainViewModel by activityViewModel<MainViewModel>()
     private val categoryTabAdapter by lazy { CategoryTabAdapter(onItemTapped = ::onCategorySelected) }
 
     private lateinit var layerSetupHelper: LayerSetupHelper
     private lateinit var categoryLayerHelper: CategoryLayerHelper
 
+    private var outfitId: Long = -1L
+
     override fun initView() {
-        initHelpers()
         setupRecyclerViews()
-        categoryLayerHelper.setupDefaultTab()
     }
 
     override fun initListener() {
-        setupHomeButton()
-        setupResetButton()
-        setupCameraButton()
-        setupSwitchCharacterButton()
+        binding.btnHome.setOnClickListener { showSaveDialog { navigate(R.id.homeFragment) } }
+        binding.btnReset.setOnClickListener { layerSetupHelper.resetToInitialState() }
+        binding.btnChangeMale.setOnClickListener { categoryLayerHelper.switchCharacter() }
+        binding.btnCamera.setOnClickListener { saveCurrentOutfitAndNext() }
     }
 
     override fun initData() {
         loadViewModelData()
         observeViewModel()
     }
+
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        if (mainViewModel.currentOutfit.value == null) {
-            // Khởi tạo outfit mới ngay khi vào Category
-            val newOutfitJson = "{}" // hoặc outfit json mặc định
-            mainViewModel.createNewOutfit(newOutfitJson)
-        }
-    }
+        val isNewOutfit = args.outfitId == -1L
 
-    private fun initHelpers() {
-        // Layer setup
+        // 1️⃣ Init helpers trên Main thread
         layerSetupHelper = LayerSetupHelper(binding.photoContainer, binding.photoEditorView, requireContext())
-        layerSetupHelper.setupInitialLayers {
-            if (args.fromHome || mainViewModel.shouldResetToDefault()) {
-                layerSetupHelper.setOutfitJsonWithBackground("{}")
+        categoryLayerHelper = CategoryLayerHelper(binding, layerSetupHelper) { _, _ ->
+            updateOutfitInDb()
+        }
+        categoryLayerHelper.setupFeatureAdapter()
+        categoryLayerHelper.setupDefaultTab()
+
+        lifecycleScope.launch(Dispatchers.IO) {
+            val dao = AppDatabase.getInstance(requireContext()).outfitDao()
+            if (isNewOutfit) {
+                val entity = OutfitEntity(outfitJson = "{}", backgroundUri = null)
+                outfitId = dao.insert(entity)
+                withContext(Dispatchers.Main) {
+                    layerSetupHelper.setupInitialLayers {
+                        layerSetupHelper.setOutfitJsonWithBackground("{}")
+                    }
+                }
             } else {
-                mainViewModel.currentOutfit.value?.let { outfit ->
-                    layerSetupHelper.setOutfitJsonWithBackground(outfit.json)
-                } ?: layerSetupHelper.setOutfitJsonWithBackground("{}")
+                outfitId = args.outfitId
+                val outfit = dao.getOutfitById(outfitId)
+                withContext(Dispatchers.Main) {
+                    outfit?.let {
+                        val uri = it.backgroundUri?.let(Uri::parse)
+                        layerSetupHelper.setupInitialLayers(onReady = {
+                            layerSetupHelper.setOutfitJsonWithBackground(it.outfitJson, uri)
+                        }, seedDefaults = false)
+                    }
+                }
             }
         }
-        // Category features setup
-        categoryLayerHelper = CategoryLayerHelper(binding, layerSetupHelper)
-        categoryLayerHelper.setupFeatureAdapter()
     }
 
     private fun setupRecyclerViews() {
@@ -78,57 +93,40 @@ class CategoryFragment : BaseFragment<FragmentCategoryBinding, CategoryViewModel
         }
     }
 
-    private fun setupHomeButton() {
-        binding.btnHome.setOnClickListener { saveOutfitThenBack() }
-    }
-
-    private fun setupResetButton() {
-        binding.btnReset.setOnClickListener { layerSetupHelper.resetToInitialState() }
-    }
-
-    private fun setupSwitchCharacterButton() {
-        binding.btnChangeMale.setOnClickListener { categoryLayerHelper.switchCharacter() }
-    }
-
-    private fun setupCameraButton() {
-        binding.btnCamera.setOnClickListener { saveOutfitThenNext() }
-    }
-
     private fun onCategorySelected(category: CategoryItem) {
         binding.rcvArts.scrollToPosition(0)
         categoryLayerHelper.showCategoryFeatures(category.type)
-        // Chỉ preview, không commit tạm vào ViewModel
     }
 
-    private fun saveOutfitThenBack() {
+    private fun showSaveDialog(onComplete: () -> Unit) {
         DialogSaveFragment().show(parentFragmentManager, "DialogSave")
         parentFragmentManager.setFragmentResultListener("dialog_save_request", viewLifecycleOwner) { _, bundle ->
             val result = bundle.getString("result")
             if (result == "YES") {
-                val outfitJson = layerSetupHelper.getOutfitJsonWithBackground(R.drawable.bg_gradient)
-                PhotoCommitHelper.commitFromContainer(binding.photoContainer, outfitJson, mainViewModel) {
-                    // Clear tạm nếu có
-                    PhotoCommitHelper.clearTemporaryOutfits(mainViewModel)
-                    navigate(R.id.homeFragment)
-                }
+                updateOutfitInDb { onComplete() }
             }
         }
     }
 
-    private fun saveOutfitThenNext() {
-        val outfitJsonWithBg = layerSetupHelper.getOutfitJsonWithBackground(R.drawable.bg_gradient)
-        if (outfitJsonWithBg.isNotEmpty()) {
-            val currentUri = mainViewModel.currentOutfit.value?.uri
-            // Chỉ cập nhật currentOutfit trong ViewModel, không lưu bitmap
-            mainViewModel.commitOutfitWithBitmap(outfitJsonWithBg, null, currentUri)
-            navigate(R.id.photographFragment)
-        } else {
-            navigate(R.id.photographFragment)
+    private fun saveCurrentOutfitAndNext() {
+        updateOutfitInDb {
+            val action = CategoryFragmentDirections.actionCategoryFragmentToPhotographFragment(outfitId)
+            Log.d("CategoryFragment", "Navigate to Photograph with outfitId=$outfitId")
+            findNavController().navigate(action)
         }
     }
 
-    private fun loadArtsByCategory() {
-        viewModel.getArtsByCategory(categoryTabAdapter.getSelectedPosition())
+    private fun updateOutfitInDb(onComplete: (() -> Unit)? = null) {
+        val outfitJson = layerSetupHelper.getFullOutfitJson()
+        lifecycleScope.launch(Dispatchers.IO) {
+            val dao = AppDatabase.getInstance(requireContext()).outfitDao()
+            val outfit = dao.getOutfitById(outfitId)
+            outfit?.let {
+                dao.update(it.copy(outfitJson = outfitJson))
+                Log.d("CategoryFragment", "Auto updated outfit $outfitId")
+            }
+            withContext(Dispatchers.Main) { onComplete?.invoke() }
+        }
     }
 
     private fun loadViewModelData() {
@@ -144,27 +142,5 @@ class CategoryFragment : BaseFragment<FragmentCategoryBinding, CategoryViewModel
         collectLatestFlow(viewModel.categorySelected) { pos ->
             categoryTabAdapter.selectCategory(pos)
         }
-    }
-
-    override fun onResume() {
-        super.onResume()
-        // Khi quay lại fragment này, reset mặc định nếu cần
-        if (args.fromHome || mainViewModel.shouldResetToDefault()) {
-            layerSetupHelper.setOutfitJsonWithBackground("{}")
-        } else {
-            mainViewModel.currentOutfit.value?.let {
-                layerSetupHelper.setOutfitJsonWithBackground(it.json)
-            }
-        }
-
-    }
-
-    private fun logCurrentOutfits() {
-        val outfits = mainViewModel.outfitListData.value
-        Log.d("OutfitListDebug", "=== Current outfits ===")
-        outfits.forEachIndexed { index, outfit ->
-            Log.d("OutfitListDebug", "$index: json=${outfit.json}, uri=${outfit.uri}")
-        }
-        Log.d("OutfitListDebug", "=== End of list ===")
     }
 }

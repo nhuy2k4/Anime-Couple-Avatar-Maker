@@ -67,8 +67,12 @@ android {
 }
 
 dependencies {
+    val room_version = "2.8.0"
     implementation("com.burhanrashid52:photoeditor:3.0.2")
     implementation("com.google.code.gson:gson:2.10.1")
+    implementation("androidx.room:room-runtime:$room_version")
+    kapt("androidx.room:room-compiler:$room_version")
+    implementation("androidx.room:room-ktx:${room_version}")
     implementation(project(":base"))
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.appcompat)

@@ -1,38 +1,37 @@
 package com.app.base.ui.photograph
 
-import android.graphics.drawable.Drawable
+import android.graphics.Bitmap
 import android.net.Uri
 import android.os.Bundle
+import android.os.Environment
+import android.provider.MediaStore
 import android.util.Log
 import android.view.View
 import android.widget.Toast
-import androidx.core.content.ContextCompat
+import androidx.lifecycle.lifecycleScope
+import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
 import androidx.recyclerview.widget.GridLayoutManager
 import com.app.base.R
 import com.app.base.core.layer.LayerSetupHelper
-import com.app.base.core.utils.PhotoCommitHelper
-import com.app.base.core.utils.PhotoSaver
+import com.app.base.database.AppDatabase
+import com.app.base.database.OutfitEntity
 import com.app.base.databinding.FragmentPhotographBinding
 import com.brally.mobile.base.activity.BaseFragment
-import com.brally.mobile.data.model.PhotographItem
-import com.brally.mobile.utils.collectLatestFlow
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import org.koin.androidx.viewmodel.ext.android.viewModel
-import org.koin.androidx.viewmodel.ext.android.activityViewModel
-import com.app.base.ui.main.MainViewModel
-import com.brally.mobile.base.activity.navigate
-import org.json.JSONObject
+import java.io.OutputStream
 
 class PhotographFragment : BaseFragment<FragmentPhotographBinding, PhotographViewModel>() {
+
     private val args: PhotographFragmentArgs by navArgs()
-    private var selectedBackgroundId: Int? = null
-    private var selectedBackgroundUri: Uri? = null
     private val photographViewModel by viewModel<PhotographViewModel>()
-    private val mainViewModel by activityViewModel<MainViewModel>()
-    private val photoAdapter by lazy { PhotographAdapter(onPhotoTapped = ::onPhotoSelected) }
     private lateinit var layerSetupHelper: LayerSetupHelper
-    private var tempOutfitJson: String = "{}"
-    private var isEditGallery = false
+    private val photoAdapter by lazy { PhotographAdapter(onPhotoTapped = ::onPhotoSelected) }
+    private var outfitId: Long? = null
+
     override fun initView() {
         binding.rcvPhotographs.apply {
             layoutManager = GridLayoutManager(context, 3)
@@ -42,149 +41,118 @@ class PhotographFragment : BaseFragment<FragmentPhotographBinding, PhotographVie
 
     override fun initListener() {
         binding.btnBack.setOnClickListener {
-            navigate(R.id.categoryFragment)
+            val action = PhotographFragmentDirections
+                .actionPhotographFragmentToCategoryFragment(
+                    outfitId = outfitId ?: -1L
+                )
+            findNavController().navigate(action)
         }
 
-        binding.btnSave.setOnClickListener {
-            val outfitJson = tempOutfitJson
-            // Commit outfit kèm background hiện tại
-            PhotoCommitHelper.saveAndCommit(
-                binding.photoContainer,
-                tempOutfitJson,
-                mainViewModel,
-                backgroundUri = selectedBackgroundUri, // giữ URI cũ nếu đang edit
-                isEdit = isEditGallery,
-                context = requireContext()
-            ){
-                Toast.makeText(requireContext(), "Outfit saved!", Toast.LENGTH_SHORT).show()
-                navigate(R.id.homeFragment)
-            }
-        }
-
-        binding.btnDownload.setOnClickListener {
-            val backgroundIdToSave = selectedBackgroundId ?: R.drawable.photo1
-            val outfitJson = layerSetupHelper.getOutfitJsonWithBackground(backgroundIdToSave)
-            PhotoSaver.savePhoto(
-                binding.photoContainer,
-                outfitJson,
-                mainViewModel,
-                onSuccess = {
-                    Toast.makeText(requireContext(), "Outfit downloaded!", Toast.LENGTH_SHORT).show()
-                },
-                onError = {
-                    Toast.makeText(requireContext(), "Error downloading outfit", Toast.LENGTH_SHORT).show()
-                }
-            )
-        }
+        binding.btnSave.setOnClickListener { saveCurrentOutfit() }
     }
 
     override fun initData() {
-        loadViewModelData()
+        photographViewModel.loadInitialData(requireContext())
         observeViewModel()
     }
 
-    private fun loadViewModelData() {
-        photographViewModel.loadInitialData()
-    }
-
     private fun observeViewModel() {
-        collectLatestFlow(photographViewModel.photos) { list: List<PhotographItem> ->
-            if (list.isNotEmpty()) photoAdapter.setPhotos(list)
-            else photoAdapter.clearPhotos()
+        lifecycleScope.launch {
+            photographViewModel.photos.collect { outfits ->
+                if (outfits.isNotEmpty()) photoAdapter.setPhotos(outfits)
+                else photoAdapter.clearPhotos()
+            }
         }
     }
-
-    private fun onPhotoSelected(photo: PhotographItem) {
-        if (isEditGallery) {
-            // chỉnh JSON cũ, chỉ thay backgroundId
-            val jsonObj = JSONObject(tempOutfitJson)
-            jsonObj.put("backgroundId", photo.iconResId)
-            tempOutfitJson = jsonObj.toString()
-            binding.photoEditorView.background = ContextCompat.getDrawable(requireContext(), photo.iconResId)
-        } else {
-            // Tạo mới outfit
-            selectedBackgroundId = photo.iconResId
-            selectedBackgroundUri = null
-            tempOutfitJson = layerSetupHelper.getOutfitJsonWithBackground(photo.iconResId)
-            binding.photoEditorView.background = ContextCompat.getDrawable(requireContext(), photo.iconResId)
-        }
-    }
-
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        Log.d("Photoshop", "Received photoUri from args: ${args.photoUri}")
-
         layerSetupHelper = LayerSetupHelper(binding.photoContainer, binding.photoEditorView, requireContext())
-        val defaultBackgroundRes = R.drawable.bg_gradient
+        outfitId = args.outfitId
 
-        // Lấy URI từ Gallery nếu có
-        val photoUriFromGallery = args.photoUri?.takeIf { it.isNotBlank() }?.let { Uri.parse(it) }
-        Log.d("Photoshop", "Parsed photoUriFromGallery: $photoUriFromGallery")
+        if (outfitId == -1L) {
+            // Outfit mới → setup initial
+            layerSetupHelper.setupInitialLayers {
+                layerSetupHelper.setOutfitJsonWithBackground("{}")
+            }
+        } else {
+            // Load outfit từ DB
+            loadOutfitById(outfitId!!)
+        }
+    }
 
-        // Lấy outfit JSON từ args, fallback "{}"
-        val outfitJsonFromGallery = args.outfitJson?.takeIf { it.isNotEmpty() } ?: "{}"
-        Log.d("Photoshop", "Loaded outfitJsonFromGallery: $outfitJsonFromGallery")
+    private fun loadOutfitById(id: Long) {
+        lifecycleScope.launch(Dispatchers.IO) {
+            val outfit = AppDatabase.getInstance(requireContext()).outfitDao().getOutfitById(id)
+            Log.d("PhotographFragment", "Loaded outfit = $outfit")
 
-        layerSetupHelper.setupInitialLayers {
-            when {
-                // Nếu có URI gallery + JSON → đang edit
-                photoUriFromGallery != null && outfitJsonFromGallery != "{}" -> {
-                    selectedBackgroundUri = photoUriFromGallery
-                    tempOutfitJson = outfitJsonFromGallery
-                    layerSetupHelper.setOutfitJsonWithBackground(tempOutfitJson)
-                    loadBackground(photoUriFromGallery)
-                    isEditGallery = true
-                    Log.d("Photoshop", selectedBackgroundUri.toString())
-                }
-
-                // Nếu có outfit hiện tại từ category → sử dụng nó
-                mainViewModel.currentOutfit.value != null -> {
-                    val existingOutfit = mainViewModel.currentOutfit.value!!
-                    layerSetupHelper.setOutfitJsonWithBackground(existingOutfit.json)
-                    if (binding.photoEditorView.background == null) {
-                        binding.photoEditorView.setBackgroundResource(defaultBackgroundRes)
-                    }
-                    Log.d("Photoshop", "Current category outfit loaded")
-                }
-
-                // Fallback → tạo outfit mới
-                else -> {
-                    val newOutfitJson = "{}"
-                    mainViewModel.createNewOutfit(newOutfitJson)
-                    layerSetupHelper.setOutfitJsonWithBackground(newOutfitJson)
-                    binding.photoEditorView.setBackgroundResource(defaultBackgroundRes)
-                    Log.d("Photoshop", "New outfit created")
+            withContext(Dispatchers.Main) {
+                val uri = outfit?.backgroundUri?.let { Uri.parse(it) }
+                layerSetupHelper.setupInitialLayers {
+                    layerSetupHelper.setOutfitJsonWithBackground(outfit?.outfitJson ?: "{}", uri)
                 }
             }
         }
     }
 
+    private fun onPhotoSelected(photo: OutfitEntity) {
+        val uri = photo.backgroundUri?.let { Uri.parse(it) }
+        layerSetupHelper.setOutfitJsonWithBackground(photo.outfitJson, uri)
+    }
 
+    private fun saveCurrentOutfit() {
+        val outfitJson = layerSetupHelper.getOutfitJson()
+        val bitmap = layerSetupHelper.renderOutfitBitmap()
 
-    private fun loadBackground(uri: Uri) {
-        try {
-            val inputStream = requireContext().contentResolver.openInputStream(uri)
-            if (inputStream != null) {
-                val drawable = Drawable.createFromStream(inputStream, uri.toString())
-                binding.photoEditorView.background = drawable
-                inputStream.close()
-            } else {
-                binding.photoEditorView.setBackgroundResource(R.drawable.bg_gradient)
+        saveBitmapToGallery(bitmap) { uri ->
+            lifecycleScope.launch(Dispatchers.IO) {
+                outfitId?.let { id ->
+                    val dao = AppDatabase.getInstance(requireContext()).outfitDao()
+                    val existing = dao.getOutfitById(id)
+                    existing?.let {
+                        dao.update(
+                            it.copy(
+                                outfitJson = outfitJson,
+                                backgroundUri = uri?.toString()
+                            )
+                        )
+                        Log.d("PhotographFragment", "Updated Outfit id=$id")
+                    }
+                }
+
+                withContext(Dispatchers.Main) {
+                    Toast.makeText(requireContext(), "Outfit saved!", Toast.LENGTH_SHORT).show()
+                    findNavController().navigate(R.id.homeFragment)
+                }
             }
+        }
+    }
+
+    private fun saveBitmapToGallery(bitmap: Bitmap, onDone: (Uri?) -> Unit) {
+        val resolver = requireContext().contentResolver
+        try {
+            val fileName = "outfit_${System.currentTimeMillis()}.png"
+            val values = android.content.ContentValues().apply {
+                put(MediaStore.Images.Media.DISPLAY_NAME, fileName)
+                put(MediaStore.Images.Media.MIME_TYPE, "image/png")
+                put(MediaStore.Images.Media.RELATIVE_PATH, Environment.DIRECTORY_PICTURES)
+                put(MediaStore.Images.Media.IS_PENDING, 1)
+            }
+
+            val uri = resolver.insert(MediaStore.Images.Media.EXTERNAL_CONTENT_URI, values)
+            if (uri != null) {
+                resolver.openOutputStream(uri)?.use { out: OutputStream ->
+                    bitmap.compress(Bitmap.CompressFormat.PNG, 100, out)
+                }
+                values.clear()
+                values.put(MediaStore.Images.Media.IS_PENDING, 0)
+                resolver.update(uri, values, null, null)
+            }
+            onDone(uri)
         } catch (e: Exception) {
             e.printStackTrace()
-            binding.photoEditorView.setBackgroundResource(R.drawable.bg_gradient)
+            onDone(null)
         }
-    }
-
-    private fun logCurrentOutfits() {
-        val outfits = mainViewModel.outfitListData.value
-        Log.d("OutfitListDebug", "=== Current outfits ===")
-        outfits.forEachIndexed { index, outfit ->
-            Log.d("OutfitListDebug", "$index: id=${outfit.id}, json=${outfit.json}, uri=${outfit.uri}")
-        }
-        Log.d("OutfitListDebug", "=== End of list ===")
     }
 }

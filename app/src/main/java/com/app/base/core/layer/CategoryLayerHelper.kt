@@ -1,13 +1,14 @@
 package com.app.base.core.layer
 
+import android.util.Log
 import android.view.View
 import androidx.recyclerview.widget.LinearLayoutManager
-import com.app.base.R
 import com.app.base.databinding.FragmentCategoryBinding
 
 class CategoryLayerHelper(
     private val binding: FragmentCategoryBinding,
-    private val layerSetupHelper: LayerSetupHelper
+    private val layerSetupHelper: LayerSetupHelper,
+    private val onFeatureUpdated: (String, Int) -> Unit // 👈 callback
 ) {
     private var currentCharacter = "female"
     private var currentFeatureType: String? = null
@@ -15,11 +16,16 @@ class CategoryLayerHelper(
 
     // Data demo, có thể load từ VM / API sau này
     private val dummyData = mapOf(
-        "male" to mapOf("hair" to listOf(R.drawable.hair3, R.drawable.hair4),
-            "eye" to listOf(R.drawable.eye3, R.drawable.eye4)),
-        "female" to mapOf("hair" to listOf(R.drawable.hair1, R.drawable.hair2),
-            "eye" to listOf(R.drawable.eye1, R.drawable.eye2))
+        "male" to mapOf(
+            "hair" to listOf(com.app.base.R.drawable.hair3, com.app.base.R.drawable.hair4),
+            "eye" to listOf(com.app.base.R.drawable.eye3, com.app.base.R.drawable.eye4)
+        ),
+        "female" to mapOf(
+            "hair" to listOf(com.app.base.R.drawable.hair1, com.app.base.R.drawable.hair2),
+            "eye" to listOf(com.app.base.R.drawable.eye1, com.app.base.R.drawable.eye2)
+        )
     )
+
     fun setupDefaultTab() {
         currentFeatureType = "eye"
         showCategoryFeatures(currentFeatureType!!)
@@ -43,7 +49,13 @@ class CategoryLayerHelper(
 
     private fun onFeatureSelected(resId: Int) {
         currentFeatureType?.let { type ->
+            // 👉 Cập nhật UI
             layerSetupHelper.updateFeature(currentCharacter, type, resId)
+            Log.d("CategoryLayerHelper", "Selected feature for $currentCharacter: $currentFeatureType -> $resId")
+            Log.d("CategoryLayerHelper", "Current outfitJson: ${layerSetupHelper.getOutfitJson()}")
+
+            // 👉 Gọi callback để update DB
+            onFeatureUpdated(type, resId)
         }
     }
 

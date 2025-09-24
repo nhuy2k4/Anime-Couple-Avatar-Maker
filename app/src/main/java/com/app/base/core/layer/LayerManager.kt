@@ -1,53 +1,64 @@
 package com.app.base.core.layer
 
 import android.content.Context
+import android.graphics.Bitmap
+import android.graphics.BitmapFactory
+import android.util.Log
+import android.view.Gravity
 import android.widget.FrameLayout
 import android.widget.ImageView
-import android.view.Gravity
 
 class LayerManager(private val container: FrameLayout, private val context: Context) {
 
-    // Map lưu từng layer theo tên (type) như "hair", "eyes", "nose", "shirt"…
-    private val layers = mutableMapOf<String, ImageView>()
+    private val layers = mutableMapOf<String, ImageView>()       // key -> ImageView
+    private val layerKeys = mutableMapOf<ImageView, String>()    // ImageView -> key
+    private val layerBitmaps = mutableMapOf<String, Bitmap>()    // key -> Bitmap
+    private val layerResIds = mutableMapOf<String, Int>()        // key -> resId
 
-    /**
-     * Thêm hoặc thay thế 1 layer
-     * @param type: loại layer (hair, eyes, nose, mouth…)
-     * @param resId: resource drawable
-     * @param widthRatio: chiều ngang layer so với container
-     * @param heightRatio: chiều cao layer so với container
-     * @param topMarginRatio: khoảng cách từ trên xuống so với container
-     * @param gravity: vị trí layer
-     */
     fun setLayer(
-        type: String,
+        key: String,
         resId: Int,
         widthRatio: Float = 1f,
         heightRatio: Float = 1f,
         leftMarginRatio: Float = 0f,
         topMarginRatio: Float = 0f,
-        rightMarginRatio: Float = 0f,   // thêm right margin
+        rightMarginRatio: Float = 0f,
         gravity: Int = Gravity.TOP or Gravity.START
     ) {
-        // Remove layer cũ nếu đã có
-        layers[type]?.let { container.removeView(it) }
+        Log.d("LayerManager", "Before setLayer $key, children=${container.childCount}")
+
+        // Nếu resId giống layer hiện tại -> skip
+        val oldResId = layerResIds[key]
+        if (oldResId == resId) {
+            Log.d("LayerManager", "Layer $key already has same resId, skip update")
+            return
+        }
+
+        // Remove layer cũ nếu có
+        layers[key]?.let {
+            container.removeView(it)
+            layerKeys.remove(it)
+            layers.remove(key)
+            layerBitmaps.remove(key)
+            layerResIds.remove(key)
+            Log.d("LayerManager", "Removed layer: $key, children=${container.childCount}")
+        }
+
+        // Decode bitmap mới và lưu cache
+        val bitmap = BitmapFactory.decodeResource(context.resources, resId)
+        layerBitmaps[key] = bitmap
+        layerResIds[key] = resId
 
         val containerWidth = container.width
         val containerHeight = container.height
-
-        // Tính toán width nếu both left & right margin được dùng
-        val viewWidth = if (leftMarginRatio > 0f && rightMarginRatio > 0f) {
+        val viewWidth = if (leftMarginRatio > 0f && rightMarginRatio > 0f)
             (containerWidth * (1f - leftMarginRatio - rightMarginRatio)).toInt()
-        } else {
-            (containerWidth * widthRatio).toInt()
-        }
+        else (containerWidth * widthRatio).toInt()
+        val viewHeight = (containerHeight * heightRatio).toInt()
 
         val view = ImageView(context).apply {
-            setImageResource(resId)
-            layoutParams = FrameLayout.LayoutParams(
-                viewWidth,
-                (containerHeight * heightRatio).toInt()
-            ).apply {
+            setImageBitmap(bitmap)
+            layoutParams = FrameLayout.LayoutParams(viewWidth, viewHeight).apply {
                 this.gravity = gravity
                 topMargin = (containerHeight * topMarginRatio).toInt()
                 leftMargin = (containerWidth * leftMarginRatio).toInt()
@@ -56,45 +67,41 @@ class LayerManager(private val container: FrameLayout, private val context: Cont
         }
 
         container.addView(view)
-        layers[type] = view
-    }
-    fun getLayerView(type: String): ImageView? {
-        return layers[type]
-    }
-    fun getLayersForCharacter(character: String): List<ImageView> {
-        return layers.filterKeys { it.startsWith("$character-") }.values.toList()
+        layers[key] = view
+        layerKeys[view] = key
+
+        Log.d("LayerManager", "After setLayer $key, children=${container.childCount}")
     }
 
+    fun getKeyForLayerView(view: ImageView): String? = layerKeys[view]
 
-    /**
-     * Remove layer theo type
-     */
-    fun hasLayer(key: String): Boolean {
-        return layers.containsKey(key)
+    fun hasLayer(key: String): Boolean = layers.containsKey(key)
+
+    fun removeLayer(key: String) {
+        layers[key]?.let {
+            container.removeView(it)
+            layerKeys.remove(it)
+            layerBitmaps.remove(key)
+            layerResIds.remove(key)
+            layers.remove(key)
+            Log.d("LayerManager", "Removed layer: $key, children=${container.childCount}")
+        }
     }
 
-    fun removeLayer(type: String) {
-        layers[type]?.let { container.removeView(it) }
-        layers.remove(type)
-    }
-
-    /**
-     * Remove tất cả layer trừ base
-     */
     fun clearLayers(keepBase: Boolean = true) {
         val keys = layers.keys.toList()
         for (key in keys) {
-            if (keepBase && key == "base") continue
+            if (keepBase && key.endsWith("-body")) continue
             removeLayer(key)
         }
     }
-    fun applyOutfit(outfit: Map<String, Int>) {
-        outfit.forEach { (key, resId) ->
-            setLayer(key, resId)
-        }
-    }
-    fun getCurrentOutfit(): Map<String, Int> {
-        return layers.mapValues { it.value.id }
-    }
 
+    fun getLayersForCharacter(character: String): List<ImageView> =
+        layers.filterKeys { it.startsWith("$character-") }.values.toList()
+
+    fun getLayerBitmap(key: String): Bitmap? = layerBitmaps[key]
+
+    fun applyOutfit(outfit: Map<String, Int>) {
+        outfit.forEach { (key, resId) -> setLayer(key, resId) }
+    }
 }

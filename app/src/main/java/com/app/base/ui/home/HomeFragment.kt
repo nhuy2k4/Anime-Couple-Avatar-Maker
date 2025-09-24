@@ -35,7 +35,6 @@ class HomeFragment : BaseFragment<FragmentHomeBinding, HomeViewModel>() {
         binding.btnAvatar.singleClick {
             mainViewModel.markResetOnNextEnter()
             val action = HomeFragmentDirections.actionHomeFragmentToCategoryFragment(
-                categoryId = -1,
                 fromHome = true
             )
             findNavController().navigate(action)

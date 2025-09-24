@@ -1,24 +1,29 @@
 package com.app.base.ui.gallery
 
-import android.graphics.BitmapFactory
+import android.net.Uri
 import android.view.LayoutInflater
-import android.view.View
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import com.app.base.R
+import com.app.base.database.OutfitEntity
 import com.app.base.databinding.ItemGalleryBinding
-import com.brally.mobile.data.model.GalleryItem
+import org.json.JSONObject
 
 class GalleryAdapter(
-    private val onPhotoClicked: (GalleryItem) -> Unit,
-    private val onDeleteClicked: (GalleryItem) -> Unit
+    private val onPhotoClicked: (OutfitEntity) -> Unit,
+    private val onDeleteClicked: ((OutfitEntity) -> Unit)? = null
 ) : RecyclerView.Adapter<GalleryAdapter.ViewHolder>() {
 
-    private val items = mutableListOf<GalleryItem>()
+    private val items = mutableListOf<OutfitEntity>()
 
-    fun setPhotos(list: List<GalleryItem>) {
+    fun setPhotos(list: List<OutfitEntity>) {
         items.clear()
         items.addAll(list)
+        notifyDataSetChanged()
+    }
+
+    fun clearPhotos() {
+        items.clear()
         notifyDataSetChanged()
     }
 
@@ -27,20 +32,32 @@ class GalleryAdapter(
         return ViewHolder(binding)
     }
 
-    override fun getItemCount() = items.size
+    override fun getItemCount(): Int = items.size
 
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
-        holder.bind(items[position])
+        holder.bind(items[position], position)
     }
 
     inner class ViewHolder(private val binding: ItemGalleryBinding) : RecyclerView.ViewHolder(binding.root) {
-        fun bind(item: GalleryItem) {
-            binding.imvGallery.setImageURI(item.imageUri)
+        fun bind(item: OutfitEntity, position: Int) {
+            // Load background ưu tiên URI, fallback backgroundId
+            val bgUri = item.backgroundUri?.let { Uri.parse(it) }
+            if (bgUri != null) {
+                binding.imvGallery.setImageURI(bgUri)
+            } else {
+                val bgId = try {
+                    JSONObject(item.outfitJson).optInt("backgroundId", R.drawable.bg_gradient)
+                } catch (e: Exception) {
+                    R.drawable.bg_gradient
+                }
+                binding.imvGallery.setImageResource(bgId)
+            }
+
+            // Set tên ảnh: Photo 1, 2, 3 ...
+            binding.tvGallery.text = "Photo ${position + 1}"
 
             binding.root.setOnClickListener { onPhotoClicked(item) }
-            binding.btnDel.setOnClickListener { onDeleteClicked(item) }
+            binding.btnDel.setOnClickListener { onDeleteClicked?.invoke(item) }
         }
     }
 }
-
-

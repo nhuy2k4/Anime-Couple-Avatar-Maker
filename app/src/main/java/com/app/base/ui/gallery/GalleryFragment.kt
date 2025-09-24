@@ -1,49 +1,35 @@
 package com.app.base.ui.gallery
 
-import android.content.ContentUris
-import android.net.Uri
 import android.os.Bundle
 import android.util.Log
-import android.view.View
-import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.navigation.fragment.findNavController
-import androidx.navigation.navOptions
-import com.app.base.R
 import com.app.base.databinding.FragmentGalleryBinding
-import com.app.base.ui.main.MainViewModel
+import com.app.base.ui.photograph.PhotographFragmentDirections
 import com.brally.mobile.base.activity.BaseFragment
 import com.brally.mobile.base.activity.popBackStack
 import com.brally.mobile.utils.singleClick
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
-import org.koin.androidx.viewmodel.ext.android.activityViewModel
+import org.koin.androidx.viewmodel.ext.android.viewModel
+
 class GalleryFragment : BaseFragment<FragmentGalleryBinding, GalleryViewModel>() {
 
-    private val galleryViewModel: GalleryViewModel by viewModels()
-    private val mainViewModel by activityViewModel<MainViewModel>()
+    private val galleryViewModel: GalleryViewModel by viewModel()
     private lateinit var galleryAdapter: GalleryAdapter
 
     override fun initView() {
         galleryAdapter = GalleryAdapter(
-            onPhotoClicked = { item ->
-                item.outfitJson?.let { json ->
-                    mainViewModel.commitOutfitWithBitmap(
-                        json = json,
-                        bitmapFile = null,
-                        uri = item.imageUri
-                    )
-                }
+            onPhotoClicked = { outfit ->
+                // Khi click photo → truyền outfitId
                 val action = GalleryFragmentDirections.actionGalleryFragmentToPhotographFragment(
-                    photoUri = item.imageUri.toString(),
-                    outfitJson = item.outfitJson.toString()
+                    outfitId = outfit.id
                 )
                 findNavController().navigate(action)
-
             },
-            onDeleteClicked = { item ->
-                galleryViewModel.deletePhoto(requireContext(), item)
+            onDeleteClicked = { outfit ->
+                galleryViewModel.deletePhoto(requireContext(), outfit)
             }
         )
 
@@ -58,13 +44,14 @@ class GalleryFragment : BaseFragment<FragmentGalleryBinding, GalleryViewModel>()
     }
 
     override fun initData() {
-        galleryViewModel.loadSavedPhotos(requireContext(), mainViewModel)
+        // Load outfits từ Room
+        galleryViewModel.loadSavedOutfits(requireContext())
 
         lifecycleScope.launch {
-            galleryViewModel.photos.collectLatest { items ->
-                galleryAdapter.setPhotos(items)
+            galleryViewModel.photos.collectLatest { outfits ->
+                if (outfits.isNotEmpty()) galleryAdapter.setPhotos(outfits)
+                else galleryAdapter.clearPhotos()
             }
         }
     }
 }
-

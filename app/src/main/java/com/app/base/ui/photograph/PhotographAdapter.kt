@@ -1,29 +1,44 @@
 package com.app.base.ui.photograph
 
+import android.net.Uri
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
+import com.app.base.R
+import com.app.base.database.OutfitEntity
 import com.app.base.databinding.ItemPhotographBinding
-import com.brally.mobile.data.model.PhotographItem
-import com.brally.mobile.utils.singleClick
+import org.json.JSONObject
 
 /**
- * Adapter cho RecyclerView hiển thị danh sách ảnh trong PhotographFragment
+ * Adapter cho RecyclerView hiển thị danh sách outfit từ Room DB
  */
 class PhotographAdapter(
-    private val onPhotoTapped: ((PhotographItem) -> Unit)? = null
+    private val onPhotoTapped: ((OutfitEntity) -> Unit)? = null
 ) : RecyclerView.Adapter<PhotographAdapter.ViewHolder>() {
 
-    private val photos = mutableListOf<PhotographItem>()
+    private val outfits = mutableListOf<OutfitEntity>()
 
-    fun setPhotos(newPhotos: List<PhotographItem>) {
-        photos.clear()
-        photos.addAll(newPhotos.distinctBy { it.iconResId })
+    // 2 item mặc định
+    private val defaultItems = listOf(
+        OutfitEntity(
+            outfitJson = """{"backgroundId": ${R.drawable.photo1}}""",
+            backgroundUri = null
+        ),
+        OutfitEntity(
+            outfitJson = """{"backgroundId": ${R.drawable.photo2}}""",
+            backgroundUri = null
+        )
+    )
+
+    fun setPhotos(newOutfits: List<OutfitEntity>) {
+        outfits.clear()
+        // Gộp 2 item mặc định + outfit từ Room
+        outfits.addAll(defaultItems)
         notifyDataSetChanged()
     }
 
     fun clearPhotos() {
-        photos.clear()
+        outfits.clear()
         notifyDataSetChanged()
     }
 
@@ -37,22 +52,25 @@ class PhotographAdapter(
     }
 
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
-        if (position < photos.size) {
-            holder.bind(photos[position])
+        if (position < outfits.size) {
+            holder.bind(outfits[position])
         }
     }
 
-    override fun getItemCount(): Int = photos.size
+    override fun getItemCount(): Int = outfits.size
 
-    inner class ViewHolder(
-        private val binding: ItemPhotographBinding
-    ) : RecyclerView.ViewHolder(binding.root) {
+    inner class ViewHolder(private val binding: ItemPhotographBinding) : RecyclerView.ViewHolder(binding.root) {
+        fun bind(item: OutfitEntity) {
+            val bgUri = item.backgroundUri?.let { Uri.parse(it) }
+            if (bgUri != null) {
+                binding.imvPhoto.setImageURI(bgUri) // Hiển thị đúng bitmap đã save
+            } else {
+                val bgId = JSONObject(item.outfitJson).optInt("backgroundId", R.drawable.bg_gradient)
+                binding.imvPhoto.setImageResource(bgId)
+            }
 
-        fun bind(item: PhotographItem) {
-            // Load ảnh drawable
-            binding.imvPhoto.setImageResource(item.iconResId)
 
-            binding.root.singleClick {
+            binding.root.setOnClickListener {
                 if (adapterPosition != RecyclerView.NO_POSITION) {
                     onPhotoTapped?.invoke(item)
                 }
@@ -60,3 +78,4 @@ class PhotographAdapter(
         }
     }
 }
+
