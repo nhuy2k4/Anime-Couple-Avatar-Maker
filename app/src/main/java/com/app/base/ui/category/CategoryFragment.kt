@@ -79,7 +79,7 @@ class CategoryFragment : BaseFragment<FragmentCategoryBinding, CategoryViewModel
                         val uri = it.backgroundUri?.let(Uri::parse)
                         layerSetupHelper.setupInitialLayers(onReady = {
                             layerSetupHelper.setOutfitJsonWithBackground(it.outfitJson, uri)
-                        }, seedDefaults = false)
+                        })
                     }
                 }
             }

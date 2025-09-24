@@ -21,6 +21,10 @@ class PhotographAdapter(
     // 2 item mặc định
     private val defaultItems = listOf(
         OutfitEntity(
+            outfitJson = """{"backgroundId": ${R.drawable.bg_gradient}}""",
+            backgroundUri = null
+        ),
+        OutfitEntity(
             outfitJson = """{"backgroundId": ${R.drawable.photo1}}""",
             backgroundUri = null
         ),
