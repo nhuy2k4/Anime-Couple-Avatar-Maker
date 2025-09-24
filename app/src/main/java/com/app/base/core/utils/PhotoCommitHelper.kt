@@ -3,6 +3,7 @@ package com.app.base.core.utils
 import android.content.Context
 import android.graphics.Bitmap
 import android.graphics.Canvas
+import android.graphics.drawable.Drawable
 import android.net.Uri
 import android.util.Log
 import android.view.View
@@ -19,6 +20,7 @@ object PhotoCommitHelper {
         outfitJson: String,
         mainViewModel: MainViewModel,
         backgroundUri: Uri? = null,
+        isEdit: Boolean = false,
         context: Context? = null,  // thêm context để lưu JSON
         onDone: (() -> Unit)? = null
     ) {
@@ -26,14 +28,24 @@ object PhotoCommitHelper {
             val width = container.width
             val height = container.height
             if (width == 0 || height == 0) return@post
-
+            backgroundUri?.let { uri ->
+                try {
+                    context?.contentResolver?.openInputStream(uri)?.use { stream ->
+                        val drawable = Drawable.createFromStream(stream, uri.toString())
+                        container.background = drawable
+                    }
+                } catch (e: Exception) {
+                    Log.e("CommitHelper", "Failed to load background from URI: $uri", e)
+                }
+            }
             val bitmap = Bitmap.createBitmap(width, height, Bitmap.Config.ARGB_8888)
             val canvas = Canvas(bitmap)
             container.draw(canvas)
-
-            if (backgroundUri != null) {
+            Log.d("CommitHelper", "isEdit=$isEdit, backgroundUri=$backgroundUri")
+            if (isEdit) {
                 // cập nhật outfit hiện tại thay vì tạo mới
                 mainViewModel.updateCurrentOutfit(outfitJson, uri = backgroundUri)
+
             } else {
                 mainViewModel.applyAndSaveOutfit(outfitJson, bitmap)
             }
@@ -68,10 +80,11 @@ object PhotoCommitHelper {
         outfitJson: String,
         mainViewModel: MainViewModel,
         backgroundUri: Uri? = null,
+        isEdit: Boolean = false,
         context: Context? = null,
         onDone: (() -> Unit)? = null
     ) {
-        commitFromContainer(container, outfitJson, mainViewModel, backgroundUri, context, onDone)
+        commitFromContainer(container, outfitJson, mainViewModel, backgroundUri, isEdit, context, onDone)
     }
 
     /**

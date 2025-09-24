@@ -31,6 +31,10 @@
             app:argType="integer"
             android:defaultValue="-1" />
         <argument
+            android:name="backgroundUri"
+            app:argType="string"
+            android:defaultValue="" />
+        <argument
             android:name="fromHome"
             app:argType="boolean"
             android:defaultValue="false" />
@@ -48,9 +52,22 @@
     <fragment
         android:id="@+id/photographFragment"
         android:name="com.app.base.ui.photograph.PhotographFragment"
-        tools:layout="@layout/fragment_photograph" />
+        tools:layout="@layout/fragment_photograph" >
+        <argument
+            android:name="photoUri"
+            app:argType="string"
+            android:defaultValue=""/>
+        <argument
+            android:name="outfitJson"
+            app:argType="string"
+            android:defaultValue=""/>
+    </fragment>
     <fragment
         android:id="@+id/galleryFragment"
         android:name="com.app.base.ui.gallery.GalleryFragment"
-        tools:layout="@layout/fragment_gallery" />
+        tools:layout="@layout/fragment_gallery" >
+        <action
+            android:id="@+id/action_galleryFragment_to_photographFragment"
+            app:destination="@id/photographFragment" />
+    </fragment>
 </navigation>

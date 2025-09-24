@@ -58,17 +58,14 @@ class CategoryFragment : BaseFragment<FragmentCategoryBinding, CategoryViewModel
         // Layer setup
         layerSetupHelper = LayerSetupHelper(binding.photoContainer, binding.photoEditorView, requireContext())
         layerSetupHelper.setupInitialLayers {
-            // Nếu lần vào này cần reset (từ Home), set mặc định
-            if (mainViewModel.shouldResetToDefault()) {
+            if (args.fromHome || mainViewModel.shouldResetToDefault()) {
                 layerSetupHelper.setOutfitJsonWithBackground("{}")
             } else {
-                // Load outfit hiện tại
                 mainViewModel.currentOutfit.value?.let { outfit ->
-                    if (outfit.json.isNotEmpty()) layerSetupHelper.setOutfitJson(outfit.json)
+                    layerSetupHelper.setOutfitJsonWithBackground(outfit.json)
                 } ?: layerSetupHelper.setOutfitJsonWithBackground("{}")
             }
         }
-
         // Category features setup
         categoryLayerHelper = CategoryLayerHelper(binding, layerSetupHelper)
         categoryLayerHelper.setupFeatureAdapter()
@@ -152,13 +149,14 @@ class CategoryFragment : BaseFragment<FragmentCategoryBinding, CategoryViewModel
     override fun onResume() {
         super.onResume()
         // Khi quay lại fragment này, reset mặc định nếu cần
-        if (mainViewModel.shouldResetToDefault()) {
+        if (args.fromHome || mainViewModel.shouldResetToDefault()) {
             layerSetupHelper.setOutfitJsonWithBackground("{}")
         } else {
             mainViewModel.currentOutfit.value?.let {
-                layerSetupHelper.setOutfitJson(it.json)
+                layerSetupHelper.setOutfitJsonWithBackground(it.json)
             }
         }
+
     }
 
     private fun logCurrentOutfits() {

@@ -5,6 +5,7 @@ import com.app.base.R
 import com.app.base.component.dialog.ExitsAppDialog
 import com.app.base.databinding.FragmentHomeBinding
 import com.app.base.ui.category.CategoryFragmentArgs
+import com.app.base.ui.main.MainViewModel
 import com.brally.mobile.base.activity.BaseFragment
 import com.brally.mobile.base.activity.navigate
 import com.brally.mobile.base.activity.onBackPressed
@@ -16,6 +17,8 @@ import com.brally.mobile.service.event.HOME_CLICK_BACK
 import com.brally.mobile.utils.singleClick
 import com.braly.analytics.notification.UpdateAppUtils
 import com.language_onboard.utils.tracking
+import org.koin.androidx.viewmodel.ext.android.activityViewModel
+import kotlin.getValue
 
 class HomeFragment : BaseFragment<FragmentHomeBinding, HomeViewModel>() {
     override fun initView() {
@@ -23,13 +26,14 @@ class HomeFragment : BaseFragment<FragmentHomeBinding, HomeViewModel>() {
         checkUpdate()
 //        showNative(AdManager.NATIVE_HOME, binding.nativeAdsView)
     }
-
+    private val mainViewModel by activityViewModel<MainViewModel>()
     override fun initListener() {
 
         binding.btnSetting.singleClick {
             navigate(R.id.settingFragment)
         }
         binding.btnAvatar.singleClick {
+            mainViewModel.markResetOnNextEnter()
             val action = HomeFragmentDirections.actionHomeFragmentToCategoryFragment(
                 categoryId = -1,
                 fromHome = true

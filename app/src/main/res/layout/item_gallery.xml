@@ -37,5 +37,12 @@
             app:layout_constraintEnd_toEndOf="parent"
             android:text="abc">
         </TextView>
+        <ImageView
+            android:id="@+id/btnDel"
+            android:src="@android:drawable/ic_menu_close_clear_cancel"
+            android:tint="@android:color/white"
+            app:layout_constraintEnd_toEndOf="parent"
+            android:layout_width="24dp"
+            android:layout_height="24dp" />
     </androidx.constraintlayout.widget.ConstraintLayout>
 </androidx.cardview.widget.CardView>

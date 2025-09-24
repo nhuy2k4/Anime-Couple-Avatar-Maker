@@ -23,30 +23,30 @@ class GalleryFragment : BaseFragment<FragmentGalleryBinding, GalleryViewModel>()
 
     private val galleryViewModel: GalleryViewModel by viewModels()
     private val mainViewModel by activityViewModel<MainViewModel>()
-    private val galleryAdapter by lazy {
-        GalleryAdapter { item ->
-            Log.d("GalleryFragment", "User selected photo uri=${item.imageUri}, outfitJson=${item.outfitJson}")
-
-            item.outfitJson?.let { json ->
-                // Đồng bộ outfit + URI vào MainViewModel
-                mainViewModel.commitOutfitWithBitmap(
-                    json = json,
-                    bitmapFile = null,
-                    uri = item.imageUri,
-                    mediaId = ContentUris.parseId(item.imageUri)
-                )
-            }
-
-            val bundle = Bundle().apply {
-                putString("outfit_json", item.outfitJson)
-                putString("photo_uri", item.imageUri.toString())
-            }
-            findNavController().navigate(R.id.photographFragment, bundle)
-        }
-    }
-
+    private lateinit var galleryAdapter: GalleryAdapter
 
     override fun initView() {
+        galleryAdapter = GalleryAdapter(
+            onPhotoClicked = { item ->
+                item.outfitJson?.let { json ->
+                    mainViewModel.commitOutfitWithBitmap(
+                        json = json,
+                        bitmapFile = null,
+                        uri = item.imageUri
+                    )
+                }
+                val action = GalleryFragmentDirections.actionGalleryFragmentToPhotographFragment(
+                    photoUri = item.imageUri.toString(),
+                    outfitJson = item.outfitJson.toString()
+                )
+                findNavController().navigate(action)
+
+            },
+            onDeleteClicked = { item ->
+                galleryViewModel.deletePhoto(requireContext(), item)
+            }
+        )
+
         binding.rcvGallery.apply {
             layoutManager = GridLayoutManager(context, 2)
             adapter = galleryAdapter
@@ -54,15 +54,11 @@ class GalleryFragment : BaseFragment<FragmentGalleryBinding, GalleryViewModel>()
     }
 
     override fun initListener() {
-        binding.btnHome.singleClick {
-            popBackStack()
-        }
-
+        binding.btnHome.singleClick { popBackStack() }
     }
 
     override fun initData() {
-        // Gọi load ảnh, truyền context
-        galleryViewModel.loadSavedPhotos(requireContext(), mainViewModel )
+        galleryViewModel.loadSavedPhotos(requireContext(), mainViewModel)
 
         lifecycleScope.launch {
             galleryViewModel.photos.collectLatest { items ->
@@ -71,3 +67,4 @@ class GalleryFragment : BaseFragment<FragmentGalleryBinding, GalleryViewModel>()
         }
     }
 }
+

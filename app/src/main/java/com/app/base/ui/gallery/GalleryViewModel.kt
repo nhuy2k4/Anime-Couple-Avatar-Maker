@@ -7,16 +7,20 @@ import android.util.Log
 import androidx.lifecycle.viewModelScope
 import com.brally.mobile.base.viewmodel.BaseViewModel
 import com.brally.mobile.data.model.GalleryItem
+import com.app.base.ui.main.MainViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
-import com.app.base.ui.main.MainViewModel
+
 class GalleryViewModel : BaseViewModel() {
 
     private val _photos = MutableStateFlow<List<GalleryItem>>(emptyList())
     val photos: StateFlow<List<GalleryItem>> = _photos
 
+    /**
+     * Load saved photos từ MediaStore, kết hợp outfit JSON từ MainViewModel hoặc SharedPreferences
+     */
     fun loadSavedPhotos(context: Context, mainViewModel: MainViewModel) {
         viewModelScope.launch(Dispatchers.IO) {
             val photoList = mutableListOf<GalleryItem>()
@@ -37,7 +41,7 @@ class GalleryViewModel : BaseViewModel() {
                         id.toString()
                     )
 
-                    // Lookup outfit by URI instead of mediaId
+                    // Lookup outfit JSON từ MainViewModel
                     val outfitData = mainViewModel.getOutfitDataByUri(contentUri)
                     val prefs = context.getSharedPreferences("outfit_map", Context.MODE_PRIVATE)
                     val savedJson = prefs.getString(contentUri.toString(), null)
@@ -52,6 +56,26 @@ class GalleryViewModel : BaseViewModel() {
         }
     }
 
+    /**
+     * Xóa ảnh
+     */
+    fun deletePhoto(context: Context, item: GalleryItem) {
+        viewModelScope.launch(Dispatchers.IO) {
+            try {
+                // Xóa file ảnh
+                context.contentResolver.delete(item.imageUri, null, null)
 
+                // Xóa JSON lưu trong SharedPreferences
+                val prefs = context.getSharedPreferences("outfit_map", Context.MODE_PRIVATE)
+                prefs.edit().remove(item.imageUri.toString()).apply()
+
+                // Cập nhật danh sách photos
+                _photos.value = _photos.value.filter { it.imageUri != item.imageUri }
+
+                Log.d("GalleryVM", "Deleted photo uri=${item.imageUri}")
+            } catch (e: Exception) {
+                Log.e("GalleryVM", "Failed to delete photo uri=${item.imageUri}", e)
+            }
+        }
+    }
 }
-

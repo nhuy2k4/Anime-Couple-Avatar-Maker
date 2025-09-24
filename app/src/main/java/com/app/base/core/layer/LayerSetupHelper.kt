@@ -1,6 +1,8 @@
 package com.app.base.core.layer
 
 import android.content.Context
+import android.graphics.Bitmap
+import android.graphics.Canvas
 import android.util.Log
 import android.view.ViewTreeObserver
 import android.widget.FrameLayout
@@ -106,6 +108,14 @@ class LayerSetupHelper(
         }
         charFeatures.put(type, resId)
         applyFeaturesToLayers()
+    }
+    fun getBitmapOfContainer(): Bitmap {
+        val width = photoContainer.width
+        val height = photoContainer.height
+        val bitmap = Bitmap.createBitmap(width, height, Bitmap.Config.ARGB_8888)
+        val canvas = Canvas(bitmap)
+        photoContainer.draw(canvas)
+        return bitmap
     }
 
     fun resetToInitialState() {

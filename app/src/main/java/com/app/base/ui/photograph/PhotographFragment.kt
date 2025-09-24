@@ -7,6 +7,7 @@ import android.util.Log
 import android.view.View
 import android.widget.Toast
 import androidx.core.content.ContextCompat
+import androidx.navigation.fragment.navArgs
 import androidx.recyclerview.widget.GridLayoutManager
 import com.app.base.R
 import com.app.base.core.layer.LayerSetupHelper
@@ -20,16 +21,18 @@ import org.koin.androidx.viewmodel.ext.android.viewModel
 import org.koin.androidx.viewmodel.ext.android.activityViewModel
 import com.app.base.ui.main.MainViewModel
 import com.brally.mobile.base.activity.navigate
+import org.json.JSONObject
 
 class PhotographFragment : BaseFragment<FragmentPhotographBinding, PhotographViewModel>() {
-
+    private val args: PhotographFragmentArgs by navArgs()
     private var selectedBackgroundId: Int? = null
+    private var selectedBackgroundUri: Uri? = null
     private val photographViewModel by viewModel<PhotographViewModel>()
     private val mainViewModel by activityViewModel<MainViewModel>()
     private val photoAdapter by lazy { PhotographAdapter(onPhotoTapped = ::onPhotoSelected) }
     private lateinit var layerSetupHelper: LayerSetupHelper
     private var tempOutfitJson: String = "{}"
-
+    private var isEditGallery = false
     override fun initView() {
         binding.rcvPhotographs.apply {
             layoutManager = GridLayoutManager(context, 3)
@@ -44,7 +47,15 @@ class PhotographFragment : BaseFragment<FragmentPhotographBinding, PhotographVie
 
         binding.btnSave.setOnClickListener {
             val outfitJson = tempOutfitJson
-            PhotoCommitHelper.saveAndCommit(binding.photoContainer, outfitJson, mainViewModel) {
+            // Commit outfit kèm background hiện tại
+            PhotoCommitHelper.saveAndCommit(
+                binding.photoContainer,
+                tempOutfitJson,
+                mainViewModel,
+                backgroundUri = selectedBackgroundUri, // giữ URI cũ nếu đang edit
+                isEdit = isEditGallery,
+                context = requireContext()
+            ){
                 Toast.makeText(requireContext(), "Outfit saved!", Toast.LENGTH_SHORT).show()
                 navigate(R.id.homeFragment)
             }
@@ -84,55 +95,84 @@ class PhotographFragment : BaseFragment<FragmentPhotographBinding, PhotographVie
     }
 
     private fun onPhotoSelected(photo: PhotographItem) {
-        binding.photoEditorView.background = ContextCompat.getDrawable(requireContext(), photo.iconResId)
-        tempOutfitJson = layerSetupHelper.getOutfitJsonWithBackground(photo.iconResId)
+        if (isEditGallery) {
+            // chỉnh JSON cũ, chỉ thay backgroundId
+            val jsonObj = JSONObject(tempOutfitJson)
+            jsonObj.put("backgroundId", photo.iconResId)
+            tempOutfitJson = jsonObj.toString()
+            binding.photoEditorView.background = ContextCompat.getDrawable(requireContext(), photo.iconResId)
+        } else {
+            // Tạo mới outfit
+            selectedBackgroundId = photo.iconResId
+            selectedBackgroundUri = null
+            tempOutfitJson = layerSetupHelper.getOutfitJsonWithBackground(photo.iconResId)
+            binding.photoEditorView.background = ContextCompat.getDrawable(requireContext(), photo.iconResId)
+        }
     }
+
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        layerSetupHelper = LayerSetupHelper(binding.photoContainer, binding.photoEditorView, requireContext())
+        Log.d("Photoshop", "Received photoUri from args: ${args.photoUri}")
 
+        layerSetupHelper = LayerSetupHelper(binding.photoContainer, binding.photoEditorView, requireContext())
         val defaultBackgroundRes = R.drawable.bg_gradient
-        val photoUriFromGallery = arguments?.getString("photo_uri")?.let { Uri.parse(it) }
-        val outfitJsonFromGallery = photoUriFromGallery?.let { PhotoCommitHelper.loadOutfitJson(it, requireContext()) }
+
+        // Lấy URI từ Gallery nếu có
+        val photoUriFromGallery = args.photoUri?.takeIf { it.isNotBlank() }?.let { Uri.parse(it) }
+        Log.d("Photoshop", "Parsed photoUriFromGallery: $photoUriFromGallery")
+
+        // Lấy outfit JSON từ args, fallback "{}"
+        val outfitJsonFromGallery = args.outfitJson?.takeIf { it.isNotEmpty() } ?: "{}"
+        Log.d("Photoshop", "Loaded outfitJsonFromGallery: $outfitJsonFromGallery")
 
         layerSetupHelper.setupInitialLayers {
             when {
-                // Gallery + outfit JSON đã lưu
-                !outfitJsonFromGallery.isNullOrEmpty() -> {
-                    layerSetupHelper.setOutfitJsonWithBackground(outfitJsonFromGallery)
-                    loadBackground(photoUriFromGallery!!)
+                // Nếu có URI gallery + JSON → đang edit
+                photoUriFromGallery != null && outfitJsonFromGallery != "{}" -> {
+                    selectedBackgroundUri = photoUriFromGallery
+                    tempOutfitJson = outfitJsonFromGallery
+                    layerSetupHelper.setOutfitJsonWithBackground(tempOutfitJson)
+                    loadBackground(photoUriFromGallery)
+                    isEditGallery = true
+                    Log.d("Photoshop", selectedBackgroundUri.toString())
                 }
 
-                // Category (đã có currentOutfit)
+                // Nếu có outfit hiện tại từ category → sử dụng nó
                 mainViewModel.currentOutfit.value != null -> {
                     val existingOutfit = mainViewModel.currentOutfit.value!!
                     layerSetupHelper.setOutfitJsonWithBackground(existingOutfit.json)
                     if (binding.photoEditorView.background == null) {
                         binding.photoEditorView.setBackgroundResource(defaultBackgroundRes)
                     }
+                    Log.d("Photoshop", "Current category outfit loaded")
                 }
 
-                // Fallback
+                // Fallback → tạo outfit mới
                 else -> {
                     val newOutfitJson = "{}"
                     mainViewModel.createNewOutfit(newOutfitJson)
                     layerSetupHelper.setOutfitJsonWithBackground(newOutfitJson)
                     binding.photoEditorView.setBackgroundResource(defaultBackgroundRes)
+                    Log.d("Photoshop", "New outfit created")
                 }
             }
         }
-
-        logCurrentOutfits()
     }
+
+
 
     private fun loadBackground(uri: Uri) {
         try {
             val inputStream = requireContext().contentResolver.openInputStream(uri)
-            val drawable = Drawable.createFromStream(inputStream, uri.toString())
-            binding.photoEditorView.background = drawable
-            inputStream?.close()
+            if (inputStream != null) {
+                val drawable = Drawable.createFromStream(inputStream, uri.toString())
+                binding.photoEditorView.background = drawable
+                inputStream.close()
+            } else {
+                binding.photoEditorView.setBackgroundResource(R.drawable.bg_gradient)
+            }
         } catch (e: Exception) {
             e.printStackTrace()
             binding.photoEditorView.setBackgroundResource(R.drawable.bg_gradient)
