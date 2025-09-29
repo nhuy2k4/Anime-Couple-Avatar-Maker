@@ -1,0 +1,17 @@
+[
+  {
+    "id": "skin1",
+    "name": "Light Skin",
+    "gender": "unisex",
+    "image": "src/main/assets/features/skin/skin1.png",
+    "unlockCondition": "free"
+  },
+  {
+    "id": "skin2",
+    "name": "Tan Skin",
+    "gender": "unisex",
+    "image": "src/main/assets/features/skin/skin2.png",
+    "unlockCondition": "diamond:10"
+  }
+]
+

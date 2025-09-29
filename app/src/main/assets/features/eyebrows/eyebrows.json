@@ -1,0 +1,17 @@
+[
+  {
+    "id": "eyebrows1",
+    "name": "Thin Brows",
+    "gender": "unisex",
+    "image": "src/main/assets/features/eyebrows/eyebrows1.png",
+    "unlockCondition": "free"
+  },
+  {
+    "id": "eyebrows2",
+    "name": "Thick Brows",
+    "gender": "unisex",
+    "image": "src/main/assets/features/eyebrows/eyebrows2.png",
+    "unlockCondition": "diamond:5"
+  }
+]
+

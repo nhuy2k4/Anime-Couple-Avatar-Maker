@@ -1,0 +1,32 @@
+[
+  {
+    "id": "glasses1",
+    "name": "Round Glasses",
+    "gender": "unisex",
+    "image": "src/main/assets/features/glasses/glasses1.png",
+    "unlockCondition": "free"
+  },
+  {
+    "id": "glasses2",
+    "name": "Square Glasses",
+    "gender": "male",
+    "image": "src/main/assets/features/glasses/glasses2.png",
+    "unlockCondition": "diamond:5"
+  }
+]
+  {
+    "id": "backHair1",
+    "name": "Short Back Hair",
+    "gender": "male",
+    "image": "src/main/assets/features/backHair/backHair1.png",
+    "unlockCondition": "free"
+  },
+  {
+    "id": "backHair2",
+    "name": "Long Back Hair",
+    "gender": "female",
+    "image": "src/main/assets/features/backHair/backHair2.png",
+    "unlockCondition": "diamond:10"
+  }
+]
+

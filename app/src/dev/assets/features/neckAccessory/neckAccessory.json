@@ -1,0 +1,17 @@
+[
+  {
+    "id": "neckAccessory1",
+    "name": "Scarf",
+    "gender": "unisex",
+    "image": "src/main/assets/features/neckAccessory/neckAccessory1.png",
+    "unlockCondition": "free"
+  },
+  {
+    "id": "neckAccessory2",
+    "name": "Necklace",
+    "gender": "female",
+    "image": "src/main/assets/features/neckAccessory/neckAccessory2.png",
+    "unlockCondition": "diamond:5"
+  }
+]
+

@@ -1,0 +1,66 @@
+[
+  {
+    "id": "eyes1",
+    "name": "Blue Eyes",
+    "category": "eyes",
+    "gender": "female",
+    "image": "features/eyes/eyes1.png",
+    "unlockCondition": "free"
+  },
+  {
+    "id": "eyes2",
+    "name": "Green Eyes",
+    "category": "eyes",
+    "gender": "female",
+    "image": "features/eyes/eyes2.png",
+    "unlockCondition": "free"
+  },
+  {
+    "id": "eyes3",
+    "name": "Blue Eyes",
+    "category": "eyes",
+    "gender": "male",
+    "image": "features/eyes/eyes3.png",
+    "unlockCondition": "free"
+  },
+  {
+    "id": "eyes4",
+    "name": "Green Eyes",
+    "category": "eyes",
+    "gender": "male",
+    "image": "features/eyes/eyes4.png",
+    "unlockCondition": "free"
+  },
+  {
+    "id": "frontHair1",
+    "name": "Short Bangs",
+    "category": "frontHair",
+    "gender": "female",
+    "image": "features/frontHair/frontHair1.png",
+    "unlockCondition": "free"
+  },
+  {
+    "id": "frontHair2",
+    "name": "Long Bangs",
+    "category": "frontHair",
+    "gender": "female",
+    "image": "features/frontHair/frontHair2.png",
+    "unlockCondition": "free"
+  },
+  {
+    "id": "frontHair3",
+    "name": "Shorted",
+    "category": "frontHair",
+    "gender": "male",
+    "image": "features/frontHair/frontHair3.png",
+    "unlockCondition": "free"
+  },
+  {
+    "id": "frontHair4",
+    "name": "Long Short",
+    "category": "frontHair",
+    "gender": "male",
+    "image": "features/frontHair/frontHair4.png",
+    "unlockCondition": "free"
+  }
+]

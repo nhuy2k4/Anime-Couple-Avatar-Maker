@@ -1,0 +1,17 @@
+[
+  {
+    "id": "mouth1",
+    "name": "Smile",
+    "gender": "unisex",
+    "image": "src/main/assets/features/mouth/mouth1.png",
+    "unlockCondition": "free"
+  },
+  {
+    "id": "mouth2",
+    "name": "Open Mouth",
+    "gender": "unisex",
+    "image": "src/main/assets/features/mouth/mouth2.png",
+    "unlockCondition": "ad"
+  }
+]
+

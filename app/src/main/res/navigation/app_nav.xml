@@ -3,7 +3,7 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/app_nav"
-    app:startDestination="@id/splashFragment">
+    app:startDestination="@id/dressupFragment">
 
     <include app:graph="@navigation/nav_graph_language_onboard" />
 
@@ -18,13 +18,13 @@
         tools:layout="@layout/fragment_home" >
         <action
             android:id="@+id/action_homeFragment_to_categoryFragment"
-            app:destination="@id/categoryFragment" />
+            app:destination="@id/dressupFragment" />
     </fragment>
 
     <fragment
-        android:id="@+id/categoryFragment"
-        android:name="com.app.base.ui.category.CategoryFragment"
-        tools:layout="@layout/fragment_category" >
+        android:id="@+id/dressupFragment"
+        android:name="com.app.base.ui.dressup.DressUpFragment"
+        tools:layout="@layout/fragment_dress_up" >
         <action
             android:id="@+id/actionCategoryFragmentToPhotographFragment"
             app:destination="@id/photographFragment"
@@ -54,8 +54,8 @@
         android:name="com.app.base.ui.photograph.PhotographFragment"
         tools:layout="@layout/fragment_photograph" >
         <action
-            android:id="@+id/action_photographFragment_to_categoryFragment"
-            app:destination="@id/categoryFragment" />
+            android:id="@+id/action_photographFragment_to_dressupFragment"
+            app:destination="@id/dressupFragment" />
         <argument
             android:name="outfitId"
             app:argType="long" />

@@ -1,0 +1,17 @@
+[
+  {
+    "id": "blindfold1",
+    "name": "Simple Blindfold",
+    "gender": "unisex",
+    "image": "src/main/assets/features/blindfold/blindfold1.png",
+    "unlockCondition": "free"
+  },
+  {
+    "id": "blindfold2",
+    "name": "Patterned Blindfold",
+    "gender": "unisex",
+    "image": "src/main/assets/features/blindfold/blindfold2.png",
+    "unlockCondition": "diamond:5"
+  }
+]
+

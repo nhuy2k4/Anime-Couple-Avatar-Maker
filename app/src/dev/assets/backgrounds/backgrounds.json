@@ -1,0 +1,15 @@
+[
+  {
+    "id": "bg01",
+    "name": "Sunny Park",
+    "image": "bg1.png",
+    "unlockCondition": "free"
+  },
+  {
+    "id": "bg02",
+    "name": "Night City",
+    "image": "bg2.png",
+    "unlockCondition": "diamond:5"
+  }
+]
+

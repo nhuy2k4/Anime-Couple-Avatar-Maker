@@ -1,0 +1,17 @@
+[
+  {
+    "id": "shirt1",
+    "name": "T-shirt",
+    "gender": "unisex",
+    "image": "src/main/assets/features/shirt/shirt1.png",
+    "unlockCondition": "free"
+  },
+  {
+    "id": "shirt2",
+    "name": "Jacket",
+    "gender": "male",
+    "image": "src/main/assets/features/shirt/shirt2.png",
+    "unlockCondition": "diamond:10"
+  }
+]
+

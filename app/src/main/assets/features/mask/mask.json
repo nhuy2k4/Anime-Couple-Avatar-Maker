@@ -1,0 +1,17 @@
+[
+  {
+    "id": "mask1",
+    "name": "Simple Mask",
+    "gender": "unisex",
+    "image": "src/main/assets/features/mask/mask1.png",
+    "unlockCondition": "free"
+  },
+  {
+    "id": "mask2",
+    "name": "Fancy Mask",
+    "gender": "female",
+    "image": "src/main/assets/features/mask/mask2.png",
+    "unlockCondition": "diamond:10"
+  }
+]
+

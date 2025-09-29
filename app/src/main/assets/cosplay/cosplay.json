@@ -1,0 +1,27 @@
+[
+  {
+    "id": "cos01",
+    "name": "Sakura Cosplay",
+    "outfit": {
+      "skin": "skin01",
+      "eyes": "eyes01",
+      "frontHair": "frontHair01",
+      "shirt": "shirt01"
+    },
+    "image": "cosplay1.png",
+    "unlockCondition": "free"
+  },
+  {
+    "id": "cos02",
+    "name": "Ninja Cosplay",
+    "outfit": {
+      "skin": "skin02",
+      "eyes": "eyes02",
+      "frontHair": "frontHair02",
+      "shirt": "shirt02"
+    },
+    "image": "cosplay2.png",
+    "unlockCondition": "diamond:20"
+  }
+]
+

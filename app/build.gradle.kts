@@ -68,6 +68,13 @@ android {
 
 dependencies {
     val room_version = "2.8.0"
+    // Use Firebase BOM for version management
+    implementation(platform("com.google.firebase:firebase-bom:32.7.3"))
+    implementation("com.google.firebase:firebase-firestore-ktx")
+    implementation("com.google.firebase:firebase-auth-ktx")
+    implementation("com.google.firebase:firebase-analytics-ktx")
+    implementation("com.google.firebase:firebase-crashlytics-ktx")
+
     implementation("com.burhanrashid52:photoeditor:3.0.2")
     implementation("com.google.code.gson:gson:2.10.1")
     implementation("androidx.room:room-runtime:$room_version")

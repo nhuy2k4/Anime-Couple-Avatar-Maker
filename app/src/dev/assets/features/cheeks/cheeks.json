@@ -1,0 +1,17 @@
+[
+  {
+    "id": "cheeks1",
+    "name": "Blush",
+    "gender": "unisex",
+    "image": "src/main/assets/features/cheeks/cheeks1.png",
+    "unlockCondition": "free"
+  },
+  {
+    "id": "cheeks2",
+    "name": "Rosy Cheeks",
+    "gender": "unisex",
+    "image": "src/main/assets/features/cheeks/cheeks2.png",
+    "unlockCondition": "diamond:5"
+  }
+]
+

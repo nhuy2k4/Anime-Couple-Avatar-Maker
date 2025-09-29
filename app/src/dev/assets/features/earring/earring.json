@@ -1,0 +1,17 @@
+[
+  {
+    "id": "earring1",
+    "name": "Stud Earring",
+    "gender": "female",
+    "image": "src/main/assets/features/earring/earring1.png",
+    "unlockCondition": "free"
+  },
+  {
+    "id": "earring2",
+    "name": "Hoop Earring",
+    "gender": "female",
+    "image": "src/main/assets/features/earring/earring2.png",
+    "unlockCondition": "diamond:5"
+  }
+]
+

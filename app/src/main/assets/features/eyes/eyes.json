@@ -1,0 +1,34 @@
+[
+  {
+    "id": "eyes1",
+    "name": "Blue Eyes",
+    "category": "eyes",
+    "gender": "female",
+    "image": "features/eyes/eyes1.png",
+    "unlockCondition": "free"
+  },
+  {
+    "id": "eyes2",
+    "name": "Green Eyes",
+    "category": "eyes",
+    "gender": "female",
+    "image": "features/eyes/eyes2.png",
+    "unlockCondition": "free"
+  },
+  {
+    "id": "eyes3",
+    "name": "Blue Eyes",
+    "category": "eyes",
+    "gender": "male",
+    "image": "features/eyes/eyes3.png",
+    "unlockCondition": "free"
+  },
+  {
+    "id": "eyes4",
+    "name": "Green Eyes",
+    "category": "eyes",
+    "gender": "male",
+    "image": "features/eyes/eyes4.png",
+    "unlockCondition": "free"
+  }
+]

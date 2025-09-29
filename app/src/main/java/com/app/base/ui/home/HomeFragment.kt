@@ -4,14 +4,10 @@ import androidx.navigation.fragment.findNavController
 import com.app.base.R
 import com.app.base.component.dialog.ExitsAppDialog
 import com.app.base.databinding.FragmentHomeBinding
-import com.app.base.ui.category.CategoryFragmentArgs
 import com.app.base.ui.main.MainViewModel
 import com.brally.mobile.base.activity.BaseFragment
 import com.brally.mobile.base.activity.navigate
 import com.brally.mobile.base.activity.onBackPressed
-import com.brally.mobile.service.ads.AdManager
-import com.brally.mobile.service.ads.showFull
-import com.brally.mobile.service.ads.showNative
 import com.brally.mobile.service.event.EXIT_DIALOG_SHOW
 import com.brally.mobile.service.event.HOME_CLICK_BACK
 import com.brally.mobile.utils.singleClick

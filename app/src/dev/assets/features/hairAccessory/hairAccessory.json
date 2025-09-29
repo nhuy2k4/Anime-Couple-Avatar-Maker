@@ -1,0 +1,17 @@
+[
+  {
+    "id": "hairAccessory1",
+    "name": "Bow",
+    "gender": "female",
+    "image": "src/main/assets/features/hairAccessory/hairAccessory1.png",
+    "unlockCondition": "free"
+  },
+  {
+    "id": "hairAccessory2",
+    "name": "Headband",
+    "gender": "unisex",
+    "image": "src/main/assets/features/hairAccessory/hairAccessory2.png",
+    "unlockCondition": "diamond:5"
+  }
+]
+

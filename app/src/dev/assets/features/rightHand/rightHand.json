@@ -1,0 +1,17 @@
+[
+  {
+    "id": "rightHand1",
+    "name": "Open Right Hand",
+    "gender": "unisex",
+    "image": "src/main/assets/features/rightHand/rightHand1.png",
+    "unlockCondition": "free"
+  },
+  {
+    "id": "rightHand2",
+    "name": "Closed Right Hand",
+    "gender": "unisex",
+    "image": "src/main/assets/features/rightHand/rightHand2.png",
+    "unlockCondition": "diamond:5"
+  }
+]
+

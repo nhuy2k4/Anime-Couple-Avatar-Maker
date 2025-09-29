@@ -1,0 +1,17 @@
+[
+  {
+    "id": "wings1",
+    "name": "Angel Wings",
+    "gender": "unisex",
+    "image": "src/main/assets/features/wings/wings1.png",
+    "unlockCondition": "free"
+  },
+  {
+    "id": "wings2",
+    "name": "Devil Wings",
+    "gender": "unisex",
+    "image": "src/main/assets/features/wings/wings2.png",
+    "unlockCondition": "diamond:10"
+  }
+]
+

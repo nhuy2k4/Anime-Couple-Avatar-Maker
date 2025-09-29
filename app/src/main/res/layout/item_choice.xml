@@ -20,7 +20,7 @@
             android:scaleType="fitCenter"
             android:layout_weight="1"
             android:background="@color/pink"
-            android:src="@drawable/eye" />
+            android:src="@drawable/tab_eyes" />
 
         <androidx.appcompat.widget.AppCompatImageButton
             android:layout_width="0dp"
@@ -36,7 +36,7 @@
             android:background="@color/pink"
             android:scaleType="fitCenter"
             android:layout_weight="1"
-            android:src="@drawable/hair" />
+            android:src="@drawable/tab_hair" />
 
         <androidx.appcompat.widget.AppCompatImageButton
             android:layout_width="0dp"
