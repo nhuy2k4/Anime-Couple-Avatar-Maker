@@ -30,7 +30,8 @@ class HomeFragment : BaseFragment<FragmentHomeBinding, HomeViewModel>() {
     override fun initListener() {
 
         binding.btnSetting.singleClick {
-            navigate(R.id.settingFragment)
+            com.app.base.ui.setting.SettingDialogFragment.newInstance()
+                .show(parentFragmentManager, "SettingDialog")
         }
         binding.btnAvatar.singleClick {
             mainViewModel.markResetOnNextEnter()

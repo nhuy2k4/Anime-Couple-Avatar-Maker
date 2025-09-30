@@ -1,0 +1,13 @@
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="100dp"
+    android:height="100dp"
+    android:viewportWidth="100"
+    android:viewportHeight="100">
+
+    <!-- Inset 4dp từ biên -->
+    <path
+        android:pathData="M50,4 L90,26 L90,74 L50,96 L10,74 L10,26 Z"
+        android:strokeColor="@color/black"
+        android:strokeWidth="4"
+        android:fillColor="@android:color/transparent"/>
+</vector>

@@ -1,0 +1,20 @@
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="80dp"
+    android:layout_height="80dp"
+    android:layout_margin="4dp">
+
+    <com.app.base.core.utils.HexagonImageView
+        android:id="@+id/imgStage"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:scaleType="centerCrop" />
+
+    <com.app.base.core.utils.HexagonImageView
+        android:id="@+id/highlightOverlay"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="@drawable/bg_hexagon"
+        android:visibility="visible"
+        android:alpha="0"/>
+
+</FrameLayout>

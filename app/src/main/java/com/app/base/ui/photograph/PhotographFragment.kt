@@ -71,15 +71,7 @@ class PhotographFragment : BaseFragment<FragmentPhotographBinding, PhotographVie
         layerSetupHelper = LayerSetupHelper(binding.photoContainer, binding.photoEditorView, requireContext())
         outfitId = args.outfitId
 
-        if (outfitId == -1L) {
-            // Outfit mới → setup initial
-            layerSetupHelper.setupInitialLayers {
-                layerSetupHelper.setOutfitJsonWithBackground("{}")
-            }
-        } else {
-            // Load outfit từ DB
-            loadOutfitById(outfitId!!)
-        }
+        loadOutfitById(outfitId!!)
     }
 
     private fun loadOutfitById(id: Long) {
@@ -88,71 +80,84 @@ class PhotographFragment : BaseFragment<FragmentPhotographBinding, PhotographVie
             Log.d("PhotographFragment", "Loaded outfit = $outfit")
 
             withContext(Dispatchers.Main) {
-                val uri = outfit?.backgroundUri?.let { Uri.parse(it) }
                 layerSetupHelper.setupInitialLayers {
-                    layerSetupHelper.setOutfitJsonWithBackground(outfit?.outfitJson ?: "{}", uri)
-                }
-            }
-        }
-    }
+                    outfit?.let {
+                        // 1️⃣ Nếu outfit có backgroundId trong JSON thì set
+                        val outfitJson = it.outfitJson
+                        val jsonObj = org.json.JSONObject(outfitJson)
+                        val bgId = if (jsonObj.has("backgroundId")) {
+                            jsonObj.getInt("backgroundId")
+                        } else {
+                            null
+                        }
 
-    private fun onPhotoSelected(photo: OutfitEntity) {
-        val uri = photo.backgroundUri?.let { Uri.parse(it) }
-        layerSetupHelper.setOutfitJsonWithBackground(photo.outfitJson, uri)
-    }
-
-    private fun saveCurrentOutfit() {
-        val outfitJson = layerSetupHelper.getOutfitJson()
-        val bitmap = layerSetupHelper.renderOutfitBitmap()
-
-        saveBitmapToGallery(bitmap) { uri ->
-            lifecycleScope.launch(Dispatchers.IO) {
-                outfitId?.let { id ->
-                    val dao = AppDatabase.getInstance(requireContext()).outfitDao()
-                    val existing = dao.getOutfitById(id)
-                    existing?.let {
-                        dao.update(
-                            it.copy(
-                                outfitJson = outfitJson,
-                                backgroundUri = uri?.toString()
-                            )
-                        )
-                        Log.d("PhotographFragment", "Updated Outfit id=$id")
+                        if (bgId != null) {
+                            layerSetupHelper.setOutfitJsonWithBackground(outfitJson)
+                        } else {
+                            // Chỉ set features, không dùng default background
+                            layerSetupHelper.setOutfitJson(outfitJson)
+                        }
                     }
                 }
+            }
+        }
+    }
 
-                withContext(Dispatchers.Main) {
-                    Toast.makeText(requireContext(), "Outfit saved!", Toast.LENGTH_SHORT).show()
-                    findNavController().navigate(R.id.homeFragment)
+
+    private fun onPhotoSelected(photo: OutfitEntity) {
+        // 1️⃣ Update LayerSetupHelper
+        layerSetupHelper.setOutfitJsonWithBackground(photo.outfitJson)
+
+        // 2️⃣ Update DB ngay lập tức
+        outfitId?.let { id ->
+            lifecycleScope.launch(Dispatchers.IO) {
+                val dao = AppDatabase.getInstance(requireContext()).outfitDao()
+                val existing = dao.getOutfitById(id)
+                existing?.let {
+                    // Cập nhật JSON mới, giữ URI cũ
+                    dao.update(
+                        it.copy(
+                            outfitJson = layerSetupHelper.getOutfitJson()
+                            // backgroundUri vẫn giữ nguyên
+                        )
+                    )
+                    Log.d("PhotographFragment", "Updated DB backgroundId ngay khi chọn photo")
                 }
             }
         }
     }
 
-    private fun saveBitmapToGallery(bitmap: Bitmap, onDone: (Uri?) -> Unit) {
-        val resolver = requireContext().contentResolver
-        try {
-            val fileName = "outfit_${System.currentTimeMillis()}.png"
-            val values = android.content.ContentValues().apply {
-                put(MediaStore.Images.Media.DISPLAY_NAME, fileName)
-                put(MediaStore.Images.Media.MIME_TYPE, "image/png")
-                put(MediaStore.Images.Media.RELATIVE_PATH, Environment.DIRECTORY_PICTURES)
-                put(MediaStore.Images.Media.IS_PENDING, 1)
-            }
 
-            val uri = resolver.insert(MediaStore.Images.Media.EXTERNAL_CONTENT_URI, values)
-            if (uri != null) {
-                resolver.openOutputStream(uri)?.use { out: OutputStream ->
-                    bitmap.compress(Bitmap.CompressFormat.PNG, 100, out)
-                }
-                values.clear()
-                values.put(MediaStore.Images.Media.IS_PENDING, 0)
-                resolver.update(uri, values, null, null)
+    private fun saveCurrentOutfit() {
+        layerSetupHelper.saveCurrentOutfitToGallery { uri ->
+            updateOutfitInDb(uri) {
+                Toast.makeText(requireContext(), "Outfit saved!", Toast.LENGTH_SHORT).show()
+                findNavController().navigate(R.id.homeFragment)
             }
-            onDone(uri)
-        } catch (e: Exception) {
-            e.printStackTrace()
-            onDone(null)
         }
+    }
+    private fun updateOutfitInDb(uri: Uri? = null, onComplete: (() -> Unit)? = null) {
+        val outfitJson = layerSetupHelper.getFullOutfitJson(backgroundUri = uri)
+        outfitId?.let { id ->  // đảm bảo id không null
+            lifecycleScope.launch(Dispatchers.IO) {
+                val dao = AppDatabase.getInstance(requireContext()).outfitDao()
+                val outfit = dao.getOutfitById(id)
+                outfit?.let {
+                    dao.update(it.copy(outfitJson = outfitJson, backgroundUri = uri?.toString()))
+                }
+                withContext(Dispatchers.Main) { onComplete?.invoke() }
+            }
+        }
+    }
+
+
+    private fun saveBitmapToGallery(bitmap: Bitmap, onDone: (Uri?) -> Unit) {
+        layerSetupHelper.saveCurrentOutfitToGallery { uri ->
+            updateOutfitInDb(uri) {
+                Toast.makeText(requireContext(), "Outfit saved!", Toast.LENGTH_SHORT).show()
+                findNavController().navigate(R.id.homeFragment)
+            }
+        }
+
     }
 }

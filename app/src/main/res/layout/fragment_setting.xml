@@ -1,386 +1,142 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@drawable/img_background_app"
-    android:orientation="vertical">
+    android:background="#80000000"> <!-- Nền mờ -->
 
-    <androidx.constraintlayout.widget.ConstraintLayout
-        android:id="@+id/clToolbar"
-        android:layout_width="match_parent"
+    <androidx.cardview.widget.CardView
+        android:id="@+id/cardSetting"
+        android:layout_width="320dp"
         android:layout_height="wrap_content"
-        app:layout_constraintTop_toTopOf="parent">
+        android:layout_gravity="center"
+        app:cardCornerRadius="24dp"
+        app:cardElevation="8dp"
+        android:background="@android:color/transparent">
 
-        <androidx.appcompat.widget.AppCompatImageView
-            android:id="@+id/imvBack"
-            android:layout_width="@dimen/_36sdp"
-            android:layout_height="@dimen/_36sdp"
-            android:layout_centerVertical="true"
-            android:foreground="?actionBarItemBackground"
-            android:padding="@dimen/_6sdp"
-            app:tint="@color/colorTextTitle"
-            android:src="@drawable/ic_back"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent" />
-
-        <androidx.appcompat.widget.AppCompatTextView
-            android:id="@+id/tvTitle"
-            style="@style/StyleTitle"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_centerVertical="true"
-            android:paddingHorizontal="@dimen/_16dp"
-            android:text="@string/setting"
-            android:textSize="@dimen/_16sdp"
-            android:textColor="@color/colorTextTitle"
-            app:layout_constraintBottom_toBottomOf="@id/imvBack"
-            app:layout_constraintStart_toEndOf="@id/imvBack"
-            app:layout_constraintTop_toTopOf="@id/imvBack" />
-    </androidx.constraintlayout.widget.ConstraintLayout>
-
-    <androidx.core.widget.NestedScrollView
-        android:layout_width="match_parent"
-        android:layout_height="0dp"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/clToolbar">
-
-        <androidx.appcompat.widget.LinearLayoutCompat
+        <androidx.constraintlayout.widget.ConstraintLayout
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:layout_marginTop="@dimen/_20sdp"
-            android:orientation="vertical"
-            android:paddingHorizontal="@dimen/_10sdp">
+            android:layout_height="wrap_content"
+            android:background="@drawable/bg_setting_popup">
 
-            <androidx.constraintlayout.widget.ConstraintLayout
+            <!-- Nút đóng -->
+            <ImageView
+                android:id="@+id/btnClose"
+                android:layout_width="40dp"
+                android:layout_height="40dp"
+                android:src="@android:drawable/ic_menu_close_clear_cancel"
+                android:background="@drawable/bg_circle_close"
+                android:scaleType="center"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                android:layout_marginTop="20dp"
+                android:layout_marginEnd="20dp" />
+
+            <!-- Tiêu đề -->
+            <TextView
+                android:id="@+id/tvTitle"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Setting"
+                android:textColor="#FF6EB6"
+                android:textSize="24sp"
+                android:textStyle="bold"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                android:layout_marginTop="32dp" />
+
+            <!-- Các nút chức năng -->
+            <LinearLayout
+                android:id="@+id/llOptions"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:background="@drawable/bg_round_24">
+                android:orientation="horizontal"
+                android:gravity="center"
+                app:layout_constraintTop_toBottomOf="@id/tvTitle"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                android:layout_marginTop="24dp"
+                android:layout_marginBottom="24dp">
 
-                <androidx.appcompat.widget.LinearLayoutCompat
+                <!-- Sound -->
+                <LinearLayout
+                    android:id="@+id/llSound"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:orientation="vertical"
+                    android:gravity="center">
+
+                    <ImageView
+                        android:id="@+id/switchSoundFx"
+                        android:layout_width="72dp"
+                        android:layout_height="72dp"
+                        android:src="@drawable/bg_switch_sound"
+                        android:background="@drawable/bg_circle_option"
+                        android:scaleType="centerInside" />
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Sound"
+                        android:textColor="#A05B9C"
+                        android:textSize="18sp"
+                        android:textStyle="bold"
+                        android:layout_marginTop="8dp" />
+                </LinearLayout>
+
+                <!-- Music -->
+                <LinearLayout
                     android:id="@+id/llMusic"
-                    android:layout_width="match_parent"
+                    android:layout_width="0dp"
                     android:layout_height="wrap_content"
-                    android:foreground="?selectableItemBackground"
-                    android:gravity="center_vertical"
-                    android:orientation="horizontal"
-                    android:padding="@dimen/_12sdp"
-                    app:layout_constraintTop_toTopOf="parent">
+                    android:layout_weight="1"
+                    android:orientation="vertical"
+                    android:gravity="center">
 
-                    <androidx.appcompat.widget.AppCompatImageView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:src="@drawable/ic_music" />
-
-                    <androidx.appcompat.widget.AppCompatTextView
-                        android:layout_width="0dp"
-                        android:layout_height="wrap_content"
-                        android:layout_weight="1"
-                        android:fontFamily="@font/font_semi_bold"
-                        android:paddingHorizontal="@dimen/_12sdp"
-                        android:text="@string/music"
-                        android:textColor="@color/colorText"
-                        android:textSize="@dimen/_14ssp" />
-
-                    <androidx.appcompat.widget.AppCompatImageView
+                    <ImageView
                         android:id="@+id/switchMusic"
+                        android:layout_width="72dp"
+                        android:layout_height="72dp"
+                        android:src="@drawable/bg_switch_music"
+                        android:background="@drawable/bg_circle_option"
+                        android:scaleType="centerInside" />
+                    <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:src="@drawable/ic_switch_off" />
+                        android:text="Music"
+                        android:textColor="#A05B9C"
+                        android:textSize="18sp"
+                        android:textStyle="bold"
+                        android:layout_marginTop="8dp" />
+                </LinearLayout>
 
-                </androidx.appcompat.widget.LinearLayoutCompat>
-
-                <androidx.appcompat.widget.LinearLayoutCompat
-                    android:id="@+id/llSoundFx"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:foreground="?selectableItemBackground"
-                    android:gravity="center_vertical"
-                    android:padding="@dimen/_12sdp"
-                    app:layout_constraintTop_toBottomOf="@id/llMusic">
-
-                    <androidx.appcompat.widget.AppCompatImageView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:src="@drawable/ic_sound_fx" />
-
-                    <androidx.appcompat.widget.AppCompatTextView
-                        android:layout_width="0dp"
-                        android:layout_height="wrap_content"
-                        android:layout_weight="1"
-                        android:fontFamily="@font/font_semi_bold"
-                        android:paddingHorizontal="@dimen/_12sdp"
-                        android:text="@string/sound_fx"
-                        android:textColor="@color/colorText"
-                        android:textSize="@dimen/_14ssp" />
-
-                    <androidx.appcompat.widget.AppCompatImageView
-                        android:id="@+id/switch_sound_fx"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:src="@drawable/ic_switch_off" />
-                </androidx.appcompat.widget.LinearLayoutCompat>
-
-                <androidx.appcompat.widget.LinearLayoutCompat
+                <!-- Vibration -->
+                <LinearLayout
                     android:id="@+id/llVibrate"
-                    android:layout_width="match_parent"
+                    android:layout_width="0dp"
                     android:layout_height="wrap_content"
-                    android:foreground="?selectableItemBackground"
-                    android:gravity="center_vertical"
-                    android:padding="@dimen/_12sdp"
-                    app:layout_constraintTop_toBottomOf="@id/llSoundFx">
+                    android:layout_weight="1"
+                    android:orientation="vertical"
+                    android:gravity="center">
 
-                    <androidx.appcompat.widget.AppCompatImageView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:src="@drawable/vibrate" />
-
-                    <androidx.appcompat.widget.AppCompatTextView
-                        android:layout_width="0dp"
-                        android:layout_height="wrap_content"
-                        android:layout_weight="1"
-                        android:fontFamily="@font/font_semi_bold"
-                        android:paddingHorizontal="@dimen/_12sdp"
-                        android:text="@string/vibrate"
-                        android:textColor="@color/colorText"
-                        android:textSize="@dimen/_14ssp" />
-
-                    <androidx.appcompat.widget.AppCompatImageView
+                    <ImageView
                         android:id="@+id/switchVibrate"
+                        android:layout_width="72dp"
+                        android:layout_height="72dp"
+                        android:src="@drawable/bg_switch_vibrate"
+                        android:background="@drawable/bg_circle_option"
+                        android:scaleType="centerInside" />
+                    <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:src="@drawable/ic_switch_off" />
-
-                </androidx.appcompat.widget.LinearLayoutCompat>
-            </androidx.constraintlayout.widget.ConstraintLayout>
-
-            <androidx.constraintlayout.widget.ConstraintLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="@dimen/_16sdp"
-                android:background="@drawable/bg_round_24">
-
-                <androidx.appcompat.widget.LinearLayoutCompat
-                    android:id="@+id/llLanguage"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:foreground="?selectableItemBackground"
-                    android:gravity="center_vertical"
-                    android:padding="@dimen/_12sdp"
-                    app:layout_constraintTop_toTopOf="parent">
-
-                    <androidx.appcompat.widget.AppCompatImageView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:src="@drawable/ic_translate" />
-
-                    <androidx.appcompat.widget.AppCompatTextView
-                        android:layout_width="0dp"
-                        android:layout_height="wrap_content"
-                        android:layout_weight="1"
-                        android:fontFamily="@font/font_semi_bold"
-                        android:paddingHorizontal="@dimen/_12sdp"
-                        android:text="@string/language"
-                        android:textColor="@color/colorText"
-                        android:textSize="@dimen/_14ssp" />
-
-                    <androidx.appcompat.widget.AppCompatImageView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:src="@drawable/ic_arrow_right" />
-                </androidx.appcompat.widget.LinearLayoutCompat>
-
-                <androidx.appcompat.widget.LinearLayoutCompat
-                    android:id="@+id/llShare"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:foreground="?selectableItemBackground"
-                    android:gravity="center_vertical"
-                    android:padding="@dimen/_12sdp"
-                    app:layout_constraintTop_toBottomOf="@id/llLanguage">
-
-                    <androidx.appcompat.widget.AppCompatImageView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:src="@drawable/ic_share_sg" />
-
-                    <androidx.appcompat.widget.AppCompatTextView
-                        android:layout_width="0dp"
-                        android:layout_height="wrap_content"
-                        android:layout_weight="1"
-                        android:fontFamily="@font/font_semi_bold"
-                        android:paddingHorizontal="@dimen/_12sdp"
-                        android:text="@string/share_to_your_friends"
-                        android:textColor="@color/colorText"
-                        android:textSize="@dimen/_14ssp" />
-
-                    <androidx.appcompat.widget.AppCompatImageView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:src="@drawable/ic_arrow_right" />
-
-                </androidx.appcompat.widget.LinearLayoutCompat>
-
-                <androidx.appcompat.widget.LinearLayoutCompat
-                    android:id="@+id/llRate"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:foreground="?selectableItemBackground"
-                    android:gravity="center_vertical"
-                    android:padding="@dimen/_12sdp"
-                    app:layout_constraintTop_toBottomOf="@id/llShare">
-
-                    <androidx.appcompat.widget.AppCompatImageView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:src="@drawable/ic_rate" />
-
-                    <androidx.appcompat.widget.AppCompatTextView
-                        android:layout_width="0dp"
-                        android:layout_height="wrap_content"
-                        android:layout_weight="1"
-                        android:fontFamily="@font/font_semi_bold"
-                        android:paddingHorizontal="@dimen/_12sdp"
-                        android:text="@string/rate_5_stars"
-                        android:textColor="@color/colorText"
-                        android:textSize="@dimen/_14ssp" />
-
-                    <androidx.appcompat.widget.AppCompatImageView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:src="@drawable/ic_arrow_right" />
-
-                </androidx.appcompat.widget.LinearLayoutCompat>
-
-                <androidx.appcompat.widget.LinearLayoutCompat
-                    android:id="@+id/llFeedback"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:foreground="?selectableItemBackground"
-                    android:gravity="center_vertical"
-                    android:padding="@dimen/_12sdp"
-                    app:layout_constraintTop_toBottomOf="@id/llRate">
-
-                    <androidx.appcompat.widget.AppCompatImageView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:src="@drawable/ic_feedback" />
-
-                    <androidx.appcompat.widget.AppCompatTextView
-                        android:layout_width="0dp"
-                        android:layout_height="wrap_content"
-                        android:layout_weight="1"
-                        android:fontFamily="@font/font_semi_bold"
-                        android:paddingHorizontal="@dimen/_12sdp"
-                        android:text="@string/feed_back"
-                        android:textColor="@color/colorText"
-                        android:textSize="@dimen/_14ssp" />
-
-                    <androidx.appcompat.widget.AppCompatImageView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:src="@drawable/ic_arrow_right" />
-                </androidx.appcompat.widget.LinearLayoutCompat>
-            </androidx.constraintlayout.widget.ConstraintLayout>
-
-            <androidx.constraintlayout.widget.ConstraintLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="@dimen/_16sdp"
-                android:background="@drawable/bg_round_24">
-
-                <androidx.appcompat.widget.LinearLayoutCompat
-                    android:id="@+id/llPolicy"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:foreground="?selectableItemBackground"
-                    android:gravity="center_vertical"
-                    android:padding="@dimen/_12sdp"
-                    app:layout_constraintTop_toTopOf="parent">
-
-                    <androidx.appcompat.widget.AppCompatImageView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:src="@drawable/ic_policy" />
-
-                    <androidx.appcompat.widget.AppCompatTextView
-                        android:layout_width="0dp"
-                        android:layout_height="wrap_content"
-                        android:layout_weight="1"
-                        android:fontFamily="@font/font_semi_bold"
-                        android:paddingHorizontal="@dimen/_12sdp"
-                        android:text="@string/policy"
-                        android:textColor="@color/colorText"
-                        android:textSize="@dimen/_14ssp" />
-
-                    <androidx.appcompat.widget.AppCompatImageView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:src="@drawable/ic_arrow_right" />
-
-                </androidx.appcompat.widget.LinearLayoutCompat>
-
-                <androidx.appcompat.widget.LinearLayoutCompat
-                    android:id="@+id/llTerm"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:foreground="?selectableItemBackground"
-                    android:gravity="center_vertical"
-                    android:padding="@dimen/_12sdp"
-                    app:layout_constraintTop_toBottomOf="@id/llPolicy">
-
-                    <androidx.appcompat.widget.AppCompatImageView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:src="@drawable/ic_cpm" />
-
-                    <androidx.appcompat.widget.AppCompatTextView
-                        android:layout_width="0dp"
-                        android:layout_height="wrap_content"
-                        android:layout_weight="1"
-                        android:fontFamily="@font/font_semi_bold"
-                        android:paddingHorizontal="@dimen/_12sdp"
-                        android:text="@string/term"
-                        android:textColor="@color/colorText"
-                        android:textSize="@dimen/_14ssp" />
-
-                    <androidx.appcompat.widget.AppCompatImageView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:src="@drawable/ic_arrow_right" />
-
-                </androidx.appcompat.widget.LinearLayoutCompat>
-
-                <androidx.appcompat.widget.LinearLayoutCompat
-                    android:id="@+id/ll_cmp_setting"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:foreground="?selectableItemBackground"
-                    android:gravity="center_vertical"
-                    android:padding="@dimen/_12sdp"
-                    app:layout_constraintTop_toBottomOf="@id/llTerm">
-
-                    <androidx.appcompat.widget.AppCompatImageView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:src="@drawable/ic_cpm" />
-
-                    <androidx.appcompat.widget.AppCompatTextView
-                        android:layout_width="0dp"
-                        android:layout_height="wrap_content"
-                        android:layout_weight="1"
-                        android:fontFamily="@font/font_semi_bold"
-                        android:paddingHorizontal="@dimen/_12sdp"
-                        android:text="@string/cmp_setting"
-                        android:textColor="@color/colorText"
-                        android:textSize="@dimen/_14ssp" />
-
-                    <androidx.appcompat.widget.AppCompatImageView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:src="@drawable/ic_arrow_right" />
-                </androidx.appcompat.widget.LinearLayoutCompat>
-            </androidx.constraintlayout.widget.ConstraintLayout>
-        </androidx.appcompat.widget.LinearLayoutCompat>
-    </androidx.core.widget.NestedScrollView>
-</androidx.constraintlayout.widget.ConstraintLayout>
+                        android:text="Vibration"
+                        android:textColor="#A05B9C"
+                        android:textSize="18sp"
+                        android:textStyle="bold"
+                        android:layout_marginTop="8dp" />
+                </LinearLayout>
+            </LinearLayout>
+        </androidx.constraintlayout.widget.ConstraintLayout>
+    </androidx.cardview.widget.CardView>
+</FrameLayout>

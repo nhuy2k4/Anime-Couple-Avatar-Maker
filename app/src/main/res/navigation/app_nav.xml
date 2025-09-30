@@ -39,12 +39,10 @@
             app:argType="boolean"
             android:defaultValue="false" />
     </fragment>
-
     <fragment
-        android:id="@+id/settingFragment"
-        android:name="com.app.base.ui.setting.SettingFragment"
-        tools:layout="@layout/fragment_setting" />
-
+        android:id="@+id/arenaSelectFragment"
+        android:name="com.app.base.ui.battle.ArenaSelectFragment"
+        tools:layout="@layout/fragment_arena_select" />
     <fragment
         android:id="@+id/languageAppFragment"
         android:name="com.app.base.ui.language.LanguageAppFragment"
