@@ -78,7 +78,7 @@ class CategoryFragment : BaseFragment<FragmentCategoryBinding, CategoryViewModel
                     outfit?.let {
                         val uri = it.backgroundUri?.let(Uri::parse)
                         layerSetupHelper.setupInitialLayers(onReady = {
-                            layerSetupHelper.setOutfitJsonWithBackground(it.outfitJson, uri)
+                            layerSetupHelper.setOutfitJsonWithBackground(it.outfitJson)
                         })
                     }
                 }

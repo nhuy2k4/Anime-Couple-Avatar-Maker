@@ -5,6 +5,7 @@ import android.graphics.Bitmap
 import android.graphics.Canvas
 import android.graphics.drawable.BitmapDrawable
 import android.net.Uri
+import android.os.Environment
 import android.provider.MediaStore
 import android.view.ViewTreeObserver
 import android.widget.FrameLayout
@@ -78,27 +79,22 @@ class LayerSetupHelper(
         })
     }
 
-    fun setOutfitJsonWithBackground(json: String, backgroundUri: Uri? = null, replace: Boolean = false) {
-        initLayerManager()
+    fun setOutfitJsonWithBackground(json: String, replace: Boolean = false) {
         val root = JSONObject(json)
-        if (replace) {
-            outfitJson = JSONObject()
-        }
+        val bgIdFromJson = if (root.has("backgroundId")) root.getInt("backgroundId") else null
+
+        if (replace) outfitJson = JSONObject()
         mergeOutfitJson(root)
 
-        if (backgroundUri != null) {
-            val bitmap = MediaStore.Images.Media.getBitmap(context.contentResolver, backgroundUri)
-            photoEditorView.background = BitmapDrawable(context.resources, bitmap)
-            outfitJson.put("backgroundUri", backgroundUri.toString())
-        } else if (root.has("backgroundId")) {
-            val bgId = root.getInt("backgroundId")
-            val drawable = ContextCompat.getDrawable(context, bgId)
-            photoEditorView.background = drawable
-            outfitJson.put("backgroundId", bgId)
+        // Chỉ set background nếu JSON có backgroundId
+        bgIdFromJson?.let {
+            photoEditorView.background = ContextCompat.getDrawable(context, it)
+            outfitJson.put("backgroundId", it)
         }
 
         applyFeaturesToLayers()
     }
+
 
     private fun mergeOutfitJson(newJson: JSONObject) {
         val merged = JSONObject(outfitJson.toString())
@@ -161,6 +157,35 @@ class LayerSetupHelper(
 
     }
 
+    fun saveCurrentOutfitToGallery(onDone: (Uri?) -> Unit) {
+        val bitmap = renderOutfitBitmap()
+        val resolver = context.contentResolver
+        try {
+            val fileName = "outfit_${System.currentTimeMillis()}.png"
+            val values = android.content.ContentValues().apply {
+                put(MediaStore.Images.Media.DISPLAY_NAME, fileName)
+                put(MediaStore.Images.Media.MIME_TYPE, "image/png")
+                put(MediaStore.Images.Media.RELATIVE_PATH, android.os.Environment.DIRECTORY_PICTURES)
+                put(MediaStore.Images.Media.IS_PENDING, 1)
+            }
+
+            val uri = resolver.insert(MediaStore.Images.Media.EXTERNAL_CONTENT_URI, values)
+            if (uri != null) {
+                resolver.openOutputStream(uri)?.use { out ->
+                    bitmap.compress(Bitmap.CompressFormat.PNG, 100, out)
+                }
+                values.clear()
+                values.put(MediaStore.Images.Media.IS_PENDING, 0)
+                resolver.update(uri, values, null, null)
+            }
+            onDone(uri)
+        } catch (e: Exception) {
+            e.printStackTrace()
+            onDone(null)
+        }
+    }
+
+
     fun getBitmapOfContainer(): Bitmap {
         val bitmap = Bitmap.createBitmap(photoContainer.width, photoContainer.height, Bitmap.Config.ARGB_8888)
         val canvas = Canvas(bitmap)
@@ -170,7 +195,7 @@ class LayerSetupHelper(
 
     fun getFullOutfitJson(backgroundId: Int? = null, backgroundUri: Uri? = null): String {
         val root = JSONObject(getOutfitJson())
-        root.put("backgroundId", backgroundId ?: R.drawable.bg_gradient)
+        backgroundId?.let { root.put("backgroundId", it) }
         backgroundUri?.let { root.put("backgroundUri", it.toString()) }
         return root.toString()
     }
