@@ -1,0 +1,108 @@
+<androidx.constraintlayout.widget.ConstraintLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@drawable/bg_gradient">
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/topPlayer"
+        android:layout_width="350dp"
+        android:layout_height="wrap_content"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintBottom_toTopOf="@id/vs_text">
+        <!-- Top Avatar -->
+        <ImageView
+            android:id="@+id/avatar_top"
+            android:layout_width="160dp"
+            android:layout_height="160dp"
+            android:src="@drawable/profile"
+            app:layout_constraintStart_toStartOf="parent" />
+
+        <!-- Top Name -->
+        <TextView
+            android:id="@+id/name_top"
+            android:layout_width="160dp"
+            android:layout_height="40dp"
+            android:text="Player"
+            android:textSize="22sp"
+            android:gravity="center"
+            android:layout_marginTop="8dp"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"/>
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+    <!-- Bottom Avatar -->
+    <LinearLayout
+        android:id="@+id/startup"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:layout_marginEnd="80dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/vs_text">
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:textSize="22sp"
+            android:text="Waiting">
+        </TextView>
+        <TextView
+            android:id="@+id/countdown_text"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:textSize="22sp"
+            android:layout_gravity="center"
+            android:text="3">
+        </TextView>
+    </LinearLayout>
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/botPlayer"
+        android:layout_width="350dp"
+        android:layout_height="wrap_content"
+        android:visibility="gone"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/vs_text">
+        <!-- Top Avatar -->
+        <ImageView
+            android:id="@+id/avatar_bot"
+            android:layout_width="160dp"
+            android:layout_height="160dp"
+            android:src="@drawable/profile"
+            app:layout_constraintEnd_toEndOf="parent"/>
+
+        <!-- Top Name -->
+        <TextView
+            android:id="@+id/name_bot"
+            android:layout_width="160dp"
+            android:layout_height="40dp"
+            android:text="NPC"
+            android:textSize="22sp"
+            android:gravity="center"
+            android:layout_marginTop="8dp"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintBottom_toBottomOf="parent" />
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+    <!-- VS Text -->
+    <TextView
+        android:id="@+id/vs_text"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="VS"
+        android:textSize="64sp"
+        android:textStyle="bold"
+        android:textColor="#FFF176"
+        android:shadowColor="#FF4081"
+        android:shadowDx="2"
+        android:shadowDy="2"
+        android:shadowRadius="8"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"/>
+
+</androidx.constraintlayout.widget.ConstraintLayout>

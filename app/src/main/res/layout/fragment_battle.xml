@@ -1,0 +1,221 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout
+    android:id="@+id/battle_container"
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@drawable/bg_gradient">
+
+    <!-- Top Section: Player Avatar, Name, Score, CUTE label -->
+    <FrameLayout
+        android:id="@+id/photo_container1"
+        android:layout_width="match_parent"
+        android:layout_height="300dp"
+        app:layout_constraintTop_toTopOf="parent">
+        <ja.burhanrashid52.photoeditor.PhotoEditorView
+            android:id="@+id/photoEditorView"
+            android:layout_width="match_parent"
+            android:layout_height="300dp"
+            android:background="@drawable/bg_gradient" />
+    </FrameLayout>
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/bonus_container1"
+        android:layout_width="wrap_content"
+        android:layout_height="80dp"
+        android:orientation="vertical"
+        android:layout_marginBottom="25dp"
+        android:layout_marginStart="50dp"
+        app:layout_constraintBottom_toBottomOf="@id/photo_container1"
+        app:layout_constraintStart_toStartOf="@id/photo_container1">
+        <TextView
+            android:id="@+id/tv_bonus1"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textColor="#FF9800"
+            android:textStyle="bold"
+            android:textSize="28sp"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            android:background="@android:color/transparent"
+            />
+        <TextView
+            android:id="@+id/tv_bonus_score1"
+            android:layout_width="100dp"
+            android:layout_height="40dp"
+            android:textColor="#fff"
+            android:textSize="22sp"
+            android:gravity="center"
+            android:layout_marginTop="8dp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintBottom_toBottomOf="parent"/>
+    </androidx.constraintlayout.widget.ConstraintLayout>
+    <TextView
+        android:id="@+id/tv_player_score1"
+        android:layout_width="100dp"
+        android:layout_height="40dp"
+        android:text="0"
+        android:textColor="#fff"
+        android:textSize="22sp"
+        android:gravity="center"
+        android:layout_marginTop="100dp"
+        android:layout_marginEnd="50dp"
+        app:layout_constraintEnd_toEndOf="@id/photo_container1"
+        app:layout_constraintTop_toTopOf="@id/photo_container1"
+        app:layout_constraintBottom_toBottomOf="@id/photo_container1"/>
+    <TextView
+        android:id="@+id/tv_player_name1"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Player"
+        android:textColor="#fff"
+        android:textSize="22sp"
+        android:paddingLeft="24dp"
+        android:paddingRight="24dp"
+        android:paddingTop="6dp"
+        android:paddingBottom="6dp"
+        android:layout_marginTop="8dp"
+        android:layout_marginEnd="50dp"
+        app:layout_constraintEnd_toEndOf="@id/photo_container1"
+        app:layout_constraintBottom_toTopOf="@id/tv_player_score1"/>
+
+
+    <!-- Bottom Section: Grid overlay, Avatar, Name, Score, CUTE label -->
+
+    <FrameLayout
+        android:id="@+id/photo_container2"
+        android:layout_width="match_parent"
+        android:layout_height="300dp"
+        app:layout_constraintTop_toBottomOf="@id/photo_container1">
+        <ja.burhanrashid52.photoeditor.PhotoEditorView
+            android:id="@+id/photoEditorView1"
+            android:layout_width="match_parent"
+            android:layout_height="300dp"
+            android:background="@drawable/bg_gradient" />
+    </FrameLayout>
+
+    <LinearLayout
+        android:id="@+id/bonus_container2"
+        android:layout_width="wrap_content"
+        android:layout_height="80dp"
+        android:orientation="vertical"
+        android:layout_marginBottom="25dp"
+        android:layout_marginEnd="50dp"
+        app:layout_constraintBottom_toBottomOf="@id/photo_container2"
+        app:layout_constraintEnd_toEndOf="@id/photo_container2">>
+        <TextView
+            android:id="@+id/tv_bonus2"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textColor="#FF9800"
+            android:textStyle="bold"
+            android:textSize="28sp"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            android:background="@android:color/transparent" />
+
+        <TextView
+            android:id="@+id/tv_bonus_score2"
+            android:layout_width="100dp"
+            android:layout_height="40dp"
+            android:textColor="#fff"
+            android:textSize="22sp"
+            android:gravity="center"
+            android:layout_marginTop="8dp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintBottom_toBottomOf="parent" />
+    </LinearLayout>
+    <TextView
+        android:id="@+id/tv_player_score2"
+        android:layout_width="100dp"
+        android:layout_height="40dp"
+        android:text="0"
+        android:textColor="#fff"
+        android:textSize="22sp"
+        android:gravity="center"
+        android:layout_marginTop="100dp"
+        android:layout_marginEnd="50dp"
+        app:layout_constraintStart_toStartOf="@id/photo_container2"
+        app:layout_constraintTop_toTopOf="@id/photo_container2"
+        app:layout_constraintBottom_toBottomOf="@id/photo_container2"/>
+    <TextView
+        android:id="@+id/tv_player_name2"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Delgado"
+        android:textColor="#fff"
+        android:textSize="22sp"
+        android:paddingLeft="24dp"
+        android:paddingRight="24dp"
+        android:paddingTop="6dp"
+        android:paddingBottom="6dp"
+        android:layout_marginTop="8dp"
+        app:layout_constraintStart_toStartOf="@id/photo_container2"
+        app:layout_constraintBottom_toTopOf="@id/tv_player_score2"/>
+
+    <!-- Response Buttons -->
+    <LinearLayout
+        android:id="@+id/response_group"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:gravity="center"
+        android:layout_marginTop="16dp"
+        android:layout_marginBottom="24dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toStartOf="@id/btn_heart">
+
+        <TextView
+            android:id="@+id/btn_response_1"
+            android:layout_width="wrap_content"
+            android:layout_height="40dp"
+            android:text="Trông bạn thật tuyệt  🥰😘  90"
+            android:textColor="#222"
+            android:textSize="18sp"
+            android:gravity="center_vertical"
+            android:paddingLeft="16dp"
+            android:paddingRight="16dp"
+            android:layout_marginBottom="8dp" />
+
+        <TextView
+            android:id="@+id/btn_response_2"
+            android:layout_width="wrap_content"
+            android:layout_height="40dp"
+            android:text="Извините, это не мой вкус  😂😅  118"
+            android:textColor="#222"
+            android:textSize="18sp"
+            android:gravity="center_vertical"
+            android:paddingLeft="16dp"
+            android:paddingRight="16dp"
+            android:layout_marginBottom="8dp" />
+
+        <TextView
+            android:id="@+id/btn_response_3"
+            android:layout_width="wrap_content"
+            android:layout_height="40dp"
+            android:text="미안 이건 내 취향이 아니야  😘💔  150"
+            android:textColor="#222"
+            android:textSize="18sp"
+            android:gravity="center_vertical"
+            android:paddingLeft="16dp"
+            android:paddingRight="16dp" />
+    </LinearLayout>
+
+    <!-- Heart Button with Hand Icon -->
+    <FrameLayout
+        android:id="@+id/btn_heart"
+        android:layout_width="100dp"
+        android:layout_height="100dp"
+        android:layout_margin="16dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent">
+
+        <ImageView
+            android:id="@+id/heartPoint"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:src="@drawable/ic_heart" />
+    </FrameLayout>
+
+</androidx.constraintlayout.widget.ConstraintLayout>

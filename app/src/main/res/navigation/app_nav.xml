@@ -38,15 +38,39 @@
             android:name="fromHome"
             app:argType="boolean"
             android:defaultValue="false" />
+        <argument
+            android:name="backgroundId"
+            app:argType="integer"
+            android:defaultValue="-1" />
+        <argument
+            android:name="mode"
+            app:argType="string"
+            android:defaultValue="A" />
     </fragment>
     <fragment
         android:id="@+id/arenaSelectFragment"
         android:name="com.app.base.ui.battle.ArenaSelectFragment"
-        tools:layout="@layout/fragment_arena_select" />
+        tools:layout="@layout/fragment_arena_select" >
+        <action
+            android:id="@+id/action_arenaSelectFragment_to_categoryFragment"
+            app:destination="@id/categoryFragment" />
+    </fragment>
     <fragment
         android:id="@+id/languageAppFragment"
         android:name="com.app.base.ui.language.LanguageAppFragment"
         tools:layout="@layout/fragment_language_app" />
+    <fragment
+        android:id="@+id/checkPointFragment"
+        android:name="com.app.base.ui.checkpoint.CheckPointFragment"
+        tools:layout="@layout/fragment_check_point" />
+    <fragment
+        android:id="@+id/battleFragment"
+        android:name="com.app.base.ui.battle.BattleFragment"
+        tools:layout="@layout/fragment_battle" />
+    <fragment
+        android:id="@+id/waitingFragment"
+        android:name="com.app.base.ui.battle.WaitingFragment"
+        tools:layout="@layout/fragment_waiting" />
     <fragment
         android:id="@+id/photographFragment"
         android:name="com.app.base.ui.photograph.PhotographFragment"
