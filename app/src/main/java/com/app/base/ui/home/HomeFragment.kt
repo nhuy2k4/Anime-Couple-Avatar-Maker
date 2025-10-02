@@ -5,6 +5,7 @@ import com.app.base.R
 import com.app.base.component.dialog.ExitsAppDialog
 import com.app.base.databinding.FragmentHomeBinding
 import com.app.base.ui.category.CategoryFragmentArgs
+import com.app.base.ui.dialog.SettingDialogFragment
 import com.app.base.ui.main.MainViewModel
 import com.brally.mobile.base.activity.BaseFragment
 import com.brally.mobile.base.activity.navigate
@@ -30,7 +31,7 @@ class HomeFragment : BaseFragment<FragmentHomeBinding, HomeViewModel>() {
     override fun initListener() {
 
         binding.btnSetting.singleClick {
-            com.app.base.ui.setting.SettingDialogFragment.newInstance()
+            SettingDialogFragment.newInstance()
                 .show(parentFragmentManager, "SettingDialog")
         }
         binding.btnAvatar.singleClick {
@@ -43,7 +44,9 @@ class HomeFragment : BaseFragment<FragmentHomeBinding, HomeViewModel>() {
         binding.btnGallery.singleClick {
             navigate(R.id.galleryFragment)
         }
-
+        binding.btnPkBattle.singleClick {
+            navigate(R.id.arenaSelectFragment)
+        }
         onBackPressed {
             tracking(HOME_CLICK_BACK)
             tracking(EXIT_DIALOG_SHOW)

@@ -3,8 +3,6 @@ package com.app.base.ui.photograph
 import android.graphics.Bitmap
 import android.net.Uri
 import android.os.Bundle
-import android.os.Environment
-import android.provider.MediaStore
 import android.util.Log
 import android.view.View
 import android.widget.Toast
@@ -13,7 +11,7 @@ import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
 import androidx.recyclerview.widget.GridLayoutManager
 import com.app.base.R
-import com.app.base.core.layer.LayerSetupHelper
+import com.app.base.core.helper.LayerSetupHelper
 import com.app.base.database.AppDatabase
 import com.app.base.database.OutfitEntity
 import com.app.base.databinding.FragmentPhotographBinding
@@ -22,7 +20,6 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import org.koin.androidx.viewmodel.ext.android.viewModel
-import java.io.OutputStream
 
 class PhotographFragment : BaseFragment<FragmentPhotographBinding, PhotographViewModel>() {
 

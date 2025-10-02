@@ -1,9 +1,9 @@
-package com.app.base.core.layer
+package com.app.base.core.helper
 
+import android.content.ContentValues
 import android.content.Context
 import android.graphics.Bitmap
 import android.graphics.Canvas
-import android.graphics.drawable.BitmapDrawable
 import android.net.Uri
 import android.os.Environment
 import android.provider.MediaStore
@@ -15,6 +15,7 @@ import ja.burhanrashid52.photoeditor.PhotoEditor
 import ja.burhanrashid52.photoeditor.PhotoEditorView
 import org.json.JSONObject
 import android.util.Log
+import com.app.base.core.layer.LayerManager
 
 data class CharacterConfig(
     val baseResId: Int,
@@ -23,7 +24,7 @@ data class CharacterConfig(
 )
 
 class LayerSetupHelper(
-    private val photoContainer: FrameLayout,
+    val photoContainer: FrameLayout,
     private val photoEditorView: PhotoEditorView,
     private val context: Context
 ) {
@@ -96,7 +97,7 @@ class LayerSetupHelper(
     }
 
 
-    private fun mergeOutfitJson(newJson: JSONObject) {
+    fun mergeOutfitJson(newJson: JSONObject) {
         val merged = JSONObject(outfitJson.toString())
         newJson.keys().forEach { key ->
             val value = newJson.get(key)
@@ -119,15 +120,22 @@ class LayerSetupHelper(
     fun applyFeaturesToLayers() {
         initLayerManager()
         characterConfigs.forEach { (char, config) ->
+            // đảm bảo body luôn tồn tại
+            val bodyKey = "$char-body"
+            if (!layerManager.hasLayer(bodyKey)) {
+                layerManager.setLayer(bodyKey, config.baseResId, 1f, 1f, config.leftMargin)
+            }
+
             val features = outfitJson.optJSONObject(char) ?: return@forEach
 
             // Remove feature cũ, giữ body
             layerManager.getLayersForCharacter(char).forEach { layerView ->
                 val key = layerManager.getKeyForLayerView(layerView)
-                if (key != null && key != "$char-body") {
+                if (key != null && key != bodyKey) {
                     layerManager.removeLayer(key)
                 }
             }
+
             Log.d("LayerSetupHelper", "Applying features for character: $char")
             // Set lại feature mới
             features.keys().forEach { type ->
@@ -140,6 +148,7 @@ class LayerSetupHelper(
             }
         }
     }
+
 
     fun updateFeature(character: String, type: String, resId: Int) {
         val layerKey = "$character-$type"
@@ -162,10 +171,10 @@ class LayerSetupHelper(
         val resolver = context.contentResolver
         try {
             val fileName = "outfit_${System.currentTimeMillis()}.png"
-            val values = android.content.ContentValues().apply {
+            val values = ContentValues().apply {
                 put(MediaStore.Images.Media.DISPLAY_NAME, fileName)
                 put(MediaStore.Images.Media.MIME_TYPE, "image/png")
-                put(MediaStore.Images.Media.RELATIVE_PATH, android.os.Environment.DIRECTORY_PICTURES)
+                put(MediaStore.Images.Media.RELATIVE_PATH, Environment.DIRECTORY_PICTURES)
                 put(MediaStore.Images.Media.IS_PENDING, 1)
             }
 

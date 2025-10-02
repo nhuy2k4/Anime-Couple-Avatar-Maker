@@ -1,26 +1,22 @@
-package com.app.base.ui.setting
+package com.app.base.ui.dialog
 
 import android.app.Dialog
 import android.graphics.drawable.LayerDrawable
 import android.os.Bundle
-import android.view.LayoutInflater
-import android.view.View
-import android.view.ViewGroup
-import android.widget.ImageView
-import androidx.core.view.isVisible
 import androidx.fragment.app.DialogFragment
 import com.app.base.R
-import com.app.base.component.dialog.RateAppBottomDialog
 import com.app.base.databinding.FragmentSettingBinding
-import com.bg.common.Common
-import com.brally.mobile.base.activity.isCmpRequired
-import com.brally.mobile.base.activity.navigate
-import com.brally.mobile.base.activity.showDialog
-import com.brally.mobile.base.activity.showPrivacyOptionForm
-import com.brally.mobile.base.activity.popBackStack
-import com.brally.mobile.base.application.appInfo
-import com.brally.mobile.service.event.*
-import com.brally.mobile.service.firebase.AppRemoteConfig
+import com.brally.mobile.service.event.CMP_MESSAGE_SHOW
+import com.brally.mobile.service.event.CONSENT_ALL_FAILED
+import com.brally.mobile.service.event.CONSENT_ALL_SUCCESS
+import com.brally.mobile.service.event.CONSENT_SOME_OPTIONS
+import com.brally.mobile.service.event.PURPOSE_AMOUNT
+import com.brally.mobile.service.event.SETTING_CLICK_MUSIC_OFF
+import com.brally.mobile.service.event.SETTING_CLICK_MUSIC_ON
+import com.brally.mobile.service.event.SETTING_CLICK_SOUND_OFF
+import com.brally.mobile.service.event.SETTING_CLICK_SOUND_ON
+import com.brally.mobile.service.event.SETTING_SHOW
+import com.brally.mobile.service.event.VENDORS_AMOUNT
 import com.brally.mobile.service.session.isMusic
 import com.brally.mobile.service.session.isSound
 import com.brally.mobile.service.session.isVibrate
@@ -100,19 +96,19 @@ class SettingDialogFragment : DialogFragment(), BralyResultConsentForm {
         // Music
         val musicDrawable = binding.switchMusic.drawable as? LayerDrawable
         musicDrawable?.let {
-            val cross = it.findDrawableByLayerId(com.app.base.R.id.cross)
+            val cross = it.findDrawableByLayerId(R.id.cross)
             cross?.alpha = if (isMusic()) 0 else 255
         }
         // Sound
         val soundDrawable = binding.switchSoundFx.drawable as? LayerDrawable
         soundDrawable?.let {
-            val cross = it.findDrawableByLayerId(com.app.base.R.id.cross)
+            val cross = it.findDrawableByLayerId(R.id.cross)
             cross?.alpha = if (isSound()) 0 else 255
         }
         // Vibrate
         val vibrateDrawable = binding.switchVibrate.drawable as? LayerDrawable
         vibrateDrawable?.let {
-            val cross = it.findDrawableByLayerId(com.app.base.R.id.cross)
+            val cross = it.findDrawableByLayerId(R.id.cross)
             cross?.alpha = if (isVibrate()) 0 else 255
         }
     }
