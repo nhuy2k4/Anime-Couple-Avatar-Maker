@@ -1,0 +1,193 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@drawable/bg_gradient"
+    tools:context=".ui.checkpoint.CheckPointFragment">
+
+    <!-- Top bar with diamond and count -->
+    <LinearLayout
+        android:id="@+id/topBar"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:gravity="end|center_vertical"
+        android:paddingTop="24dp"
+        android:paddingEnd="24dp"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        android:layout_marginTop="16dp">
+
+        <ImageView
+            android:id="@+id/ivDiamond"
+            android:layout_width="32dp"
+            android:layout_height="32dp"
+            android:src="@drawable/ic_back" />
+
+        <TextView
+            android:id="@+id/tvDiamondCount"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="410"
+            android:textColor="#fff"
+            android:textSize="20sp"
+            android:layout_marginStart="8dp"
+            android:fontFamily="sans-serif-medium" />
+    </LinearLayout>
+
+    <!-- TRY AGAIN Title -->
+    <TextView
+        android:id="@+id/tvResult"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="TRY AGAIN"
+        android:textColor="#fff"
+        android:textSize="36sp"
+        android:textStyle="bold"
+        android:fontFamily="sans-serif-black"
+        android:layout_gravity="top|center_horizontal"
+        android:layout_marginTop="18dp"
+        android:shadowColor="#80000000"
+        android:shadowDx="0"
+        android:shadowDy="4"
+        android:shadowRadius="8"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/topBar"/>
+
+    <FrameLayout
+        android:id="@+id/photo_container"
+        android:layout_width="match_parent"
+        android:layout_height="300dp"
+        app:layout_constraintTop_toBottomOf="@id/tvResult">
+        <ja.burhanrashid52.photoeditor.PhotoEditorView
+            android:id="@+id/photoEditorView"
+            android:layout_width="match_parent"
+            android:layout_height="300dp"
+            android:background="@drawable/bg_gradient" />
+    </FrameLayout>
+    <!-- Multiplier bar -->
+    <LinearLayout
+        android:id="@+id/llMultiplierBar"
+        android:layout_width="wrap_content"
+        android:layout_height="56dp"
+        android:orientation="horizontal"
+        android:gravity="center"
+        android:background="@drawable/bg_art_border"
+        android:layout_gravity="bottom|center_horizontal"
+        android:layout_marginBottom="16dp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintBottom_toTopOf="@id/llReward"
+        android:paddingHorizontal="16dp">
+        <TextView
+            android:id="@+id/tvX3Left"
+            android:layout_width="40dp"
+            android:layout_height="match_parent"
+            android:gravity="center"
+            android:text="x3"
+            android:textColor="#fff"
+            android:textSize="18sp"
+            android:background="@drawable/bg_art_border" />
+        <TextView
+            android:id="@+id/tvX4Left"
+            android:layout_width="40dp"
+            android:layout_height="match_parent"
+            android:gravity="center"
+            android:text="x4"
+            android:textColor="#fff"
+            android:textSize="18sp"
+            android:background="@drawable/bg_art_border" />
+        <TextView
+            android:id="@+id/tvX5"
+            android:layout_width="40dp"
+            android:layout_height="match_parent"
+            android:gravity="center"
+            android:text="x5"
+            android:textColor="#fff"
+            android:textSize="18sp"
+            android:background="@drawable/bg_art_border" />
+        <TextView
+            android:id="@+id/tvX4Right"
+            android:layout_width="40dp"
+            android:layout_height="match_parent"
+            android:gravity="center"
+            android:text="x4"
+            android:textColor="#fff"
+            android:textSize="18sp"
+            android:background="@drawable/bg_art_border" />
+        <TextView
+            android:id="@+id/tvX3Right"
+            android:layout_width="40dp"
+            android:layout_height="match_parent"
+            android:gravity="center"
+            android:text="x3"
+            android:textColor="#fff"
+            android:textSize="18sp"
+            android:background="@drawable/bg_art_border" />
+
+        <!-- Arrow -->
+        <ImageView
+            android:id="@+id/ivArrow"
+            android:layout_width="24dp"
+            android:layout_height="24dp"
+            android:src="@drawable/ic_back"
+            android:layout_gravity="bottom"
+            android:layout_marginTop="-12dp"
+            android:layout_marginStart="-32dp" />
+    </LinearLayout>
+
+    <!-- Reward button -->
+    <LinearLayout
+        android:id="@+id/llReward"
+        android:layout_width="220dp"
+        android:layout_height="56dp"
+        android:orientation="horizontal"
+        android:gravity="center"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintBottom_toTopOf="@id/tvNoThanks"
+        android:background="@drawable/bg_art_border"
+        android:layout_gravity="bottom|center_horizontal"
+        android:layout_marginBottom="50dp">
+
+        <ImageView
+            android:id="@+id/ivAds"
+            android:layout_width="32dp"
+            android:layout_height="32dp"
+            android:src="@drawable/ic_heart" />
+
+        <TextView
+            android:id="@+id/tvRewardAmount"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="150"
+            android:textColor="#222"
+            android:textSize="22sp"
+            android:fontFamily="sans-serif-medium"
+            android:layout_marginStart="8dp" />
+
+        <ImageView
+            android:id="@+id/ivRewardDiamond"
+            android:layout_width="32dp"
+            android:layout_height="32dp"
+            android:src="@drawable/ic_check" />
+    </LinearLayout>
+
+    <!-- No Thanks button -->
+    <TextView
+        android:id="@+id/tvNoThanks"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="No, Thanks"
+        android:textColor="#7A7A7A"
+        android:textSize="20sp"
+        android:fontFamily="sans-serif-medium"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintBottom_toBottomOf="parent"
+        android:layout_marginBottom="100dp" />
+
+</androidx.constraintlayout.widget.ConstraintLayout>
