@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="24dp"
+    android:height="24dp"
+    android:viewportWidth="24"
+    android:viewportHeight="24">
+    <!-- Nắp quà màu hồng nhạt -->
+    <path android:fillColor="#FF80AB" android:pathData="M2,8h20v4H2z"/>
+    <!-- Thân quà màu vàng -->
+    <path android:fillColor="#FFD600" android:pathData="M2,12h20v8a2,2 0 0,1 -2,2h-16a2,2 0 0,1 -2,-2z"/>
+    <!-- Dải ruy băng dọc màu hồng đậm -->
+    <path android:fillColor="#FF4081" android:pathData="M11,8h2v12h-2z"/>
+    <!-- Nơ trái -->
+    <path android:fillColor="#FF80AB" android:pathData="M7,8a3,3 0 1,1 6,0"/>
+    <!-- Nơ phải -->
+    <path android:fillColor="#FF80AB" android:pathData="M17,8a3,3 0 1,0 -6,0"/>
+</vector>

@@ -1,0 +1,16 @@
+[
+  {
+    "id": "cos_001",
+    "name": "Naruto",
+    "image": "cosplay/naruto/full.png",
+    "outfitUri": "cosplay/naruto/outfit.json",
+    "unlockCondition": "default"
+  },
+  {
+    "id": "cos_002",
+    "name": "Sakura",
+    "image": "cosplay/sakura/full.png",
+    "outfitUri": "cosplay/sakura/outfit.json",
+    "unlockCondition": "mission_005"
+  }
+]

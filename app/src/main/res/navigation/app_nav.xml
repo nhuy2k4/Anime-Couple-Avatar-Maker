@@ -30,6 +30,9 @@
             app:destination="@id/photographFragment"
             app:enterAnim="@anim/slide_in_right"
             app:exitAnim="@anim/slide_out_left"/>
+        <action
+            android:id="@+id/action_categoryFragment_to_checkPointFragment"
+            app:destination="@id/checkPointFragment"/>
         <argument
             android:name="outfitId"
             app:argType="long"
@@ -46,6 +49,14 @@
             android:name="mode"
             app:argType="string"
             android:defaultValue="A" />
+        <argument
+            android:name="selectedCharacter"
+            app:argType="integer"
+            android:defaultValue="-1" />
+        <argument
+            android:name="gender"
+            app:argType="string"
+            android:defaultValue="female" />
     </fragment>
     <fragment
         android:id="@+id/arenaSelectFragment"
@@ -60,9 +71,26 @@
         android:name="com.app.base.ui.language.LanguageAppFragment"
         tools:layout="@layout/fragment_language_app" />
     <fragment
+        android:id="@+id/cosplayFragment"
+        android:name="com.app.base.ui.cosplay.CosplayFragment"
+        tools:layout="@layout/fragment_cosplay">
+        <action
+            android:id="@+id/action_cosplayFragment_to_categoryFragment"
+            app:destination="@id/categoryFragment" />
+    </fragment>
+    <fragment
         android:id="@+id/checkPointFragment"
         android:name="com.app.base.ui.checkpoint.CheckPointFragment"
-        tools:layout="@layout/fragment_check_point" />
+        tools:layout="@layout/fragment_check_point">
+        <argument
+            android:name="outfitId"
+            app:argType="integer"
+            android:defaultValue="-1" />
+        <argument
+            android:name="mode"
+            app:argType="string"
+            android:defaultValue="A" />
+    </fragment>
     <fragment
         android:id="@+id/battleFragment"
         android:name="com.app.base.ui.battle.BattleFragment"

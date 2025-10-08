@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="80dp"
+    android:layout_height="100dp"
+    android:background="@drawable/bg_reward_item"
+    android:layout_margin="6dp">
+
+    <ImageView
+        android:id="@+id/imgReward"
+        android:layout_width="56dp"
+        android:layout_height="56dp"
+        android:layout_gravity="center_horizontal|top"
+        android:layout_marginTop="8dp"
+        android:scaleType="centerInside" />
+
+    <TextView
+        android:id="@+id/tvDay"
+        android:layout_width="wrap_content"
+        android:layout_height="24dp"
+        android:layout_gravity="bottom|center_horizontal"
+        android:background="@drawable/bg_day_label"
+        android:text="Day 1"
+        android:textColor="#FF69B4"
+        android:textSize="14sp"
+        android:gravity="center"
+        android:paddingLeft="12dp"
+        android:paddingRight="12dp"
+        android:paddingTop="2dp"
+        android:paddingBottom="2dp" />
+
+    <ImageView
+        android:id="@+id/imgCheck"
+        android:layout_width="32dp"
+        android:layout_height="32dp"
+        android:layout_gravity="top|end"
+        android:src="@drawable/ic_check"
+        android:visibility="gone"
+        android:layout_margin="4dp" />
+</FrameLayout>
+

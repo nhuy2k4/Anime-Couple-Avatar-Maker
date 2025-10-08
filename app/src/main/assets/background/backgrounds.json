@@ -1,0 +1,15 @@
+[
+  {
+    "id": "bg_1",
+    "name": "School",
+    "image": "backgrounds/bg_school.png",
+    "unlockCondition": "default"
+  },
+  {
+    "id": "bg_2",
+    "name": "Stage",
+    "image": "backgrounds/bg_stage.png",
+    "unlockCondition": "mission_3"
+  }
+]
+

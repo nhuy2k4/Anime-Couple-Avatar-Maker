@@ -1,0 +1,12 @@
+[
+  {
+    "id": "milestone_1",
+    "requiredPoints": 500,
+    "reward": {
+      "diamonds": 100,
+      "featureId": "shirt_2"
+    },
+    "isClaimed": false
+  }
+]
+

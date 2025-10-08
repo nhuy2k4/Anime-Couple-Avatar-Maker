@@ -1,0 +1,82 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical"
+    android:background="@drawable/bg_dialog"
+    android:padding="16dp">
+
+    <TextView
+        android:id="@+id/tvTitle"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Daily Reward"
+        android:textSize="22sp"
+        android:textStyle="bold"
+        android:textColor="#FF69B4"
+        android:layout_gravity="center_horizontal"
+        android:paddingBottom="8dp" />
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:gravity="center_vertical"
+        android:paddingBottom="8dp">
+        <ImageView
+            android:id="@+id/imgCharacter"
+            android:layout_width="64dp"
+            android:layout_height="64dp"
+            android:src="@drawable/ic_character_sample"
+            android:layout_marginEnd="8dp" />
+        <LinearLayout
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:orientation="vertical">
+            <TextView
+                android:id="@+id/tvSubtitle"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="7 Days Sign In"
+                android:textSize="16sp"
+                android:textColor="#FF69B4" />
+            <TextView
+                android:id="@+id/tvCombo"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Get the combo"
+                android:textSize="14sp"
+                android:textColor="#FFB6C1" />
+        </LinearLayout>
+        <ImageButton
+            android:id="@+id/btnClose"
+            android:layout_width="32dp"
+            android:layout_height="32dp"
+            android:src="@drawable/ic_close"
+            android:background="@android:color/transparent"
+            android:layout_gravity="top" />
+    </LinearLayout>
+
+    <GridLayout
+        android:id="@+id/gridRewards"
+        android:layout_width="350dp"
+        android:layout_height="wrap_content"
+        android:columnCount="4"
+        android:rowCount="2"
+        android:padding="8dp">
+        <!-- Reward items will be added dynamically -->
+    </GridLayout>
+
+    <Button
+        android:id="@+id/btnClaim"
+        android:layout_width="match_parent"
+        android:layout_height="48dp"
+        android:text="Claim"
+        android:drawableStart="@drawable/ic_ads"
+        android:background="@drawable/bg_claim_button"
+        android:textColor="#FFF"
+        android:textSize="18sp"
+        android:layout_marginTop="12dp" />
+</LinearLayout>
+

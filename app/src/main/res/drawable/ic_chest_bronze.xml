@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="40dp"
+    android:height="32dp"
+    android:viewportWidth="40"
+    android:viewportHeight="32">
+    <!-- Thân dưới -->
+    <path android:fillColor="#FFB300" android:pathData="M4,16h32v12a4,4 0 0,1 -4,4h-24a4,4 0 0,1 -4,-4z"/>
+    <!-- Nắp trên -->
+    <path android:fillColor="#FF6F00" android:pathData="M4,16h32v-6a16,8 0 0,0 -32,0z"/>
+    <!-- Khóa vàng -->
+    <path android:fillColor="#FFF9C4" android:pathData="M20,22 v6 h-2 v-6 h2 z"/>
+</vector>

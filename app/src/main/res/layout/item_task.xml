@@ -1,0 +1,92 @@
+<androidx.constraintlayout.widget.ConstraintLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:background="@drawable/bg_task_item"
+    android:layout_marginBottom="8dp"
+    android:padding="8dp">
+
+    <!-- Reward Icon -->
+    <ImageView
+        android:id="@+id/imgReward"
+        android:layout_width="40dp"
+        android:layout_height="40dp"
+        android:src="@drawable/ic_diamond"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        android:layout_marginStart="8dp"/>
+
+    <!-- Reward Amount -->
+    <TextView
+        android:id="@+id/tvRewardAmount"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="x50"
+        android:textColor="#A040C9"
+        android:textStyle="bold"
+        android:textSize="16sp"
+        android:fontFamily="sans-serif-black"
+        app:layout_constraintStart_toEndOf="@id/imgReward"
+        app:layout_constraintTop_toTopOf="@id/imgReward"
+        android:layout_marginStart="4dp"/>
+
+    <!-- Task Description -->
+    <TextView
+        android:id="@+id/tvTaskDesc"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:text="Save 1 Photo"
+        android:textColor="#A040C9"
+        android:textSize="16sp"
+        android:fontFamily="sans-serif-medium"
+        app:layout_constraintStart_toEndOf="@id/tvRewardAmount"
+        app:layout_constraintTop_toTopOf="@id/imgReward"
+        app:layout_constraintEnd_toStartOf="@id/btnGoNow"
+        android:layout_marginStart="8dp"
+        android:layout_marginEnd="8dp"/>
+
+    <!-- Go Now Button -->
+    <Button
+        android:id="@+id/btnGoNow"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:minWidth="72dp"
+        android:minHeight="36dp"
+        android:text="Go Now"
+        android:textColor="#A040C9"
+        android:textStyle="bold"
+        android:textSize="14sp"
+        android:background="@drawable/bg_btn_go_now"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="@id/tvTaskDesc"/>
+
+    <!-- Progress Bar -->
+    <ProgressBar
+        android:id="@+id/progressTask"
+        style="@android:style/Widget.ProgressBar.Horizontal"
+        android:layout_width="0dp"
+        android:layout_height="12dp"
+        android:progressDrawable="@drawable/progress_task"
+        android:progress="0"
+        android:max="1"
+        app:layout_constraintStart_toStartOf="@id/tvTaskDesc"
+        app:layout_constraintTop_toBottomOf="@id/tvTaskDesc"
+        app:layout_constraintEnd_toStartOf="@id/btnGoNow"
+        android:layout_marginTop="4dp"
+        android:layout_marginEnd="8dp"/>
+
+    <!-- Progress Text -->
+    <TextView
+        android:id="@+id/tvTaskProgress"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="0/1"
+        android:textColor="#A040C9"
+        android:textSize="12sp"
+        android:gravity="center"
+        app:layout_constraintStart_toStartOf="@id/progressTask"
+        app:layout_constraintEnd_toEndOf="@id/progressTask"
+        app:layout_constraintTop_toTopOf="@id/progressTask"
+        app:layout_constraintBottom_toBottomOf="@id/progressTask"/>
+</androidx.constraintlayout.widget.ConstraintLayout>

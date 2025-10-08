@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="wrap_content"
+    android:layout_height="300dp">
+
+    <!-- Vertical bar -->
+    <View
+        android:id="@+id/accScaleBar"
+        android:layout_width="32dp"
+        android:layout_height="220dp"
+        android:layout_gravity="center_horizontal|top"
+        android:background="@drawable/bar_purple_with_border"
+        android:layout_marginTop="40dp"/>
+
+    <!-- Top circle with star -->
+    <ImageView
+        android:id="@+id/accScaleTop"
+        android:layout_width="56dp"
+        android:layout_height="56dp"
+        android:layout_gravity="center_horizontal|top"
+        android:src="@drawable/circle_star"/>
+
+    <!-- Percentage label at bottom -->
+    <TextView
+        android:id="@+id/accScalePercent"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center_horizontal|bottom"
+        android:text="0%"
+        android:textColor="#FFFFFF"
+        android:textSize="28sp"
+        android:shadowColor="#80000000"
+        android:shadowDx="2"
+        android:shadowDy="2"
+        android:shadowRadius="2"
+        android:fontFamily="sans-serif-black"
+        android:paddingBottom="4dp"/>
+
+</FrameLayout>
+

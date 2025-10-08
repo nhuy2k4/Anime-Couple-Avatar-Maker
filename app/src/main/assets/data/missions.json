@@ -1,0 +1,23 @@
+[
+  {
+    "id": "mission_1",
+    "title": "Play your first match",
+    "type": "task",
+    "status": "in_progress",
+    "reward": {
+      "diamonds": 50,
+      "featureId": "eyes_1"
+    }
+  },
+  {
+    "id": "mission_2",
+    "title": "Win 3 matches",
+    "type": "daily",
+    "status": "locked",
+    "reward": {
+      "diamonds": 1,
+      "avatarId": "avatar_2"
+    }
+  }
+]
+

@@ -23,7 +23,11 @@ class LayerManager(private val container: FrameLayout, private val context: Cont
         leftMarginRatio: Float = 0f,
         topMarginRatio: Float = 0f,
         rightMarginRatio: Float = 0f,
-        gravity: Int = Gravity.TOP or Gravity.START
+        gravity: Int = Gravity.TOP or Gravity.START,
+        scaleX: Float = 1f,      // thêm
+        scaleY: Float = 1f,      // thêm
+        offsetX: Float = 0f,     // thêm
+        offsetY: Float = 0f      // thêm
     ) {
         Log.d("LayerManager", "Before setLayer $key, children=${container.childCount}")
 
@@ -64,6 +68,10 @@ class LayerManager(private val container: FrameLayout, private val context: Cont
                 leftMargin = (containerWidth * leftMarginRatio).toInt()
                 rightMargin = (containerWidth * rightMarginRatio).toInt()
             }
+            this.scaleX = scaleX
+            this.scaleY = scaleY
+            this.translationX = offsetX
+            this.translationY = offsetY
         }
 
         container.addView(view)
