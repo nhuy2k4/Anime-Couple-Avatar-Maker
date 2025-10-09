@@ -3,7 +3,7 @@
     "id": "frontHair_1",
     "category": "frontHair",
     "name": "Front Hair 1",
-    "gender": "unisex",
+    "gender": "female",
     "image": "features/frontHair/frontHair_f_1.png",
     "unlockCondition": "default"
   },
@@ -11,7 +11,7 @@
     "id": "frontHair_2",
     "category": "frontHair",
     "name": "Front Hair 2",
-    "gender": "unisex",
+    "gender": "female",
     "image": "features/frontHair/frontHair_f_2.png",
     "unlockCondition": "default"
   },
@@ -19,7 +19,7 @@
     "id": "frontHair_3",
     "category": "frontHair",
     "name": "Front Hair 3",
-    "gender": "unisex",
+    "gender": "male",
     "image": "features/frontHair/frontHair_m_3.png",
     "unlockCondition": "default"
   },
@@ -27,7 +27,7 @@
     "id": "frontHair_4",
     "category": "frontHair",
     "name": "Front Hair 4",
-    "gender": "unisex",
+    "gender": "male",
     "image": "features/frontHair/frontHair_m_4.png",
     "unlockCondition": "default"
   }

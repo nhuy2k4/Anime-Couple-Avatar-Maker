@@ -15,6 +15,7 @@ import ja.burhanrashid52.photoeditor.PhotoEditor
 import ja.burhanrashid52.photoeditor.PhotoEditorView
 import org.json.JSONObject
 import com.app.base.core.layer.LayerManager
+import com.app.base.database.FeatureRepository
 
 data class CharacterConfig(
     val baseResId: Int,
@@ -37,10 +38,14 @@ class LayerSetupHelper(
 
     private var outfitJson: JSONObject = JSONObject()
 
+    // Feature repository to load feature JSONs from assets
+    private val featureRepo = FeatureRepository(context)
+    private var defaultsLoaded = false
+
     val characterConfigs = mapOf(
         "male" to CharacterConfig(
             baseResId = R.drawable.body_base_male,
-            defaultFeatures = mapOf("hair" to R.drawable.hair3, "eye" to R.drawable.eye3),
+            defaultFeatures = emptyMap(),
             leftMargin = 0f,
             scale = 0.7f,
             offsetX = 100f,
@@ -48,7 +53,7 @@ class LayerSetupHelper(
         ),
         "female" to CharacterConfig(
             baseResId = R.drawable.body_base_female,
-            defaultFeatures = mapOf("hair" to R.drawable.hair1, "eye" to R.drawable.eye1),
+            defaultFeatures = emptyMap(),
             leftMargin = 0f,
             scale = 0.7f,
             offsetX = 200f,
@@ -65,6 +70,90 @@ class LayerSetupHelper(
         }
     }
 
+    private fun ensureDefaultFeaturesLoaded() {
+        if (defaultsLoaded) return
+        defaultsLoaded = true
+
+        // Load lists (try data/features first, then fallback)
+        val eyes = try {
+            featureRepo.loadFeatures("eyes")
+        } catch (e: Exception) {
+            featureRepo.loadEyes()
+        }
+        val hairs = try {
+            featureRepo.loadFeatures("frontHair")
+        } catch (e: Exception) {
+            featureRepo.loadFrontHair()
+        }
+
+        val packageName = context.packageName
+        val res = context.resources
+
+        characterConfigs.keys.forEach { char ->
+            // Only set defaults if not already present in outfitJson
+            if (outfitJson.has(char)) return@forEach
+
+            val gender = if (char == "female") "female" else "male"
+            val defaults = JSONObject()
+
+            // pick eye
+            val eye = eyes.firstOrNull { it.gender == gender } ?: eyes.firstOrNull()
+            eye?.let {
+                val name = it.image.substringAfterLast('/').substringBeforeLast('.')
+                val resId = res.getIdentifier(name, "drawable", packageName)
+                if (resId != 0) defaults.put("eye", resId)
+            }
+
+            // pick hair (mapped to key "hair")
+            val hair = hairs.firstOrNull { it.gender == gender } ?: hairs.firstOrNull()
+            hair?.let {
+                val name = it.image.substringAfterLast('/').substringBeforeLast('.')
+                val resId = res.getIdentifier(name, "drawable", packageName)
+                if (resId != 0) defaults.put("hair", resId)
+            }
+
+            Log.d("LayerSetupHelper", "Defaults for $char -> eye=${defaults.optInt("eye",0)} hair=${defaults.optInt("hair",0)}")
+
+             outfitJson.put(char, defaults)
+         }
+     }
+
+     fun setupInitialLayersFor(characters: List<String>, onReady: (() -> Unit)? = null) {
+        initLayerManager()
+        photoContainer.viewTreeObserver.addOnGlobalLayoutListener(object :
+            ViewTreeObserver.OnGlobalLayoutListener {
+            override fun onGlobalLayout() {
+                photoContainer.viewTreeObserver.removeOnGlobalLayoutListener(this)
+
+                // ensure defaults loaded from JSON assets
+                ensureDefaultFeaturesLoaded()
+
+                characters.forEach { char ->
+                    val config = characterConfigs[char] ?: return@forEach
+                    val bodyKey = "$char-body"
+                    if (!layerManager.hasLayer(bodyKey)) {
+                        layerManager.setLayer(
+                            bodyKey,
+                            config.baseResId,
+                            1f,
+                            1f,
+                            config.leftMargin,
+                            scaleX = config.scale,
+                            scaleY = config.scale,
+                            offsetX = config.offsetX,
+                            offsetY = config.offsetY
+                        )
+                    }
+
+                    // defaults are loaded into outfitJson by ensureDefaultFeaturesLoaded(); nothing to add here
+                }
+
+                applyFeaturesToLayers()
+                onReady?.invoke()
+            }
+        })
+    }
+
     fun setupInitialLayers(
         characters: List<String>,
         offsetsX: Map<String, Float> = emptyMap(),
@@ -75,6 +164,9 @@ class LayerSetupHelper(
             ViewTreeObserver.OnGlobalLayoutListener {
             override fun onGlobalLayout() {
                 photoContainer.viewTreeObserver.removeOnGlobalLayoutListener(this)
+
+                // ensure defaults loaded from JSON assets
+                ensureDefaultFeaturesLoaded()
 
                 characters.forEach { char ->
                     val config = characterConfigs[char] ?: return@forEach
@@ -93,7 +185,11 @@ class LayerSetupHelper(
                         offsetY = offsetY
                     )
 
-                    if (!outfitJson.has(char)) outfitJson.put(char, JSONObject(config.defaultFeatures))
+                    // outfitJson should already contain defaults from ensureDefaultFeaturesLoaded(); don't overwrite with empty defaults
+                    if (!outfitJson.has(char)) {
+                        // As a fallback, set an empty object so subsequent code doesn't NPE
+                        outfitJson.put(char, JSONObject())
+                    }
                 }
 
                 applyFeaturesToLayers(forCharacters = characters, offsetsX = offsetsX)
@@ -137,11 +233,11 @@ class LayerSetupHelper(
         return result
     }
 
-    fun setFeaturesMap(map: Map<String, Map<String, Int>>) {
+    fun setFeaturesMap(map: Map<String, Map<String, String>>) {
         val root = JSONObject()
         map.forEach { (char, inner) ->
             val obj = JSONObject()
-            inner.forEach { (k, v) -> obj.put(k, v) }
+            inner.forEach { (k, v) -> obj.put(k, v) } // giữ nguyên string path
             root.put(char, obj)
         }
         mergeOutfitJson(root)
@@ -168,7 +264,8 @@ class LayerSetupHelper(
             val innerKeys = obj.keys()
             while (innerKeys.hasNext()) {
                 val k = innerKeys.next()
-                flat["$charKey.$k"] = obj.optInt(k, 0).toString()
+                val v = obj.opt(k)
+                flat["$charKey.$k"] = v?.toString() ?: "0"
             }
         }
         return flat
@@ -200,30 +297,69 @@ class LayerSetupHelper(
             }
 
             features.keys().forEach { type ->
-                val resId = features.optInt(type, 0)
-                if (resId != 0) {
-                    val layerKey = "$char-$type"
-                    layerManager.setLayer(
-                        layerKey,
-                        resId,
-                        scaleX = config.scale,
-                        scaleY = config.scale,
-                        offsetX = bodyOffsetX, // feature theo X của body
-                        offsetY = bodyOffsetY  // feature theo Y của body
-                    )
+                val value = features.opt(type)
+                when (value) {
+                    is Number -> {
+                        val resId = value.toInt()
+                        if (resId != 0) {
+                            val layerKey = "$char-$type"
+                            layerManager.setLayer(
+                                layerKey,
+                                resId,
+                                scaleX = config.scale,
+                                scaleY = config.scale,
+                                offsetX = bodyOffsetX, // feature theo X của body
+                                offsetY = bodyOffsetY  // feature theo Y của body
+                            )
+                        }
+                    }
+                    is String -> {
+                        val assetPath = value
+                        val layerKey = "$char-$type"
+                        layerManager.setLayerFromAsset(
+                            layerKey,
+                            assetPath,
+                            scaleX = config.scale,
+                            scaleY = config.scale,
+                            offsetX = bodyOffsetX,
+                            offsetY = bodyOffsetY
+                        )
+                    }
+                    else -> {
+                        // unsupported type — ignore
+                    }
                 }
             }
         }
     }
 
-    fun moveCharacterX(char: String, offsetX: Float) {
-        val bodyKey = "$char-body"
-        val bodyView = layerManager.getLayersForCharacter(char)
-            .find { layerManager.getKeyForLayerView(it) == bodyKey } ?: return
-        val deltaX = offsetX - bodyView.translationX
-        layerManager.getLayersForCharacter(char).forEach { layer ->
-            layer.translationX += deltaX
+    /** Update a feature for a character using an asset path (stores string in outfitJson) */
+    fun updateFeatureFromAsset(character: String, type: String, assetPath: String) {
+        initLayerManager()
+        val layerKey = "$character-$type"
+        if (layerManager.hasLayer(layerKey)) layerManager.removeLayer(layerKey)
+
+        val charFeatures = outfitJson.optJSONObject(character) ?: JSONObject().also {
+            outfitJson.put(character, it)
         }
+        charFeatures.put(type, assetPath)
+
+        val config = characterConfigs[character] ?: CharacterConfig(0, emptyMap(), 0f)
+        val bodyView = layerManager.getLayersForCharacter(character)
+            .find { layerManager.getKeyForLayerView(it) == "$character-body" }
+
+        val offsetX = bodyView?.translationX ?: config.offsetX
+        val offsetY = bodyView?.translationY ?: config.offsetY
+
+        layerManager.setLayerFromAsset(
+            layerKey,
+            assetPath,
+            scaleX = config.scale,
+            scaleY = config.scale,
+            offsetX = offsetX,
+            offsetY = offsetY
+        )
+        Log.d("LayerSetupHelper", "Updated asset feature: $character-$type -> $assetPath")
     }
 
     fun updateFeature(character: String, type: String, resId: Int) {
@@ -255,11 +391,16 @@ class LayerSetupHelper(
 
     fun setOutfitJson(json: String) {
         initLayerManager()
-        outfitJson = JSONObject(json)
+        // Merge incoming outfit JSON with defaults loaded from assets so missing features fall back to defaults
+        ensureDefaultFeaturesLoaded()
+        val incoming = JSONObject(json)
+        mergeOutfitJson(incoming)
         applyFeaturesToLayers()
     }
 
     fun setOutfitJsonWithBackground(json: String, replace: Boolean = false) {
+        // ensure defaults are loaded so merge preserves missing features
+        ensureDefaultFeaturesLoaded()
         val root = JSONObject(json)
         if (replace) outfitJson = JSONObject()
         mergeOutfitJson(root)
@@ -274,12 +415,18 @@ class LayerSetupHelper(
 
     fun getOutfitJson(): String = outfitJson.toString()
 
-    fun getFullOutfitJson(backgroundId: Int? = null, backgroundUri: Uri? = null): String {
+    fun getFullOutfitJson(backgroundId: String? = null, backgroundUri: Uri? = null): String {
         val root = JSONObject(getOutfitJson())
-        backgroundId?.let { root.put("backgroundId", it) }
+
+        backgroundId?.toIntOrNull()?.let { id ->
+            root.put("backgroundId", id)
+        }
+
         backgroundUri?.let { root.put("backgroundUri", it.toString()) }
+
         return root.toString()
     }
+
 
     fun getBitmapOfContainer(): Bitmap {
         val bitmap = Bitmap.createBitmap(photoContainer.width, photoContainer.height, Bitmap.Config.ARGB_8888)
@@ -321,6 +468,10 @@ class LayerSetupHelper(
     fun resetToInitialState() {
         initLayerManager()
         layerManager.clearLayers(keepBase = false)
+
+        // ensure default features are loaded from JSON before resetting
+        ensureDefaultFeaturesLoaded()
+
         characterConfigs.forEach { (char, config) ->
             val bodyKey = "$char-body"
             layerManager.setLayer(
@@ -331,7 +482,9 @@ class LayerSetupHelper(
                 offsetX = config.offsetX,
                 offsetY = config.offsetY
             )
-            outfitJson.put(char, JSONObject(config.defaultFeatures))
+            // use defaults from outfitJson if present
+            val defaults = outfitJson.optJSONObject(char) ?: JSONObject()
+            outfitJson.put(char, defaults)
         }
         applyFeaturesToLayers()
     }

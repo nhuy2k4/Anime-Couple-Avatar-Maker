@@ -25,49 +25,49 @@ class DailyRewardDialog(
     private val rewards = listOf(
         DailyReward(
             day = 1,
-            icon = R.drawable.hair1,
+            icon = R.drawable.reward,
             label = "Day 1",
             type = "hair",
             value = 1
         ),
         DailyReward(
             day = 2,
-            icon = R.drawable.hair2,
+            icon = R.drawable.reward,
             label = "Day 2",
             type = "hair",
             value = 2
         ),
         DailyReward(
             day = 3,
-            icon = R.drawable.hair3,
+            icon = R.drawable.reward,
             label = "Day 3",
             type = "hair",
             value = 3
         ),
         DailyReward(
             day = 4,
-            icon = R.drawable.hair4,
+            icon = R.drawable.reward,
             label = "Day 4",
             type = "hair",
             value = 4
         ),
         DailyReward(
             day = 5,
-            icon = R.drawable.eye1,
+            icon = R.drawable.reward,
             label = "Day 5",
             type = "eye",
             value = 1
         ),
         DailyReward(
             day = 6,
-            icon = R.drawable.eye3,
+            icon = R.drawable.reward,
             label = "Day 6",
             type = "eye",
             value = 3
         ),
         DailyReward(
             day = 7,
-            icon = R.drawable.eye2,
+            icon = R.drawable.reward,
             label = "Day 7",
             type = "eye",
             value = 2

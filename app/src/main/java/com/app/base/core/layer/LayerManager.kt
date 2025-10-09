@@ -88,6 +88,82 @@ class LayerManager(private val container: FrameLayout, private val context: Cont
         Log.d("LayerManager", "After setLayer $key, children=${container.childCount}")
     }
 
+    // Set layer using an image stored in assets (path relative to assets/)
+    fun setLayerFromAsset(
+        key: String,
+        assetPath: String,
+        widthRatio: Float = 1f,
+        heightRatio: Float = 1f,
+        leftMarginRatio: Float = 0f,
+        topMarginRatio: Float = 0f,
+        rightMarginRatio: Float = 0f,
+        gravity: Int = Gravity.TOP or Gravity.START,
+        scaleX: Float = 1f,
+        scaleY: Float = 1f,
+        offsetX: Float = 0f,
+        offsetY: Float = 0f,
+        followBody: String? = null
+    ) {
+        Log.d("LayerManager", "Before setLayerFromAsset $key, children=${container.childCount}")
+
+        layers[key]?.let {
+            container.removeView(it)
+            layerKeys.remove(it)
+            layers.remove(key)
+            layerBitmaps.remove(key)
+            layerResIds.remove(key)
+            layerFollowBody.remove(key)
+        }
+
+        val bitmap: Bitmap? = try {
+            context.assets.open(assetPath).use { BitmapFactory.decodeStream(it) }
+        } catch (e: Exception) {
+            Log.w("LayerManager", "Failed to load asset $assetPath: ${e.message}")
+            null
+        }
+
+        if (bitmap == null) return
+
+        layerBitmaps[key] = bitmap
+        layerResIds.remove(key)
+        layerFollowBody[key] = followBody
+
+        val containerWidth = container.width
+        val containerHeight = container.height
+        val viewWidth = if (leftMarginRatio > 0f && rightMarginRatio > 0f)
+            (containerWidth * (1f - leftMarginRatio - rightMarginRatio)).toInt()
+        else (containerWidth * widthRatio).toInt()
+        val viewHeight = (containerHeight * heightRatio).toInt()
+
+        val finalOffsetX = followBody?.let { bodyKey ->
+            layers[bodyKey]?.translationX ?: offsetX
+        } ?: offsetX
+
+        val finalOffsetY = followBody?.let { bodyKey ->
+            layers[bodyKey]?.translationY ?: offsetY
+        } ?: offsetY
+
+        val view = ImageView(context).apply {
+            setImageBitmap(bitmap)
+            layoutParams = FrameLayout.LayoutParams(viewWidth, viewHeight).apply {
+                this.gravity = gravity
+                topMargin = (containerHeight * topMarginRatio).toInt()
+                leftMargin = (containerWidth * leftMarginRatio).toInt()
+                rightMargin = (containerWidth * rightMarginRatio).toInt()
+            }
+            this.scaleX = scaleX
+            this.scaleY = scaleY
+            this.translationX = finalOffsetX
+            this.translationY = finalOffsetY
+        }
+
+        container.addView(view)
+        layers[key] = view
+        layerKeys[view] = key
+
+        Log.d("LayerManager", "After setLayerFromAsset $key, children=${container.childCount}")
+    }
+
     fun getKeyForLayerView(view: ImageView): String? = layerKeys[view]
 
     fun hasLayer(key: String): Boolean = layers.containsKey(key)

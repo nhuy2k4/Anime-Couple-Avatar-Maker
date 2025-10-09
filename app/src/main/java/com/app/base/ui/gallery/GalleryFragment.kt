@@ -1,7 +1,6 @@
 package com.app.base.ui.gallery
 
 import android.os.Bundle
-import android.util.Log
 import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.navigation.fragment.findNavController
@@ -22,9 +21,10 @@ class GalleryFragment : BaseFragment<FragmentGalleryBinding, GalleryViewModel>()
     override fun initView() {
         galleryAdapter = GalleryAdapter(
             onPhotoClicked = { outfit ->
-                // Khi click photo → truyền outfitId
+                // 🖼 Khi click item trong gallery → load outfit đã lưu
                 val action = GalleryFragmentDirections.actionGalleryFragmentToPhotographFragment(
-                    outfitId = outfit.id
+                    outfitId = outfit.id,
+                    isFromGallery = true      // ✅ cờ để biết load từ gallery
                 )
                 findNavController().navigate(action)
             },
@@ -33,6 +33,7 @@ class GalleryFragment : BaseFragment<FragmentGalleryBinding, GalleryViewModel>()
             }
         )
 
+
         binding.rcvGallery.apply {
             layoutManager = GridLayoutManager(context, 2)
             adapter = galleryAdapter
@@ -40,11 +41,12 @@ class GalleryFragment : BaseFragment<FragmentGalleryBinding, GalleryViewModel>()
     }
 
     override fun initListener() {
+        // 🔙 Nút Home chỉ popBackStack về HomeFragment
         binding.btnHome.singleClick { popBackStack() }
     }
 
     override fun initData() {
-        // Load outfits từ Room
+        // 🧩 Load outfits đã lưu trong Room
         galleryViewModel.loadSavedOutfits(requireContext())
 
         lifecycleScope.launch {

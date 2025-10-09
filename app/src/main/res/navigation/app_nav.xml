@@ -5,71 +5,100 @@
     android:id="@+id/app_nav"
     app:startDestination="@id/splashFragment">
 
+    <!-- Include Onboarding -->
     <include app:graph="@navigation/nav_graph_language_onboard" />
 
+    <!-- Splash -->
     <fragment
         android:id="@+id/splashFragment"
         android:name="com.app.base.ui.splash.SplashFragment"
         tools:layout="@layout/fragment_splash" />
 
+    <!-- Home -->
     <fragment
         android:id="@+id/homeFragment"
         android:name="com.app.base.ui.home.HomeFragment"
-        tools:layout="@layout/fragment_home" >
+        tools:layout="@layout/fragment_home">
         <action
             android:id="@+id/action_homeFragment_to_categoryFragment"
             app:destination="@id/categoryFragment" />
+        <action
+            android:id="@+id/action_homeFragment_to_galleryFragment"
+            app:destination="@id/galleryFragment" />
     </fragment>
 
+    <!-- Category -->
     <fragment
         android:id="@+id/categoryFragment"
         android:name="com.app.base.ui.category.CategoryFragment"
-        tools:layout="@layout/fragment_category" >
+        tools:layout="@layout/fragment_category">
+
         <action
             android:id="@+id/actionCategoryFragmentToPhotographFragment"
             app:destination="@id/photographFragment"
             app:enterAnim="@anim/slide_in_right"
             app:exitAnim="@anim/slide_out_left"/>
+
         <action
             android:id="@+id/action_categoryFragment_to_checkPointFragment"
             app:destination="@id/checkPointFragment"/>
+
         <argument
             android:name="outfitId"
             app:argType="long"
-            android:defaultValue="-1L"/>
+            android:defaultValue="-1L" />
+
         <argument
             android:name="fromHome"
             app:argType="boolean"
             android:defaultValue="false" />
+
         <argument
             android:name="backgroundId"
-            app:argType="integer"
-            android:defaultValue="-1" />
+            app:argType="string"
+            android:defaultValue="" />
+
         <argument
             android:name="mode"
             app:argType="string"
             android:defaultValue="A" />
+
         <argument
             android:name="selectedCharacter"
             app:argType="integer"
             android:defaultValue="-1" />
+
         <argument
             android:name="gender"
             app:argType="string"
             android:defaultValue="female" />
+        <argument
+            android:name="isFromGallery"
+            app:argType="boolean"
+            android:defaultValue="false"/>
+        <argument
+            android:name="outfitJson"
+            app:argType="string"
+            android:defaultValue=""/>
     </fragment>
+
+    <!-- Arena Select -->
     <fragment
         android:id="@+id/arenaSelectFragment"
         android:name="com.app.base.ui.battle.ArenaSelectFragment"
-        tools:layout="@layout/fragment_arena_select" >
+        tools:layout="@layout/fragment_arena_select">
         <action
             android:id="@+id/action_arenaSelectFragment_to_categoryFragment"
             app:destination="@id/categoryFragment" />
     </fragment>
+
+    <!-- Language -->
     <fragment
         android:id="@+id/languageAppFragment"
         android:name="com.app.base.ui.language.LanguageAppFragment"
         tools:layout="@layout/fragment_language_app" />
+
+    <!-- Cosplay -->
     <fragment
         android:id="@+id/cosplayFragment"
         android:name="com.app.base.ui.cosplay.CosplayFragment"
@@ -78,44 +107,72 @@
             android:id="@+id/action_cosplayFragment_to_categoryFragment"
             app:destination="@id/categoryFragment" />
     </fragment>
+
+    <!-- CheckPoint -->
     <fragment
         android:id="@+id/checkPointFragment"
         android:name="com.app.base.ui.checkpoint.CheckPointFragment"
         tools:layout="@layout/fragment_check_point">
         <argument
             android:name="outfitId"
-            app:argType="integer"
-            android:defaultValue="-1" />
+            app:argType="long"
+            android:defaultValue="-1L" />
         <argument
             android:name="mode"
             app:argType="string"
             android:defaultValue="A" />
     </fragment>
+
+    <!-- Battle -->
     <fragment
         android:id="@+id/battleFragment"
         android:name="com.app.base.ui.battle.BattleFragment"
         tools:layout="@layout/fragment_battle" />
+
+    <!-- Waiting -->
     <fragment
         android:id="@+id/waitingFragment"
         android:name="com.app.base.ui.battle.WaitingFragment"
         tools:layout="@layout/fragment_waiting" />
+
+    <!-- Photograph -->
     <fragment
         android:id="@+id/photographFragment"
         android:name="com.app.base.ui.photograph.PhotographFragment"
-        tools:layout="@layout/fragment_photograph" >
+        tools:layout="@layout/fragment_photograph">
+
         <action
             android:id="@+id/action_photographFragment_to_categoryFragment"
             app:destination="@id/categoryFragment" />
+
         <argument
             android:name="outfitId"
-            app:argType="long" />
+            app:argType="long"
+            android:defaultValue="-1L" />
+        <argument
+            android:name="isFromGallery"
+            app:argType="boolean"
+            android:defaultValue="false" />
+        <argument
+            android:name="outfitJson"
+            app:argType="string"
+            android:defaultValue=""/>
     </fragment>
+
+    <!-- Gallery -->
     <fragment
         android:id="@+id/galleryFragment"
         android:name="com.app.base.ui.gallery.GalleryFragment"
-        tools:layout="@layout/fragment_gallery" >
+        tools:layout="@layout/fragment_gallery">
+
         <action
             android:id="@+id/action_galleryFragment_to_photographFragment"
             app:destination="@id/photographFragment" />
+
+        <argument
+            android:name="selectedOutfitId"
+            app:argType="long"
+            android:defaultValue="-1L" />
     </fragment>
+
 </navigation>

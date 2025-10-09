@@ -1,7 +1,5 @@
 package com.app.base.ui.photograph
 
-import android.graphics.Bitmap
-import android.net.Uri
 import android.os.Bundle
 import android.util.Log
 import android.view.View
@@ -27,7 +25,9 @@ class PhotographFragment : BaseFragment<FragmentPhotographBinding, PhotographVie
     private val photographViewModel by viewModel<PhotographViewModel>()
     private lateinit var layerSetupHelper: LayerSetupHelper
     private val photoAdapter by lazy { PhotographAdapter(onPhotoTapped = ::onPhotoSelected) }
+
     private var outfitId: Long? = null
+    private var isFromGallery: Boolean = false
 
     override fun initView() {
         binding.rcvPhotographs.apply {
@@ -37,14 +37,19 @@ class PhotographFragment : BaseFragment<FragmentPhotographBinding, PhotographVie
     }
 
     override fun initListener() {
+        // 🔙 Quay lại Category (Mode A)
         binding.btnBack.setOnClickListener {
             val action = PhotographFragmentDirections
                 .actionPhotographFragmentToCategoryFragment(
-                    outfitId = outfitId ?: -1L
+                    outfitId = outfitId ?: -1L,
+                    isFromGallery = isFromGallery,
+                    outfitJson = layerSetupHelper.getOutfitJson(),
+                    mode = "A"
                 )
             findNavController().navigate(action)
         }
 
+        // 💾 Lưu outfit
         binding.btnSave.setOnClickListener { saveCurrentOutfit() }
     }
 
@@ -66,39 +71,59 @@ class PhotographFragment : BaseFragment<FragmentPhotographBinding, PhotographVie
         super.onViewCreated(view, savedInstanceState)
 
         layerSetupHelper = LayerSetupHelper(binding.photoContainer, binding.photoEditorView, requireContext())
-    outfitId = args.outfitId
 
-    loadOutfitById(outfitId!!)
+        outfitId = args.outfitId.takeIf { it != -1L }
+        isFromGallery = args.isFromGallery
+        Log.d("PhotographFragment", "🧩 outfitId=$outfitId, isFromGallery=$isFromGallery")
+        if (isFromGallery && outfitId != null) {
+            loadOutfitById(outfitId!!)
+        } else {
+            // 🆕 Outfit mới
+            args.outfitJson?.let { json ->
+                layerSetupHelper.setupInitialLayers(
+                    listOf("male", "female"),
+                    offsetsX = mapOf("male" to 170f, "female" to -170f)
+                ) {
+                    layerSetupHelper.setOutfitJsonWithBackground(json)
+                }
+            }
+        }
     }
 
     private fun loadOutfitById(id: Long) {
         lifecycleScope.launch(Dispatchers.IO) {
             val outfit = AppDatabase.getInstance(requireContext()).outfitDao().getOutfitById(id)
-            Log.d("PhotographFragment", "Loaded outfit = $outfit")
-
             withContext(Dispatchers.Main) {
-                layerSetupHelper.setupInitialLayers(listOf("male", "female"),
-                    offsetsX = mapOf(
-                        "male" to 30f,     // căn trái
-                        "female" to -10f)) {
-                    outfit?.let {
-                        // convert flat features map to nested
-                        val nested = mutableMapOf<String, MutableMap<String, Int>>()
+                outfit?.let {
+                    // Lấy danh sách character từ features, fallback male/female
+                    val characters = if (it.features.isNotEmpty()) {
+                        it.features.keys.map { k -> k.split('.')[0] }.distinct()
+                    } else listOf("male", "female")
+
+                    // Offset hợp lý để body hiển thị không chồng nhau
+                    val offsets = if (characters.size == 1) mapOf(characters[0] to 0f)
+                    else mapOf("male" to 140f, "female" to -140f)
+
+                    // Setup initial layers
+                    layerSetupHelper.setupInitialLayers(characters, offsetsX = offsets) {
+                        // Build nested features map
+                        val nested = mutableMapOf<String, MutableMap<String, String>>()
                         it.features.forEach { (k, v) ->
                             val parts = k.split('.')
                             if (parts.size == 2) {
                                 val char = parts[0]
                                 val layer = parts[1]
-                                val mapForChar = nested.getOrPut(char) { mutableMapOf() }
-                                mapForChar[layer] = v.toIntOrNull() ?: 0
+                                nested.getOrPut(char) { mutableMapOf() }[layer] = v // giữ nguyên string path
                             }
                         }
                         layerSetupHelper.setFeaturesMap(nested)
 
-                        // if backgroundId exists, set via existing JSON API to keep background drawable behavior
-                        it.backgroundId?.toIntOrNull()?.let { bg ->
-                            // Ensure the backgroundId is included when calling setOutfitJsonWithBackground
-                            layerSetupHelper.setOutfitJsonWithBackground(layerSetupHelper.getFullOutfitJson(backgroundId = bg))
+                        Log.d("PhotographFragment", "Features map to set: $nested")
+                        // Set background nếu có
+                        it.backgroundId?.let { bg ->
+                            layerSetupHelper.setOutfitJsonWithBackground(
+                                layerSetupHelper.getFullOutfitJson(backgroundId = bg)
+                            )
                         }
                     }
                 }
@@ -108,80 +133,62 @@ class PhotographFragment : BaseFragment<FragmentPhotographBinding, PhotographVie
 
 
     private fun onPhotoSelected(photo: OutfitEntity) {
-        // 1️⃣ Update LayerSetupHelper from photo entity
-        val nested = mutableMapOf<String, MutableMap<String, Int>>()
+        val nested = mutableMapOf<String, MutableMap<String, String>>()
         photo.features.forEach { (k, v) ->
             val parts = k.split('.')
             if (parts.size == 2) {
                 val char = parts[0]
                 val layer = parts[1]
-                val mapForChar = nested.getOrPut(char) { mutableMapOf() }
-                mapForChar[layer] = v.toIntOrNull() ?: 0
+                nested.getOrPut(char) { mutableMapOf() }[layer] = v // giữ nguyên string path
             }
         }
         layerSetupHelper.setFeaturesMap(nested)
-        photo.backgroundId?.toIntOrNull()?.let { bg ->
-            // pass the explicit backgroundId so the helper can set the drawable
-            layerSetupHelper.setOutfitJsonWithBackground(layerSetupHelper.getFullOutfitJson(backgroundId = bg))
 
-            // Persist the chosen backgroundId into DB for this outfit
-            outfitId?.let { id ->
-                lifecycleScope.launch(Dispatchers.IO) {
-                    val dao = AppDatabase.getInstance(requireContext()).outfitDao()
-                    val existing = dao.getOutfitById(id)
-                    existing?.let {
-                        val featuresFlat = layerSetupHelper.getFeaturesAsStringMap()
-                        // store both features and backgroundId so DB reflects selection
-                        dao.update(
-                            it.copy(
-                                features = featuresFlat,
-                                backgroundId = photo.backgroundId // keep as String
-                            )
-                        )
-                        Log.d("PhotographFragment", "Saved backgroundId=${photo.backgroundId} to DB for outfit $id")
-                    }
-                }
-            }
+        photo.backgroundId?.let { bg ->
+            layerSetupHelper.setOutfitJsonWithBackground(
+                layerSetupHelper.getFullOutfitJson(backgroundId = bg)
+            )
         }
     }
-
 
     private fun saveCurrentOutfit() {
         layerSetupHelper.saveCurrentOutfitToGallery { uri ->
-            updateOutfitInDb(uri) {
-                Toast.makeText(requireContext(), "Outfit saved!", Toast.LENGTH_SHORT).show()
-                findNavController().navigate(R.id.homeFragment)
-            }
-        }
-    }
-    private fun updateOutfitInDb(uri: Uri? = null, onComplete: (() -> Unit)? = null) {
-        val featuresFlat = layerSetupHelper.getFeaturesAsStringMap()
-        outfitId?.let { id ->  // đảm bảo id không null
             lifecycleScope.launch(Dispatchers.IO) {
                 val dao = AppDatabase.getInstance(requireContext()).outfitDao()
-                val outfit = dao.getOutfitById(id)
-                outfit?.let {
-                    // also persist current backgroundId from layerSetupHelper
-                    val currentJson = layerSetupHelper.getOutfitJson()
-                    val bgId = try {
-                        org.json.JSONObject(currentJson).optInt("backgroundId", 0)
-                    } catch (e: Exception) { 0 }
-                    val bgStr: String? = if (bgId != 0) bgId.toString() else it.backgroundId
-                    dao.update(it.copy(features = featuresFlat, thumbnailPath = uri?.toString(), backgroundId = bgStr))
+                val features = layerSetupHelper.getFeaturesAsStringMap()
+                val bgId = getCurrentBgId()
+
+                if (isFromGallery && outfitId != null) {
+                    dao.getOutfitById(outfitId!!)?.let {
+                        dao.update(it.copy(
+                            features = features,
+                            thumbnailPath = uri?.toString(),
+                            backgroundId = bgId
+                        ))
+                        Log.d("PhotographFragment", "✅ Updated existing outfit ${it.id}")
+                    }
+                } else {
+                    val newOutfit = OutfitEntity(
+                        features = features,
+                        backgroundId = bgId,
+                        thumbnailPath = uri?.toString()
+                    )
+                    dao.insert(newOutfit)
+                    Log.d("PhotographFragment", "✅ Created new outfit")
                 }
-                withContext(Dispatchers.Main) { onComplete?.invoke() }
+
+                withContext(Dispatchers.Main) {
+                    Toast.makeText(requireContext(), "Outfit saved!", Toast.LENGTH_SHORT).show()
+                    findNavController().navigate(R.id.homeFragment)
+                }
             }
         }
     }
 
-
-    private fun saveBitmapToGallery(bitmap: Bitmap, onDone: (Uri?) -> Unit) {
-        layerSetupHelper.saveCurrentOutfitToGallery { uri ->
-            updateOutfitInDb(uri) {
-                Toast.makeText(requireContext(), "Outfit saved!", Toast.LENGTH_SHORT).show()
-                findNavController().navigate(R.id.homeFragment)
-            }
-        }
-
+    private fun getCurrentBgId(): String? {
+        return try {
+            val obj = org.json.JSONObject(layerSetupHelper.getOutfitJson())
+            obj.optString("backgroundId", null)
+        } catch (e: Exception) { null }
     }
 }
