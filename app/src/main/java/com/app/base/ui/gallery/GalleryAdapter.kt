@@ -41,15 +41,11 @@ class GalleryAdapter(
     inner class ViewHolder(private val binding: ItemGalleryBinding) : RecyclerView.ViewHolder(binding.root) {
         fun bind(item: OutfitEntity, position: Int) {
             // Load background ưu tiên URI, fallback backgroundId
-            val bgUri = item.backgroundUri?.let { Uri.parse(it) }
+            val bgUri = item.thumbnailPath?.let { Uri.parse(it) }
             if (bgUri != null) {
                 binding.imvGallery.setImageURI(bgUri)
             } else {
-                val bgId = try {
-                    JSONObject(item.outfitJson).optInt("backgroundId", R.drawable.bg_gradient)
-                } catch (e: Exception) {
-                    R.drawable.bg_gradient
-                }
+                val bgId = item.backgroundId?.toIntOrNull() ?: R.drawable.bg_gradient
                 binding.imvGallery.setImageResource(bgId)
             }
 

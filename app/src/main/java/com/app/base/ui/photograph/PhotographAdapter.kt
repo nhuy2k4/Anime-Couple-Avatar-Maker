@@ -18,26 +18,18 @@ class PhotographAdapter(
 
     private val outfits = mutableListOf<OutfitEntity>()
 
-    // 2 item mặc định
+    // 2 item mặc định (dùng backgroundId field)
     private val defaultItems = listOf(
-        OutfitEntity(
-            outfitJson = """{"backgroundId": ${R.drawable.bg_gradient}}""",
-            backgroundUri = null
-        ),
-        OutfitEntity(
-            outfitJson = """{"backgroundId": ${R.drawable.photo1}}""",
-            backgroundUri = null
-        ),
-        OutfitEntity(
-            outfitJson = """{"backgroundId": ${R.drawable.photo2}}""",
-            backgroundUri = null
-        )
+        OutfitEntity(backgroundId = R.drawable.bg_gradient.toString()),
+        OutfitEntity(backgroundId = R.drawable.photo1.toString()),
+        OutfitEntity(backgroundId = R.drawable.photo2.toString())
     )
 
     fun setPhotos(newOutfits: List<OutfitEntity>) {
         outfits.clear()
         // Gộp 2 item mặc định + outfit từ Room
         outfits.addAll(defaultItems)
+        outfits.addAll(newOutfits)
         notifyDataSetChanged()
     }
 
@@ -65,11 +57,11 @@ class PhotographAdapter(
 
     inner class ViewHolder(private val binding: ItemPhotographBinding) : RecyclerView.ViewHolder(binding.root) {
         fun bind(item: OutfitEntity) {
-            val bgUri = item.backgroundUri?.let { Uri.parse(it) }
+            val bgUri = item.thumbnailPath?.let { Uri.parse(it) }
             if (bgUri != null) {
                 binding.imvPhoto.setImageURI(bgUri) // Hiển thị đúng bitmap đã save
             } else {
-                val bgId = JSONObject(item.outfitJson).optInt("backgroundId", R.drawable.bg_gradient)
+                val bgId = item.backgroundId?.toIntOrNull() ?: R.drawable.bg_gradient
                 binding.imvPhoto.setImageResource(bgId)
             }
 

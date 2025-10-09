@@ -15,6 +15,9 @@ class LayerManager(private val container: FrameLayout, private val context: Cont
     private val layerBitmaps = mutableMapOf<String, Bitmap>()    // key -> Bitmap
     private val layerResIds = mutableMapOf<String, Int>()        // key -> resId
 
+    // Mapping for feature follow body
+    private val layerFollowBody = mutableMapOf<String, String?>() // key -> bodyKey
+
     fun setLayer(
         key: String,
         resId: Int,
@@ -24,34 +27,30 @@ class LayerManager(private val container: FrameLayout, private val context: Cont
         topMarginRatio: Float = 0f,
         rightMarginRatio: Float = 0f,
         gravity: Int = Gravity.TOP or Gravity.START,
-        scaleX: Float = 1f,      // thêm
-        scaleY: Float = 1f,      // thêm
-        offsetX: Float = 0f,     // thêm
-        offsetY: Float = 0f      // thêm
+        scaleX: Float = 1f,
+        scaleY: Float = 1f,
+        offsetX: Float = 0f,
+        offsetY: Float = 0f,
+        followBody: String? = null  // <-- layer sẽ bám theo body
     ) {
         Log.d("LayerManager", "Before setLayer $key, children=${container.childCount}")
 
-        // Nếu resId giống layer hiện tại -> skip
         val oldResId = layerResIds[key]
-        if (oldResId == resId) {
-            Log.d("LayerManager", "Layer $key already has same resId, skip update")
-            return
-        }
+        if (oldResId == resId) return
 
-        // Remove layer cũ nếu có
         layers[key]?.let {
             container.removeView(it)
             layerKeys.remove(it)
             layers.remove(key)
             layerBitmaps.remove(key)
             layerResIds.remove(key)
-            Log.d("LayerManager", "Removed layer: $key, children=${container.childCount}")
+            layerFollowBody.remove(key)
         }
 
-        // Decode bitmap mới và lưu cache
         val bitmap = BitmapFactory.decodeResource(context.resources, resId)
         layerBitmaps[key] = bitmap
         layerResIds[key] = resId
+        layerFollowBody[key] = followBody
 
         val containerWidth = container.width
         val containerHeight = container.height
@@ -59,6 +58,14 @@ class LayerManager(private val container: FrameLayout, private val context: Cont
             (containerWidth * (1f - leftMarginRatio - rightMarginRatio)).toInt()
         else (containerWidth * widthRatio).toInt()
         val viewHeight = (containerHeight * heightRatio).toInt()
+
+        val finalOffsetX = followBody?.let { bodyKey ->
+            layers[bodyKey]?.translationX ?: offsetX
+        } ?: offsetX
+
+        val finalOffsetY = followBody?.let { bodyKey ->
+            layers[bodyKey]?.translationY ?: offsetY
+        } ?: offsetY
 
         val view = ImageView(context).apply {
             setImageBitmap(bitmap)
@@ -70,8 +77,8 @@ class LayerManager(private val container: FrameLayout, private val context: Cont
             }
             this.scaleX = scaleX
             this.scaleY = scaleY
-            this.translationX = offsetX
-            this.translationY = offsetY
+            this.translationX = finalOffsetX
+            this.translationY = finalOffsetY
         }
 
         container.addView(view)
@@ -91,8 +98,8 @@ class LayerManager(private val container: FrameLayout, private val context: Cont
             layerKeys.remove(it)
             layerBitmaps.remove(key)
             layerResIds.remove(key)
+            layerFollowBody.remove(key)
             layers.remove(key)
-            Log.d("LayerManager", "Removed layer: $key, children=${container.childCount}")
         }
     }
 

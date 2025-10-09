@@ -29,55 +29,98 @@ class CategoryFragment : BaseFragment<FragmentCategoryBinding, CategoryViewModel
 
     private lateinit var layerSetupHelper: LayerSetupHelper
     private lateinit var categoryLayerHelper: CategoryLayerHelper
-
+    private lateinit var allButtons: List<View>
     private var outfitId: Long = -1L
 
     override fun initView() {
+        allButtons = listOf(
+            binding.btnCamera,
+            binding.btnGoPK,
+            binding.btnWand,
+            binding.btnReset,
+            binding.btnChangeSkin,
+            binding.btnChangeMale,
+            binding.similar,
+            binding.btnWand,
+            binding.previewCos
+        )
         setupRecyclerViews()
-        if (args.mode == "B") {
-            setupModeB()
-        } else {
-            setupModeA()
+        when (args.mode) {
+            "B" -> setupModeB() // Thiết lập cho chế độ Battle/PK
+            "C" -> setupModeC() // Thiết lập cho chế độ Cosplay
+            else -> setupModeA() // Mặc định là chế độ A
+        }
+    }
+    private fun setButtonVisibility(visibleButtons: List<View>) {
+        allButtons.forEach { button ->
+            button.visibility = if (button in visibleButtons) {
+                View.VISIBLE
+            } else {
+                View.GONE
+            }
         }
     }
     private fun setupModeA() {
-        binding.btnCamera.visibility = View.VISIBLE
-        binding.btnGoPK.visibility = View.GONE
+        setButtonVisibility(listOf(
+            binding.btnCamera,
+            binding.btnReset,
+            binding.btnChangeSkin,
+            binding.btnChangeMale
+        ))
     }
-
+    private fun setupModeC() {
+        setButtonVisibility(listOf(
+            binding.similar,
+            binding.btnWand,
+            binding.previewCos
+        ))
+    }
     private fun setupModeB() {
-        binding.btnCamera.visibility = View.GONE
-        binding.btnGoPK.visibility = View.VISIBLE
+        setButtonVisibility(listOf(
+            binding.btnGoPK,
+            binding.btnChangeMale,
+            binding.btnReset,
+            binding.btnChangeSkin
+
+        ))
     }
     override fun initListener() {
         binding.btnHome.setOnClickListener { showSaveDialog { navigate(R.id.homeFragment) } }
         binding.btnReset.setOnClickListener { layerSetupHelper.resetToInitialState() }
-
         // ✅ Chỉ toggle khi nhấn nút
         binding.btnChangeMale.setOnClickListener { categoryLayerHelper.switchCharacter() }
 
         // Nếu bạn muốn chọn nhân vật cố định từ UI, ví dụ avatar trong RecyclerView
         // someMaleAvatar.setOnClickListener { categoryLayerHelper.setCharacter("male") }
         // someFemaleAvatar.setOnClickListener { categoryLayerHelper.setCharacter("female") }
-        if (args.mode == "B") {
-            binding.btnGoPK.setOnClickListener {
-                lifecycleScope.launch(Dispatchers.IO) {
-                    val dao = AppDatabase.getInstance(requireContext()).outfitDao()
-                    val outfit = dao.getOutfitById(outfitId)
+        when (args.mode) {
+            "B" -> {
+                binding.btnGoPK.setOnClickListener {
+                    lifecycleScope.launch(Dispatchers.IO) {
+                        val dao = AppDatabase.getInstance(requireContext()).outfitDao()
+                        val outfit = dao.getOutfitById(outfitId)
 
-                    if (outfit != null) {
-                        val cleanedJson = removeBackgroundId(outfit.outfitJson)
-                        dao.update(outfit.copy(outfitJson = cleanedJson, backgroundUri = null))
-                        Log.d("CategoryFragment", "BackgroundId removed for outfit $outfitId")
-                    }
+                        if (outfit != null) {
+                            // Remove backgroundId (now a separate column)
+                            dao.update(outfit.copy(backgroundId = null))
+                            Log.d("CategoryFragment", "BackgroundId removed for outfit $outfitId")
+                        }
 
-                    withContext(Dispatchers.Main) {
-                        navigate(R.id.waitingFragment)
+                        withContext(Dispatchers.Main) {
+                            navigate(R.id.waitingFragment)
+                        }
                     }
                 }
             }
-        } else
-            binding.btnCamera.setOnClickListener { saveCurrentOutfitAndNext() }
+            "C" -> binding.btnWand.setOnClickListener {
+                val bundle = Bundle().apply {
+                    putString("sourceMode", "C")
+                }
+                navigate(R.id.checkPointFragment, bundle)
+
+            }
+            else -> binding.btnCamera.setOnClickListener { saveCurrentOutfitAndNext() }
+        }
     }
     private fun removeBackgroundId(json: String): String {
         val jsonObject = JSONObject(json)
@@ -113,18 +156,30 @@ class CategoryFragment : BaseFragment<FragmentCategoryBinding, CategoryViewModel
             val dao = AppDatabase.getInstance(requireContext()).outfitDao()
             if (isNewOutfit) {
                 // outfitJson mặc định
-                val initialJson = if (args.mode == "B") {
-                    """{ "backgroundId": "${args.backgroundId}" }"""   // 🟢 Mode B -> set backgroundId luôn
-                } else {
-                    "{}"
-                }
-
-                val entity = OutfitEntity(outfitJson = initialJson, backgroundUri = null)
-                outfitId = dao.insert(entity)
+                // Prepare initial features/background when creating new outfit
+                val initialBackgroundId = if (args.mode == "B") args.backgroundId else null
+                val featuresMap = emptyMap<String, String>()
+                val entity = OutfitEntity(features = featuresMap, backgroundId = initialBackgroundId?.toString(), thumbnailPath = null)
+                val rowId = dao.insert(entity)
+                outfitId = rowId
 
                 withContext(Dispatchers.Main) {
-                    layerSetupHelper.setupInitialLayers {
-                        layerSetupHelper.setOutfitJsonWithBackground(initialJson)
+                    if (args.mode == "C") {
+                        layerSetupHelper.setupInitialLayers(listOf(args.gender),
+                                offsetsX = mapOf(
+                                "male" to 30f,     // căn trái
+                            "female" to -10f)  // căn phải
+                        )
+                    } else
+                    layerSetupHelper.setupInitialLayers(listOf("male", "female"),
+                        offsetsX = mapOf(
+                            "male" to 150f,     // căn trái
+                            "female" to -200f) ) {
+                        // If background provided, set it via JSON-compatible API
+                        initialBackgroundId?.let {
+                            val json = layerSetupHelper.getFullOutfitJson(backgroundId = it)
+                            layerSetupHelper.setOutfitJsonWithBackground(json)
+                        }
                     }
                 }
             } else {
@@ -133,8 +188,28 @@ class CategoryFragment : BaseFragment<FragmentCategoryBinding, CategoryViewModel
                 val outfit = dao.getOutfitById(outfitId)
                 withContext(Dispatchers.Main) {
                     outfit?.let {
-                        layerSetupHelper.setupInitialLayers(onReady = {
-                            layerSetupHelper.setOutfitJsonWithBackground(it.outfitJson)
+                        layerSetupHelper.setupInitialLayers(listOf("male", "female"),
+                            offsetsX = mapOf(
+                                "male" to 30f,     // căn trái
+                                "female" to -10f)
+                            , onReady = {
+                            // convert flat features map to nested Map<String, Map<String, Int>>
+                            val nested = mutableMapOf<String, MutableMap<String, Int>>()
+                            it.features.forEach { (k, v) ->
+                                val parts = k.split('.')
+                                if (parts.size == 2) {
+                                    val char = parts[0]
+                                    val layer = parts[1]
+                                    val mapForChar = nested.getOrPut(char) { mutableMapOf() }
+                                    mapForChar[layer] = v.toIntOrNull() ?: 0
+                                }
+                            }
+                            layerSetupHelper.setFeaturesMap(nested)
+                            // set background if exists
+                            it.backgroundId?.toIntOrNull()?.let { bg ->
+                                // ensure backgroundId is included in JSON passed to helper
+                                layerSetupHelper.setOutfitJsonWithBackground(layerSetupHelper.getFullOutfitJson(backgroundId = bg))
+                            }
                         })
                     }
                 }
@@ -165,14 +240,14 @@ class CategoryFragment : BaseFragment<FragmentCategoryBinding, CategoryViewModel
                     val outfit = dao.getOutfitById(outfitId)
 
                     if (outfit != null) {
-                        if (outfit.backgroundUri == null) {
-                            // ❌ outfit chưa có backgroundUri -> xóa
+                        if (outfit.backgroundId == null && outfit.thumbnailPath == null) {
+                            // ❌ outfit chưa có background -> xóa
                             dao.deleteOutfit(outfit.id)
                             Log.d("CategoryFragment", "Deleted empty outfit $outfitId")
                         } else {
-                            // ✅ outfit có backgroundUri -> update outfitJson trước khi thoát
-                            val outfitJson = layerSetupHelper.getFullOutfitJson()
-                            dao.update(outfit.copy(outfitJson = outfitJson))
+                            // ✅ update features/backgroundId before exit
+                            val featuresFlat = layerSetupHelper.getFeaturesAsStringMap()
+                            dao.update(outfit.copy(features = featuresFlat, backgroundId = outfit.backgroundId))
                             Log.d("CategoryFragment", "Updated outfit $outfitId before exit")
                         }
                     }
@@ -195,12 +270,18 @@ class CategoryFragment : BaseFragment<FragmentCategoryBinding, CategoryViewModel
     }
 
     private fun updateOutfitInDb(onComplete: (() -> Unit)? = null) {
-        val outfitJson = layerSetupHelper.getFullOutfitJson()
+        val featuresFlat = layerSetupHelper.getFeaturesAsStringMap()
         lifecycleScope.launch(Dispatchers.IO) {
             val dao = AppDatabase.getInstance(requireContext()).outfitDao()
             val outfit = dao.getOutfitById(outfitId)
             outfit?.let {
-                dao.update(it.copy(outfitJson = outfitJson))
+                // also persist current backgroundId from layerSetupHelper
+                val currentJson = layerSetupHelper.getOutfitJson()
+                val bgId = try {
+                    org.json.JSONObject(currentJson).optInt("backgroundId", 0)
+                } catch (e: Exception) { 0 }
+                val bgStr: String? = if (bgId != 0) bgId.toString() else it.backgroundId
+                dao.update(it.copy(features = featuresFlat, backgroundId = bgStr))
                 Log.d("CategoryFragment", "Auto updated outfit $outfitId")
             }
             withContext(Dispatchers.Main) { onComplete?.invoke() }
@@ -222,3 +303,8 @@ class CategoryFragment : BaseFragment<FragmentCategoryBinding, CategoryViewModel
         }
     }
 }
+
+
+
+
+

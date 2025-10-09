@@ -37,25 +37,24 @@ class LayerSetupHelper(
 
     private var outfitJson: JSONObject = JSONObject()
 
-    private val characterConfigs = mapOf(
+    val characterConfigs = mapOf(
         "male" to CharacterConfig(
             baseResId = R.drawable.body_base_male,
             defaultFeatures = mapOf("hair" to R.drawable.hair3, "eye" to R.drawable.eye3),
-            leftMargin = -0.25f,
+            leftMargin = 0f,
             scale = 0.7f,
-            offsetX = 100f,    // giữ nguyên
-            offsetY = 250f     // xuống dưới 150px
+            offsetX = 100f,
+            offsetY = 250f
         ),
         "female" to CharacterConfig(
             baseResId = R.drawable.body_base_female,
             defaultFeatures = mapOf("hair" to R.drawable.hair1, "eye" to R.drawable.eye1),
-            leftMargin = 0.15f,
+            leftMargin = 0f,
             scale = 0.7f,
-            offsetX = 50f,     // giữ nguyên
-            offsetY = 250f     // xuống dưới 150px
+            offsetX = 200f,
+            offsetY = 250f
         )
     )
-
 
     fun initLayerManager() {
         if (!::layerManager.isInitialized) layerManager = LayerManager(photoContainer, context)
@@ -66,33 +65,38 @@ class LayerSetupHelper(
         }
     }
 
-    fun setupInitialLayers(onReady: (() -> Unit)? = null) {
+    fun setupInitialLayers(
+        characters: List<String>,
+        offsetsX: Map<String, Float> = emptyMap(),
+        onReady: (() -> Unit)? = null
+    ) {
         initLayerManager()
         photoContainer.viewTreeObserver.addOnGlobalLayoutListener(object :
             ViewTreeObserver.OnGlobalLayoutListener {
             override fun onGlobalLayout() {
                 photoContainer.viewTreeObserver.removeOnGlobalLayoutListener(this)
 
-                characterConfigs.forEach { (char, config) ->
+                characters.forEach { char ->
+                    val config = characterConfigs[char] ?: return@forEach
                     val bodyKey = "$char-body"
-                    if (!layerManager.hasLayer(bodyKey)) {
-                        layerManager.setLayer(
-                            bodyKey,
-                            config.baseResId,
-                            1f,
-                            1f,
-                            config.leftMargin,
-                            scaleX = config.scale,
-                            scaleY = config.scale,
-                            offsetX = config.offsetX,
-                            offsetY = config.offsetY
-                        )
-                    }
+
+                    val offsetX = offsetsX[char] ?: config.offsetX
+                    val offsetY = config.offsetY
+
+                    // body
+                    layerManager.setLayer(
+                        bodyKey,
+                        config.baseResId,
+                        scaleX = config.scale,
+                        scaleY = config.scale,
+                        offsetX = offsetX,
+                        offsetY = offsetY
+                    )
 
                     if (!outfitJson.has(char)) outfitJson.put(char, JSONObject(config.defaultFeatures))
                 }
 
-                applyFeaturesToLayers()
+                applyFeaturesToLayers(forCharacters = characters, offsetsX = offsetsX)
                 onReady?.invoke()
             }
         })
@@ -116,31 +120,83 @@ class LayerSetupHelper(
         Log.d("LayerSetupHelper", "After merge: $outfitJson")
     }
 
-    fun applyFeaturesToLayers() {
-        initLayerManager()
-        characterConfigs.forEach { (char, config) ->
-            val bodyKey = "$char-body"
-            if (!layerManager.hasLayer(bodyKey)) {
-                layerManager.setLayer(
-                    bodyKey,
-                    config.baseResId,
-                    1f,
-                    1f,
-                    config.leftMargin,
-                    scaleX = config.scale,
-                    scaleY = config.scale,
-                    offsetX = config.offsetX,
-                    offsetY = config.offsetY
-                )
+    fun getFeaturesMap(): Map<String, Map<String, Int>> {
+        val result = mutableMapOf<String, MutableMap<String, Int>>()
+        val keys = outfitJson.keys()
+        while (keys.hasNext()) {
+            val charKey = keys.next()
+            val obj = outfitJson.optJSONObject(charKey) ?: continue
+            val inner = mutableMapOf<String, Int>()
+            val innerKeys = obj.keys()
+            while (innerKeys.hasNext()) {
+                val k = innerKeys.next()
+                inner[k] = obj.optInt(k, 0)
             }
+            result[charKey] = inner
+        }
+        return result
+    }
+
+    fun setFeaturesMap(map: Map<String, Map<String, Int>>) {
+        val root = JSONObject()
+        map.forEach { (char, inner) ->
+            val obj = JSONObject()
+            inner.forEach { (k, v) -> obj.put(k, v) }
+            root.put(char, obj)
+        }
+        mergeOutfitJson(root)
+        applyFeaturesToLayers()
+    }
+
+    fun replaceFeaturesMap(map: Map<String, Map<String, Int>>) {
+        val root = JSONObject()
+        map.forEach { (char, inner) ->
+            val obj = JSONObject()
+            inner.forEach { (k, v) -> obj.put(k, v) }
+            root.put(char, obj)
+        }
+        outfitJson = root
+        applyFeaturesToLayers()
+    }
+
+    fun getFeaturesAsStringMap(): Map<String, String> {
+        val flat = mutableMapOf<String, String>()
+        val keys = outfitJson.keys()
+        while (keys.hasNext()) {
+            val charKey = keys.next()
+            val obj = outfitJson.optJSONObject(charKey) ?: continue
+            val innerKeys = obj.keys()
+            while (innerKeys.hasNext()) {
+                val k = innerKeys.next()
+                flat["$charKey.$k"] = obj.optInt(k, 0).toString()
+            }
+        }
+        return flat
+    }
+
+    fun applyFeaturesToLayers(
+        forCharacters: List<String>? = null,
+        offsetsX: Map<String, Float> = emptyMap()
+    ) {
+        initLayerManager()
+        val charsToApply = forCharacters ?: characterConfigs.keys.toList()
+
+        charsToApply.forEach { char ->
+            val config = characterConfigs[char] ?: return@forEach
+            val bodyKey = "$char-body"
+
+            // lấy vị trí body hiện tại
+            val bodyView = layerManager.getLayersForCharacter(char)
+                .find { layerManager.getKeyForLayerView(it) == bodyKey }
+            val bodyOffsetX = bodyView?.translationX ?: (offsetsX[char] ?: config.offsetX)
+            val bodyOffsetY = bodyView?.translationY ?: config.offsetY
 
             val features = outfitJson.optJSONObject(char) ?: return@forEach
 
+            // xoá các feature cũ
             layerManager.getLayersForCharacter(char).forEach { layerView ->
                 val key = layerManager.getKeyForLayerView(layerView)
-                if (key != null && key != bodyKey) {
-                    layerManager.removeLayer(key)
-                }
+                if (key != null && key != bodyKey) layerManager.removeLayer(key)
             }
 
             features.keys().forEach { type ->
@@ -150,16 +206,23 @@ class LayerSetupHelper(
                     layerManager.setLayer(
                         layerKey,
                         resId,
-                        1f,
-                        1f,
-                        config.leftMargin,
                         scaleX = config.scale,
                         scaleY = config.scale,
-                        offsetX = config.offsetX,
-                        offsetY = config.offsetY
+                        offsetX = bodyOffsetX, // feature theo X của body
+                        offsetY = bodyOffsetY  // feature theo Y của body
                     )
                 }
             }
+        }
+    }
+
+    fun moveCharacterX(char: String, offsetX: Float) {
+        val bodyKey = "$char-body"
+        val bodyView = layerManager.getLayersForCharacter(char)
+            .find { layerManager.getKeyForLayerView(it) == bodyKey } ?: return
+        val deltaX = offsetX - bodyView.translationX
+        layerManager.getLayersForCharacter(char).forEach { layer ->
+            layer.translationX += deltaX
         }
     }
 
@@ -173,16 +236,19 @@ class LayerSetupHelper(
         charFeatures.put(type, resId)
 
         val config = characterConfigs[character] ?: CharacterConfig(0, emptyMap(), 0f)
+        val bodyView = layerManager.getLayersForCharacter(character)
+            .find { layerManager.getKeyForLayerView(it) == "$character-body" }
+
+        val offsetX = bodyView?.translationX ?: config.offsetX
+        val offsetY = bodyView?.translationY ?: config.offsetY
+
         layerManager.setLayer(
             layerKey,
             resId,
-            1f,
-            1f,
-            config.leftMargin,
             scaleX = config.scale,
             scaleY = config.scale,
-            offsetX = config.offsetX,
-            offsetY = config.offsetY
+            offsetX = offsetX,
+            offsetY = offsetY
         )
         Log.d("LayerSetupHelper", "Updated feature: $character-$type -> $resId")
     }
@@ -260,9 +326,6 @@ class LayerSetupHelper(
             layerManager.setLayer(
                 bodyKey,
                 config.baseResId,
-                1f,
-                1f,
-                config.leftMargin,
                 scaleX = config.scale,
                 scaleY = config.scale,
                 offsetX = config.offsetX,

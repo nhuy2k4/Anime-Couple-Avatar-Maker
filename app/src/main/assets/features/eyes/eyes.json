@@ -19,7 +19,7 @@
     "id": "eyes_3",
     "category": "eyes",
     "name": "Pink Eyes",
-    "gender": "female",
+    "gender": "male",
     "image": "features/eyes/eyes_m_3.png",
     "unlockCondition": "default"
   },
@@ -27,7 +27,7 @@
     "id": "eyes_4",
     "category": "eyes",
     "name": "Surprised Eyes",
-    "gender": "female",
+    "gender": "male",
     "image": "features/eyes/eyes_m_4.png",
     "unlockCondition": "default"
   }

@@ -4,15 +4,14 @@ import androidx.navigation.fragment.findNavController
 import com.app.base.R
 import com.app.base.component.dialog.ExitsAppDialog
 import com.app.base.databinding.FragmentHomeBinding
-import com.app.base.ui.category.CategoryFragmentArgs
 import com.app.base.ui.dialog.SettingDialogFragment
+import com.app.base.ui.dialog.DialogTaskFragment
+import com.app.base.ui.dialog.DialogRankingFragment
+import com.app.base.ui.dialog.DialogProfileFragment
 import com.app.base.ui.main.MainViewModel
 import com.brally.mobile.base.activity.BaseFragment
 import com.brally.mobile.base.activity.navigate
 import com.brally.mobile.base.activity.onBackPressed
-import com.brally.mobile.service.ads.AdManager
-import com.brally.mobile.service.ads.showFull
-import com.brally.mobile.service.ads.showNative
 import com.brally.mobile.service.event.EXIT_DIALOG_SHOW
 import com.brally.mobile.service.event.HOME_CLICK_BACK
 import com.brally.mobile.utils.singleClick
@@ -40,6 +39,23 @@ class HomeFragment : BaseFragment<FragmentHomeBinding, HomeViewModel>() {
                 fromHome = true
             )
             findNavController().navigate(action)
+        }
+        // Dialog bindings
+        binding.btnProfile.singleClick {
+            DialogProfileFragment().show(parentFragmentManager, "DialogProfile")
+        }
+        binding.btnTask.singleClick {
+            DialogTaskFragment().show(parentFragmentManager, "DialogTask")
+        }
+        binding.btnDaily.singleClick {
+            // daily tasks reuse task dialog
+            DialogTaskFragment().show(parentFragmentManager, "DialogTaskDaily")
+        }
+        binding.btnRank.singleClick {
+            DialogRankingFragment().show(parentFragmentManager, "DialogRanking")
+        }
+        binding.btnCosplay.singleClick {
+            navigate(R.id.cosplayFragment)
         }
         binding.btnGallery.singleClick {
             navigate(R.id.galleryFragment)
