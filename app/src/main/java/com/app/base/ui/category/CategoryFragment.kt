@@ -11,10 +11,11 @@ import com.app.base.R
 import com.app.base.core.helper.CategoryLayerHelper
 import com.app.base.core.helper.LayerSetupHelper
 import com.app.base.database.AppDatabase
-import com.app.base.database.FeatureRepository
-import com.app.base.database.OutfitEntity
+import com.app.base.database.repository.FeatureRepository
+import com.app.base.database.entity.OutfitEntity
 import com.app.base.databinding.FragmentCategoryBinding
 import com.app.base.ui.dialog.DialogSaveFragment
+import com.app.base.utils.PlayerManager
 import com.brally.mobile.base.activity.BaseFragment
 import com.brally.mobile.base.activity.navigate
 import com.brally.mobile.data.model.CategoryItem
@@ -38,6 +39,9 @@ class CategoryFragment : BaseFragment<FragmentCategoryBinding, CategoryViewModel
 
     private var cachedCategories: List<CategoryItem> = emptyList()
 
+    // Player manager to handle player data
+    private lateinit var playerManager: PlayerManager
+
     override fun initView() {
         allButtons = listOf(
             binding.btnCamera,
@@ -55,6 +59,17 @@ class CategoryFragment : BaseFragment<FragmentCategoryBinding, CategoryViewModel
             "B" -> setupModeB()
             "C" -> setupModeC()
             else -> setupModeA()
+        }
+
+        // Initialize player manager and load diamond count
+        playerManager = PlayerManager.getInstance(requireContext())
+        lifecycleScope.launch {
+            try {
+                val diamonds = playerManager.getPlayerDiamonds()
+                binding.tvDiamond.text = diamonds.toString()
+            } catch (e: Exception) {
+                Log.w("CategoryFragment", "Failed to load diamonds", e)
+            }
         }
     }
 
@@ -106,58 +121,64 @@ class CategoryFragment : BaseFragment<FragmentCategoryBinding, CategoryViewModel
             layerSetupHelper,
             onFeatureUpdated = { _, _ -> updateOutfitInDb() },
             onCharacterChange = {
+                val gender = categoryLayerHelper.getCurrentCharacter()
                 val filtered = filterCategories(cachedCategories)
-                if (filtered.isNotEmpty()) categoryTabAdapter.setCategories(filtered)
-                else categoryTabAdapter.clearCategories()
+
+                if (filtered.isNotEmpty()) {
+                    categoryTabAdapter.setCategories(filtered)
+
+                    val currentType = categoryLayerHelper.currentFeatureType
+                    val newPos = filtered.indexOfFirst { it.type == currentType }.takeIf { it != -1 } ?: 0
+
+                    categoryTabAdapter.selectCategory(newPos)
+                    categoryLayerHelper.showCategoryFeatures(filtered[newPos].type)
+                } else {
+                    categoryTabAdapter.clearCategories()
+                }
             }
         )
 
         categoryLayerHelper.setupFeatureAdapter()
         categoryLayerHelper.setupDefaultTab()
 
-        lifecycleScope.launch(Dispatchers.IO) {
-            val dao = AppDatabase.getInstance(requireContext()).outfitDao()
-
-            if (outfitId != -1L) {
-                // outfit có sẵn (từ gallery)
-                dao.getOutfitById(outfitId)?.let { outfit ->
-                    withContext(Dispatchers.Main) {
-                        setupOutfitFromEntity(outfit)
+        lifecycleScope.launchWhenStarted {
+            viewModel.loadDefaultOutfit(requireContext())
+        }
+        viewLifecycleOwner.lifecycleScope.launchWhenStarted {
+            viewModel.currentOutfit.collect { outfit ->
+                outfit?.let {
+                    // Chỉ setup từ DB nếu không có JSON từ Photo
+                    if (args.outfitJson.isNullOrEmpty()) {
+                        setupOutfitFromEntity(it)
                     }
                 }
-            } else {
-                // outfit mới – lấy từ photo nếu có, fallback mặc định
-                val jsonFromPhoto = args.outfitJson
-                withContext(Dispatchers.Main) {
-                    if (!jsonFromPhoto.isNullOrEmpty()) {
-                        // setup container thôi, offsets = 0
-                        layerSetupHelper.setupInitialLayers(
-                            listOf("male", "female"),
-                            offsetsX = mapOf("male" to 150f, "female" to -200f)
-                        ) {
-                            // JSON từ Photo sẽ restore vị trí đúng
-                            val bgId = extractBackgroundId(jsonFromPhoto)
-                            layerSetupHelper.setupInitialLayers(
-                                listOf("male", "female"),
-                                offsetsX = mapOf("male" to 150f, "female" to -200f)
-                            ) {
-                                layerSetupHelper.setOutfitJsonWithBackground(jsonFromPhoto) // JSON có features + background
-                                if (bgId != null) {
-                                    //layerSetupHelper.setBackground(bgId) // nếu bạn có method setBackground riêng
-                                }
-                            }
+            }
+        }
 
-                        }
-                    } else {
-                        // fallback – tạo layout mặc định
-                        val initialBackgroundId = if (args.mode == "B") args.backgroundId else null
-                        setupInitialLayers(initialBackgroundId)
-                    }
+        // --- setup outfit ưu tiên JSON từ Photo ---
+        lifecycleScope.launch(Dispatchers.Main) {
+            val jsonFromPhoto = args.outfitJson
+            if (!jsonFromPhoto.isNullOrEmpty()) {
+                val characters = if (args.mode == "C") listOf(args.gender) else listOf("male", "female")
+                val offsets = if (args.mode == "C") mapOf(args.gender to 0f) else mapOf("male" to 150f, "female" to -200f)
+                layerSetupHelper.setupInitialLayers(characters, offsetsX = offsets) {
+                    layerSetupHelper.setOutfitJsonWithBackground(jsonFromPhoto)
+                }
+            } else if (outfitId != -1L) {
+                // Fallback: load từ DB nếu outfitId có sẵn
+                val dao = AppDatabase.getInstance(requireContext()).outfitDao()
+                dao.getOutfitById(outfitId)?.let { setupOutfitFromEntity(it) }
+            } else {
+                if (args.mode == "B") {
+                    setupInitialLayers(backgroundId = args.backgroundId)
+                } else {
+                    setupInitialLayers(outfitJson = jsonFromPhoto)
                 }
 
             }
         }
     }
+
 
 
     private fun setupOutfitFromEntity(outfit: OutfitEntity) {
@@ -197,26 +218,72 @@ class CategoryFragment : BaseFragment<FragmentCategoryBinding, CategoryViewModel
         } catch (e: Exception) { null }
     }
 
-    private fun setupInitialLayers(backgroundId: String?) {
-        val isSingleCharacterMode = args.mode == "C"
-        val characterList = if (isSingleCharacterMode) listOf(args.gender) else listOf("male", "female")
-        val offsets = if (isSingleCharacterMode) mapOf(args.gender to 0f) else mapOf("male" to 150f, "female" to -200f)
+    private fun getBackgroundIdFromJson(json: String?): String? {
+        if (json.isNullOrEmpty()) return null
+        return try {
+            val obj = JSONObject(json)
+            obj.optString("backgroundId", null)
+        } catch (e: Exception) { null }
+    }
 
-        layerSetupHelper.setupInitialLayers(characterList, offsetsX = offsets) {
-            val json = layerSetupHelper.getFullOutfitJson(backgroundId = backgroundId)
-            if (backgroundId != null) {
-                layerSetupHelper.setOutfitJsonWithBackground(json)
+    private fun setupInitialLayers(backgroundId: String? = null, outfitJson: String? = null) {
+        val characters = listOf("male", "female")
+        val offsetsX = mapOf("male" to 150f, "female" to -200f)
+
+        layerSetupHelper.setupInitialLayers(characters, offsetsX = offsetsX) {
+            when {
+                // Nếu có JSON outfit → load outfit + background trong JSON
+                !outfitJson.isNullOrEmpty() -> {
+                    layerSetupHelper.setOutfitJsonWithBackground(outfitJson)
+                }
+
+                // Nếu có backgroundId riêng (ví dụ từ ArenaSelect)
+                !backgroundId.isNullOrEmpty() -> {
+                    Log.d("CategoryFragment", "🎨 Loading background from Arena: $backgroundId")
+                    layerSetupHelper.setBackground(backgroundId)
+                }
+
+                // Fallback (khi không có gì)
+                else -> {
+                    layerSetupHelper.setBackground("bg_1.png")
+                }
             }
         }
     }
 
+
+
+
     private fun prepareBattle() {
         lifecycleScope.launch(Dispatchers.IO) {
+            // 1️⃣ Nếu bạn có outfitId trong DB thì xóa backgroundId cũ (tùy chọn)
             val dao = AppDatabase.getInstance(requireContext()).outfitDao()
             dao.getOutfitById(outfitId)?.let { dao.update(it.copy(backgroundId = null)) }
-            withContext(Dispatchers.Main) { navigate(R.id.waitingFragment) }
+
+            // 2️⃣ Lấy JSON outfit của người chơi
+            val outfitJson = layerSetupHelper.getFullOutfitJson()
+
+            // 3️⃣ Lấy các tham số đã được truyền từ ArenaSelectFragment
+            val botId = arguments?.getInt("botId", -1) ?: -1  // Thay đổi từ "selectedBotId" thành "botId"
+            val backgroundId = arguments?.getString("backgroundId", "") ?: ""
+            val mode = arguments?.getString("mode", "B") ?: "B"
+
+            // 4️⃣ Đóng gói dữ liệu gửi sang WaitingFragment
+            val bundle = Bundle().apply {
+                putInt("botId", botId)  // Thay đổi từ "selectedBotId" thành "botId"
+                putString("outfitJson", outfitJson)
+                putString("backgroundId", backgroundId)
+                putString("mode", mode)
+            }
+
+            // 5️⃣ Navigate sang WaitingFragment
+            withContext(Dispatchers.Main) {
+                navigate(R.id.waitingFragment, bundle)
+            }
         }
     }
+
+
 
     private fun showSaveDialog(onComplete: () -> Unit) {
         DialogSaveFragment().show(parentFragmentManager, "DialogSave")
@@ -305,6 +372,19 @@ class CategoryFragment : BaseFragment<FragmentCategoryBinding, CategoryViewModel
                 featureRepo.hasFeaturesFor(item.type, gender)
             } catch (e: Exception) {
                 true
+            }
+        }
+    }
+
+    override fun onResume() {
+        super.onResume()
+        // Refresh diamond count when returning to fragment
+        lifecycleScope.launch {
+            try {
+                val diamonds = playerManager.getPlayerDiamonds()
+                binding.tvDiamond.text = diamonds.toString()
+            } catch (e: Exception) {
+                Log.w("CategoryFragment", "Failed to refresh diamonds", e)
             }
         }
     }

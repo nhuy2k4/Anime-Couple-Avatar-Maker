@@ -1,7 +1,11 @@
-package com.app.base.database
+package com.app.base.database.entity
 
+import androidx.room.Entity
+import androidx.room.PrimaryKey
+
+@Entity(tableName = "features")
 data class Feature(
-    val id: String,
+    @PrimaryKey val id: String,
     val category: String, // skin, eyes, hair, shirt,...
     val name: String,
     val gender: String,

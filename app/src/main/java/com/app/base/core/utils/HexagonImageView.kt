@@ -12,6 +12,9 @@ class HexagonImageView @JvmOverloads constructor(
 ) : AppCompatImageView(context, attrs) {
 
     private val path = Path()
+    init {
+        setLayerType(LAYER_TYPE_SOFTWARE, null)
+    }
 
     override fun onSizeChanged(w: Int, h: Int, oldw: Int, oldh: Int) {
         super.onSizeChanged(w, h, oldw, oldh)

@@ -4,7 +4,7 @@ import android.content.Context
 import androidx.lifecycle.viewModelScope
 import com.brally.mobile.base.viewmodel.BaseViewModel
 import com.app.base.database.AppDatabase
-import com.app.base.database.OutfitEntity
+import com.app.base.database.entity.OutfitEntity
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow

@@ -1,77 +1,73 @@
 package com.app.base.ui.photograph
 
-import android.net.Uri
+import android.content.Context
+import android.graphics.drawable.Drawable
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
-import com.app.base.R
-import com.app.base.database.OutfitEntity
+import com.app.base.database.entity.OutfitEntity
 import com.app.base.databinding.ItemPhotographBinding
-import org.json.JSONObject
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 
-/**
- * Adapter cho RecyclerView hiển thị danh sách outfit từ Room DB
- */
 class PhotographAdapter(
-    private val onPhotoTapped: ((OutfitEntity) -> Unit)? = null
+    private val context: Context,
+    private val onBackgroundTapped: ((OutfitEntity) -> Unit)? = null
 ) : RecyclerView.Adapter<PhotographAdapter.ViewHolder>() {
 
-    private val outfits = mutableListOf<OutfitEntity>()
+    private val backgrounds = mutableListOf<OutfitEntity>()
 
-    // 2 item mặc định (dùng backgroundId field)
-    private val defaultItems = listOf(
-        OutfitEntity(backgroundId = R.drawable.bg_gradient.toString()),
-        OutfitEntity(backgroundId = R.drawable.photo1.toString()),
-        OutfitEntity(backgroundId = R.drawable.photo2.toString())
+    fun setBackgrounds(list: List<OutfitEntity>) {
+        backgrounds.clear()
+        backgrounds.addAll(list)
+        notifyDataSetChanged()
+    }
+
+    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int) = ViewHolder(
+        ItemPhotographBinding.inflate(LayoutInflater.from(parent.context), parent, false)
     )
 
-    fun setPhotos(newOutfits: List<OutfitEntity>) {
-        outfits.clear()
-        // Gộp 2 item mặc định + outfit từ Room
-        outfits.addAll(defaultItems)
-        outfits.addAll(newOutfits)
-        notifyDataSetChanged()
-    }
-
-    fun clearPhotos() {
-        outfits.clear()
-        notifyDataSetChanged()
-    }
-
-    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
-        val binding = ItemPhotographBinding.inflate(
-            LayoutInflater.from(parent.context),
-            parent,
-            false
-        )
-        return ViewHolder(binding)
-    }
-
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
-        if (position < outfits.size) {
-            holder.bind(outfits[position])
-        }
+        holder.bind(backgrounds[position])
     }
 
-    override fun getItemCount(): Int = outfits.size
+    override fun getItemCount(): Int = backgrounds.size
 
-    inner class ViewHolder(private val binding: ItemPhotographBinding) : RecyclerView.ViewHolder(binding.root) {
+    inner class ViewHolder(private val binding: ItemPhotographBinding) :
+        RecyclerView.ViewHolder(binding.root) {
+
         fun bind(item: OutfitEntity) {
-            val bgUri = item.thumbnailPath?.let { Uri.parse(it) }
-            if (bgUri != null) {
-                binding.imvPhoto.setImageURI(bgUri) // Hiển thị đúng bitmap đã save
+            // backgroundId giờ là path trong assets
+            val path = item.backgroundId
+            if (!path.isNullOrEmpty()) {
+                CoroutineScope(Dispatchers.Main).launch {
+                    val drawable = loadDrawableFromAssets(path)
+                    binding.imvPhoto.setImageDrawable(drawable)
+                }
             } else {
-                val bgId = item.backgroundId?.toIntOrNull() ?: R.drawable.bg_gradient
-                binding.imvPhoto.setImageResource(bgId)
+                binding.imvPhoto.setImageResource(android.R.color.darker_gray)
             }
-
 
             binding.root.setOnClickListener {
                 if (adapterPosition != RecyclerView.NO_POSITION) {
-                    onPhotoTapped?.invoke(item)
+                    onBackgroundTapped?.invoke(item)
+                }
+            }
+        }
+
+        private suspend fun loadDrawableFromAssets(path: String): Drawable? {
+            return withContext(Dispatchers.IO) {
+                try {
+                    context.assets.open(path).use { stream ->
+                        Drawable.createFromStream(stream, null)
+                    }
+                } catch (e: Exception) {
+                    e.printStackTrace()
+                    null
                 }
             }
         }
     }
 }
-

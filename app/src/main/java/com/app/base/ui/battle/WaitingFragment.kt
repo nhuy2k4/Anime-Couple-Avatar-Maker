@@ -1,11 +1,8 @@
 package com.app.base.ui.battle
 
-import android.view.Gravity
+import android.os.Bundle
 import android.view.View
-import android.view.ViewGroup
 import androidx.lifecycle.lifecycleScope
-import androidx.transition.Slide
-import androidx.transition.TransitionManager
 import com.app.base.R
 import com.app.base.databinding.FragmentWaitingBinding
 import com.brally.mobile.base.activity.BaseFragment
@@ -16,12 +13,16 @@ import kotlinx.coroutines.launch
 class WaitingFragment : BaseFragment<FragmentWaitingBinding, WaitingViewModel>() {
 
     override fun initView() {
-        // Khởi chạy countdown khi view đã ready
         startCountdown()
     }
 
-    override fun initData() {}
-    override fun initListener() {}
+    override fun initListener() {
+
+    }
+
+    override fun initData() {
+
+    }
 
     private fun startCountdown() {
         lifecycleScope.launch {
@@ -29,22 +30,35 @@ class WaitingFragment : BaseFragment<FragmentWaitingBinding, WaitingViewModel>()
             binding.countdownText.text = count.toString()
 
             while (count > 0) {
-                // hiệu ứng scale/ngắn khi đổi số (tuỳ chọn, cho đẹp)
                 animateCountBounce()
                 delay(1000)
                 count--
-                binding.countdownText.text = count.toString()
+                binding.countdownText.text = if (count > 0) count.toString() else "GO!"
             }
 
-            // đợi 1 frame để số 0 hiển thị, sau đó ẩn startup và hiển thị bot với animation
-            delay(300)
+            delay(500)
             binding.startup.visibility = View.GONE
 
-            // Chọn 1 trong 2 cách bên dưới (uncomment 1 cách bạn muốn)
+            // Hiển thị bot + player (animation khởi đầu)
             showBotPlayerWithPropertyAnimation()
-            // showBotPlayerWithSlideTransition()
             delay(1000)
-            navigate(R.id.battleFragment)
+
+            // ✅ Lấy dữ liệu từ arguments (được truyền từ CategoryFragment)
+            val outfitJson = arguments?.getString("outfitJson", "{}") ?: "{}"
+            val botId = arguments?.getInt("botId", -1) ?: -1  // Thay đổi từ "selectedBotId" thành "botId"
+            val backgroundId = arguments?.getString("backgroundId", "") ?: ""
+            val mode = arguments?.getString("mode", "B") ?: "B"
+
+            // ✅ Chuẩn bị bundle gửi sang BattleFragment
+            val battleBundle = Bundle().apply {
+                putString("outfitJson", outfitJson)   // player JSON
+                putInt("botId", botId)        // bot ID (để load từ DB) - Thay đổi từ "selectedBotId" thành "botId"
+                putString("backgroundId", backgroundId)
+                putString("mode", mode)
+            }
+
+            // ✅ Chuyển sang BattleFragment
+            navigate(R.id.battleFragment, battleBundle)
         }
     }
 
@@ -55,29 +69,17 @@ class WaitingFragment : BaseFragment<FragmentWaitingBinding, WaitingViewModel>()
             .scaleX(1.3f).scaleY(1.3f)
             .setDuration(120)
             .withEndAction {
-                binding.countdownText.animate()
-                    .scaleX(1f).scaleY(1f)
-                    .setDuration(120)
-                    .start()
+                binding.countdownText.animate().scaleX(1f).scaleY(1f).setDuration(120).start()
             }.start()
     }
 
     private fun showBotPlayerWithPropertyAnimation() {
-        // đặt translationX sang phải ngoài màn hình
         val screenWidth = resources.displayMetrics.widthPixels.toFloat()
         binding.botPlayer.translationX = screenWidth
         binding.botPlayer.visibility = View.VISIBLE
-
-        // animate về vị trí
-        binding.botPlayer.animate()
-            .translationX(0f)
-            .setDuration(450)
-            .withStartAction {
-                // tuỳ chọn: fade in
-                binding.botPlayer.alpha = 0f
-                binding.botPlayer.animate().alpha(1f).setDuration(300).start()
-            }
-            .start()
+        binding.botPlayer.animate().translationX(0f).setDuration(450).withStartAction {
+            binding.botPlayer.alpha = 0f
+            binding.botPlayer.animate().alpha(1f).setDuration(300).start()
+        }.start()
     }
-
 }

@@ -6,7 +6,8 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import com.app.base.core.layer.DisplayItem
 import com.app.base.core.layer.LayerItemAdapter
 import com.app.base.databinding.FragmentCategoryBinding
-import com.app.base.database.FeatureRepository
+import com.app.base.database.repository.FeatureRepository
+import com.app.base.database.entity.Feature
 
 class CategoryLayerHelper(
     private val binding: FragmentCategoryBinding,
@@ -15,7 +16,7 @@ class CategoryLayerHelper(
     private val onCharacterChange: (() -> Unit)? = null // callback khi đổi nhân vật
 ) {
     private var currentCharacter = "female"
-    private var currentFeatureType: String? = null
+    var currentFeatureType: String? = null
     private lateinit var featureAdapter: LayerItemAdapter
     private val featureRepo = FeatureRepository(binding.root.context)
 
@@ -57,7 +58,7 @@ class CategoryLayerHelper(
             "hair"
         ).map { it.trim() }.distinct()
 
-        var features: List<com.app.base.database.Feature> = emptyList()
+        var features: List<Feature> = emptyList()
         for (candidate in candidates) {
             try {
                 features = featureRepo.loadFeatures(candidate)

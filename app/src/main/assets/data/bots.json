@@ -1,0 +1,60 @@
+{
+  "bots": [
+    {
+      "id": 1,
+      "name": "Delgado",
+      "avatarImage": "avatar_1",
+      "difficulty": "NORMAL",
+      "maleFeatures": {
+        "frontHair": "features/frontHair/frontHair_m_3",
+        "eyes": "features/eyes/eyes_m_3"
+      },
+      "femaleFeatures": {
+        "frontHair": "features/frontHair/frontHair_f_2",
+        "eyes": "features/eyes/eyes_f_1"
+      }
+    },
+    {
+      "id": 2,
+      "name": "Aria",
+      "avatarImage": "avatar_2",
+      "difficulty": "EASY",
+      "maleFeatures": {
+        "frontHair": "features/frontHair/frontHair_m_3",
+        "eyes": "features/eyes/eyes_m_4"
+      },
+      "femaleFeatures": {
+        "frontHair": "features/frontHair/frontHair_f_1",
+        "eyes": "features/eyes/eyes_f_1"
+      }
+    },
+    {
+      "id": 3,
+      "name": "Zephyr",
+      "avatarImage": "avatar_3",
+      "difficulty": "HARD",
+      "maleFeatures": {
+        "frontHair": "features/frontHair/frontHair_m_4",
+        "eyes": "features/eyes/eyes_m_3"
+      },
+      "femaleFeatures": {
+        "frontHair": "features/frontHair/frontHair_f_1",
+        "eyes": "features/eyes/eyes_f_2"
+      }
+    },
+    {
+      "id": 4,
+      "name": "Nova",
+      "avatarImage": "avatar_4",
+      "difficulty": "NORMAL",
+      "maleFeatures": {
+        "frontHair": "features/frontHair/frontHair_m_4",
+        "eyes": "features/eyes/eyes_m_4"
+      },
+      "femaleFeatures": {
+        "frontHair": "features/frontHair/frontHair_f_2",
+        "eyes": "features/eyes/eyes_f_2"
+      }
+    }
+  ]
+}

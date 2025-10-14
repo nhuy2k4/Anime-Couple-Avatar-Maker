@@ -1,22 +1,18 @@
 package com.app.base.ui.category
 
+import android.content.Context
 import androidx.lifecycle.LifecycleOwner
 import com.brally.mobile.base.viewmodel.BaseViewModel
 import com.brally.mobile.data.model.ArtItem
 import com.brally.mobile.data.model.CategoryItem
 import com.brally.mobile.service.firebase.AppRemoteConfig
-import com.language_onboard.data.local.CommonAppSharePref
-import com.language_onboard.data.model.Language
+import com.app.base.database.AppDatabase
+import com.app.base.database.entity.OutfitEntity
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
-import com.app.base.R
+import kotlinx.coroutines.withContext
 
-/**
- * ViewModel quản lý dữ liệu cho CategoryFragment
- * - Categories lấy local (drawable icons)
- * - Arts lấy từ server (AppRemoteConfig)
- * - Lọc arts theo CategoryItem.type
- */
 class CategoryViewModel : BaseViewModel() {
 
     // ========== STATE FLOWS ==========
@@ -28,6 +24,9 @@ class CategoryViewModel : BaseViewModel() {
 
     private val _categorySelected = MutableStateFlow(0)
     val categorySelected = _categorySelected.asStateFlow()
+
+    private val _currentOutfit = MutableStateFlow<OutfitEntity?>(null)
+    val currentOutfit = _currentOutfit.asStateFlow()
 
     // ========== PRIVATE ==========
     private var allArt = mutableListOf<ArtItem>()
@@ -46,16 +45,40 @@ class CategoryViewModel : BaseViewModel() {
         loadArtsByCategory(_categorySelected.value)
     }
 
+    /** Load outfit mặc định từ RoomDB */
+    suspend fun loadDefaultOutfit(context: Context) {
+        withContext(Dispatchers.IO) {
+            val db = AppDatabase.getInstance(context)
+            val dao = db.outfitDao()
+
+            // Lấy outfit đầu tiên trong DB nếu có
+            val defaultOutfit = dao.getAllOutfits().firstOrNull() ?: run {
+                // Nếu DB trống, chỉ tạo mặc định trong code
+                OutfitEntity(
+                    features = mapOf(
+                        "male.hair" to "features/frontHair/frontHair_m_3.png",
+                        "male.eye" to "features/eyes/eyes_m_3.png",
+                        "female.hair" to "features/frontHair/frontHair_f_1.png",
+                        "female.eye" to "features/eyes/eyes_f_2.png"
+                    ),
+                    backgroundId = null
+                )
+            }
+
+            _currentOutfit.value = defaultOutfit
+        }
+    }
+
+
     /** Dùng categories local (drawable icons) */
     private fun loadLocalCategories() {
         val localCategories = listOf(
-            CategoryItem(type = "eye", value = "Eye", iconResId = R.drawable.eye),
-            CategoryItem(type = "hair", value = "Hair", iconResId = R.drawable.hair)
+            CategoryItem(type = "eye", value = "Eye", iconResId = com.app.base.R.drawable.eye),
+            CategoryItem(type = "hair", value = "Hair", iconResId = com.app.base.R.drawable.hair)
             // Thêm nếu cần: skin, eyebrow, mouth
         )
         _categories.value = localCategories
     }
-
 
     fun getArtsByCategory(position: Int) {
         if (position >= _categories.value.size) return

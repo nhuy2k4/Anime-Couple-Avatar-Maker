@@ -2,15 +2,16 @@
 <androidx.constraintlayout.widget.ConstraintLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    android:layout_width="320dp"
+    android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:background="@drawable/bg_dialog_task"
+    android:layout_marginHorizontal="@dimen/_20dp"
     android:padding="0dp">
 
     <!-- Header Task -->
     <LinearLayout
         android:id="@+id/layoutHeader"
-        android:layout_width="0dp"
+        android:layout_width="match_parent"
         android:layout_height="48dp"
         android:orientation="horizontal"
         android:gravity="center"
@@ -49,7 +50,7 @@
     <!-- Complete All Missions -->
     <LinearLayout
         android:id="@+id/allmissionContainer"
-        android:layout_width="0dp"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="horizontal"
         android:gravity="center_vertical"
@@ -108,7 +109,7 @@
     <!-- Danh sách nhiệm vụ -->
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/rcvTasks"
-        android:layout_width="0dp"
+        android:layout_width="match_parent"
         android:layout_height="250dp"
         app:layout_constraintTop_toBottomOf="@id/allmissionContainer"
         app:layout_constraintStart_toStartOf="parent"

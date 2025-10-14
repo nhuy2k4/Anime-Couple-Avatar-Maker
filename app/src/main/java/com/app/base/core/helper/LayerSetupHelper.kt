@@ -4,6 +4,7 @@ import android.content.ContentValues
 import android.content.Context
 import android.graphics.Bitmap
 import android.graphics.Canvas
+import android.graphics.drawable.Drawable
 import android.net.Uri
 import android.os.Environment
 import android.util.Log
@@ -15,7 +16,7 @@ import ja.burhanrashid52.photoeditor.PhotoEditor
 import ja.burhanrashid52.photoeditor.PhotoEditorView
 import org.json.JSONObject
 import com.app.base.core.layer.LayerManager
-import com.app.base.database.FeatureRepository
+import com.app.base.database.repository.FeatureRepository
 
 data class CharacterConfig(
     val baseResId: Int,
@@ -97,11 +98,11 @@ class LayerSetupHelper(
             val defaults = JSONObject()
 
             // pick eye
-            val eye = eyes.firstOrNull { it.gender == gender } ?: eyes.firstOrNull()
-            eye?.let {
+            val eyes = eyes.firstOrNull { it.gender == gender } ?: eyes.firstOrNull()
+            eyes?.let {
                 val name = it.image.substringAfterLast('/').substringBeforeLast('.')
                 val resId = res.getIdentifier(name, "drawable", packageName)
-                if (resId != 0) defaults.put("eye", resId)
+                if (resId != 0) defaults.put("eyes", resId)
             }
 
             // pick hair (mapped to key "hair")
@@ -109,10 +110,10 @@ class LayerSetupHelper(
             hair?.let {
                 val name = it.image.substringAfterLast('/').substringBeforeLast('.')
                 val resId = res.getIdentifier(name, "drawable", packageName)
-                if (resId != 0) defaults.put("hair", resId)
+                if (resId != 0) defaults.put("frontHair", resId)
             }
 
-            Log.d("LayerSetupHelper", "Defaults for $char -> eye=${defaults.optInt("eye",0)} hair=${defaults.optInt("hair",0)}")
+            Log.d("LayerSetupHelper", "Defaults for $char -> eyes=${defaults.optInt("eyes",0)} frontHair=${defaults.optInt("hair",0)}")
 
              outfitJson.put(char, defaults)
          }
@@ -232,6 +233,38 @@ class LayerSetupHelper(
         }
         return result
     }
+    fun setBackgroundFromAsset(assetPath: String) {
+        try {
+            // Try as drawable resource name first (e.g., "test_stage" -> R.drawable.test_stage)
+            val packageName = context.packageName
+            val resId = try {
+                context.resources.getIdentifier(assetPath, "drawable", packageName)
+            } catch (t: Throwable) {
+                0
+            }
+
+            if (resId != 0) {
+                Log.d("LayerSetupHelper", "setBackgroundFromAsset: found drawable resource id=$resId for path='$assetPath'")
+                photoEditorView.background = ContextCompat.getDrawable(context, resId)
+                outfitJson.put("backgroundId", resId)
+                return
+            }
+
+            // Fallback: try loading from assets
+            Log.d("LayerSetupHelper", "setBackgroundFromAsset: attempting to load asset '$assetPath'")
+            val drawable = Drawable.createFromStream(context.assets.open(assetPath), null)
+            if (drawable != null) {
+                photoEditorView.background = drawable
+                outfitJson.put("backgroundId", assetPath) // lưu path vào JSON as string
+                Log.d("LayerSetupHelper", "Background set from asset: $assetPath")
+            } else {
+                Log.e("LayerSetupHelper", "Drawable.createFromStream returned null for asset: $assetPath")
+            }
+        } catch (e: Exception) {
+            e.printStackTrace()
+            Log.e("LayerSetupHelper", "Failed to load background from asset: $assetPath")
+        }
+    }
 
     fun setFeaturesMap(map: Map<String, Map<String, String>>) {
         val root = JSONObject()
@@ -278,9 +311,15 @@ class LayerSetupHelper(
         initLayerManager()
         val charsToApply = forCharacters ?: characterConfigs.keys.toList()
 
+        Log.d("LayerSetupHelper", "=== Starting applyFeaturesToLayers ===")
+        Log.d("LayerSetupHelper", "Characters to apply: $charsToApply")
+        Log.d("LayerSetupHelper", "Current outfitJson: $outfitJson")
+
         charsToApply.forEach { char ->
             val config = characterConfigs[char] ?: return@forEach
             val bodyKey = "$char-body"
+
+            Log.d("LayerSetupHelper", "Processing character: $char")
 
             // lấy vị trí body hiện tại
             val bodyView = layerManager.getLayersForCharacter(char)
@@ -288,49 +327,80 @@ class LayerSetupHelper(
             val bodyOffsetX = bodyView?.translationX ?: (offsetsX[char] ?: config.offsetX)
             val bodyOffsetY = bodyView?.translationY ?: config.offsetY
 
-            val features = outfitJson.optJSONObject(char) ?: return@forEach
+            Log.d("LayerSetupHelper", "Body position - X: $bodyOffsetX, Y: $bodyOffsetY")
+
+            val features = outfitJson.optJSONObject(char)
+            if (features == null) {
+                Log.w("LayerSetupHelper", "No features found for character: $char")
+                return@forEach
+            }
+
+            Log.d("LayerSetupHelper", "Features for $char: $features")
 
             // xoá các feature cũ
-            layerManager.getLayersForCharacter(char).forEach { layerView ->
+            val oldLayers = layerManager.getLayersForCharacter(char)
+            Log.d("LayerSetupHelper", "Removing ${oldLayers.size} old layers for $char")
+            oldLayers.forEach { layerView ->
                 val key = layerManager.getKeyForLayerView(layerView)
-                if (key != null && key != bodyKey) layerManager.removeLayer(key)
+                if (key != null && key != bodyKey) {
+                    Log.d("LayerSetupHelper", "Removing old layer: $key")
+                    layerManager.removeLayer(key)
+                }
             }
 
             features.keys().forEach { type ->
                 val value = features.opt(type)
+                Log.d("LayerSetupHelper", "Processing feature: $type = $value (type: ${value?.javaClass?.simpleName})")
+
                 when (value) {
                     is Number -> {
                         val resId = value.toInt()
                         if (resId != 0) {
                             val layerKey = "$char-$type"
+                            Log.d("LayerSetupHelper", "Setting resource layer: $layerKey with resId: $resId")
                             layerManager.setLayer(
                                 layerKey,
                                 resId,
                                 scaleX = config.scale,
                                 scaleY = config.scale,
-                                offsetX = bodyOffsetX, // feature theo X của body
-                                offsetY = bodyOffsetY  // feature theo Y của body
+                                offsetX = bodyOffsetX,
+                                offsetY = bodyOffsetY
                             )
+                            Log.d("LayerSetupHelper", "Successfully set resource layer: $layerKey")
+                        } else {
+                            Log.w("LayerSetupHelper", "Skipping zero resId for $char-$type")
                         }
                     }
                     is String -> {
                         val assetPath = value
                         val layerKey = "$char-$type"
-                        layerManager.setLayerFromAsset(
-                            layerKey,
-                            assetPath,
-                            scaleX = config.scale,
-                            scaleY = config.scale,
-                            offsetX = bodyOffsetX,
-                            offsetY = bodyOffsetY
-                        )
+                        Log.d("LayerSetupHelper", "Setting asset layer: $layerKey from path: $assetPath")
+
+                        try {
+                            layerManager.setLayerFromAsset(
+                                layerKey,
+                                assetPath,
+                                scaleX = config.scale,
+                                scaleY = config.scale,
+                                offsetX = bodyOffsetX,
+                                offsetY = bodyOffsetY
+                            )
+                            Log.d("LayerSetupHelper", "Successfully set asset layer: $layerKey")
+                        } catch (e: Exception) {
+                            Log.e("LayerSetupHelper", "Failed to set asset layer $layerKey: ${e.message}")
+                            e.printStackTrace()
+                        }
                     }
                     else -> {
-                        // unsupported type — ignore
+                        Log.w("LayerSetupHelper", "Unsupported feature type for $char-$type: ${value?.javaClass?.simpleName}")
                     }
                 }
             }
+
+            Log.d("LayerSetupHelper", "Finished processing character: $char")
         }
+
+        Log.d("LayerSetupHelper", "=== Finished applyFeaturesToLayers ===")
     }
 
     /** Update a feature for a character using an asset path (stores string in outfitJson) */
@@ -393,21 +463,88 @@ class LayerSetupHelper(
         initLayerManager()
         // Merge incoming outfit JSON with defaults loaded from assets so missing features fall back to defaults
         ensureDefaultFeaturesLoaded()
-        val incoming = JSONObject(json)
-        mergeOutfitJson(incoming)
+        try {
+            val incoming = JSONObject(json)
+            Log.d("LayerSetupHelper", "setOutfitJson: incoming JSON length=${incoming.toString().length}")
+            mergeOutfitJson(incoming)
+        } catch (e: Exception) {
+            Log.e("LayerSetupHelper", "setOutfitJson: invalid JSON string received; error=${e.message}")
+        }
         applyFeaturesToLayers()
     }
 
     fun setOutfitJsonWithBackground(json: String, replace: Boolean = false) {
-        // ensure defaults are loaded so merge preserves missing features
         ensureDefaultFeaturesLoaded()
-        val root = JSONObject(json)
+
+        // Accept either a JSON string (containing features + backgroundId) or a plain backgroundId string.
+        if (json.isBlank()) return
+
+        val root = try {
+            JSONObject(json)
+        } catch (e: Exception) {
+            Log.d("LayerSetupHelper", "setOutfitJsonWithBackground: input is not JSON, treating as backgroundId string: '$json'")
+            JSONObject().put("backgroundId", json)
+        }
+
         if (replace) outfitJson = JSONObject()
+        Log.d("LayerSetupHelper", "setOutfitJsonWithBackground: merging root=$root")
         mergeOutfitJson(root)
 
-        root.optInt("backgroundId").takeIf { it != 0 }?.let {
-            photoEditorView.background = ContextCompat.getDrawable(context, it)
-            outfitJson.put("backgroundId", it)
+        // Handle background which can be Int (resource id) or String (asset path or drawable name)
+        val bg = root.opt("backgroundId")
+        Log.d("LayerSetupHelper", "setOutfitJsonWithBackground: backgroundId raw value=$bg (type=${bg?.javaClass?.simpleName})")
+        when (bg) {
+            is Int -> {
+                try {
+                    photoEditorView.background = ContextCompat.getDrawable(context, bg)
+                    outfitJson.put("backgroundId", bg)
+                    Log.d("LayerSetupHelper", "Background set from resource id: $bg")
+                } catch (e: Exception) {
+                    Log.e("LayerSetupHelper", "Failed to set background from resource id=$bg: ${e.message}")
+                }
+            }
+            is String -> {
+                val bgStr = bg as String
+                // Sometimes the string may actually be an integer in string form
+                val maybeInt = bgStr.toIntOrNull()
+                if (maybeInt != null) {
+                    try {
+                        photoEditorView.background = ContextCompat.getDrawable(context, maybeInt)
+                        outfitJson.put("backgroundId", maybeInt)
+                        Log.d("LayerSetupHelper", "Background string parsed as int and set resource id: $maybeInt")
+                    } catch (e: Exception) {
+                        Log.e("LayerSetupHelper", "Failed to set background from parsed int id=$maybeInt: ${e.message}")
+                    }
+                } else {
+                    // Try drawable resource lookup by name
+                    val packageName = context.packageName
+                    val resId = try {
+                        context.resources.getIdentifier(bgStr, "drawable", packageName)
+                    } catch (t: Throwable) {
+                        0
+                    }
+
+                    if (resId != 0) {
+                        photoEditorView.background = ContextCompat.getDrawable(context, resId)
+                        outfitJson.put("backgroundId", resId)
+                        Log.d("LayerSetupHelper", "Background set from drawable name '$bgStr' -> resId=$resId")
+                    } else {
+                        // Finally try asset path
+                        try {
+                            setBackgroundFromAsset(bgStr)
+                            Log.d("LayerSetupHelper", "Background set from asset path: $bgStr")
+                        } catch (e: Exception) {
+                            Log.e("LayerSetupHelper", "Unable to set background for string '$bgStr': ${e.message}")
+                        }
+                    }
+                }
+            }
+            null -> {
+                Log.d("LayerSetupHelper", "No backgroundId present in root JSON")
+            }
+            else -> {
+                Log.w("LayerSetupHelper", "Unhandled backgroundId type: ${bg?.javaClass?.simpleName}")
+            }
         }
 
         applyFeaturesToLayers()
@@ -464,6 +601,53 @@ class LayerSetupHelper(
             onDone(null)
         }
     }
+    fun setBackground(assetPath: String) {
+        try {
+            // Nếu chưa có đuôi, mặc định là .png
+            val fixedPath = if (!assetPath.contains('.')) "background/$assetPath.png" else "background/$assetPath"
+
+            Log.d("LayerSetupHelper", "🔹 Loading background from asset: $fixedPath")
+
+            // Đảm bảo layout đã đo xong
+            photoContainer.viewTreeObserver.addOnGlobalLayoutListener(object : ViewTreeObserver.OnGlobalLayoutListener {
+                override fun onGlobalLayout() {
+                    photoContainer.viewTreeObserver.removeOnGlobalLayoutListener(this)
+
+                    try {
+                        context.assets.open(fixedPath).use { inputStream ->
+                            val bitmap = android.graphics.BitmapFactory.decodeStream(inputStream)
+                            if (bitmap != null) {
+                                initLayerManager()
+                                // Thêm background layer đầu tiên, full container
+                                layerManager.setLayer(
+                                    "background",
+                                    bitmap,
+                                    widthRatio = 1f,
+                                    heightRatio = 1f,
+                                    scaleX = 1f,
+                                    scaleY = 1f,
+                                    offsetX = 0f,
+                                    offsetY = 0f,
+                                    index = 0 // luôn đứng dưới cùng layer khác
+                                )
+                                Log.d("LayerSetupHelper", "✅ Background loaded successfully from: $fixedPath")
+                            } else {
+                                Log.e("LayerSetupHelper", "❌ Failed to decode bitmap from: $fixedPath")
+                            }
+                        }
+                    } catch (e: Exception) {
+                        Log.e("LayerSetupHelper", "❌ Exception loading background '$assetPath': ${e.message}")
+                        e.printStackTrace()
+                    }
+                }
+            })
+
+        } catch (e: Exception) {
+            Log.e("LayerSetupHelper", "❌ Exception preparing background '$assetPath': ${e.message}")
+            e.printStackTrace()
+        }
+    }
+
 
     fun resetToInitialState() {
         initLayerManager()

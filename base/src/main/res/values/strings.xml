@@ -23,4 +23,5 @@
     <string name="permission_denied_text">Permission denied!</string>
     <string name="title_cancel">Cancel</string>
     <string name="setting_capp">SETTING</string>
+    <string name="mission_progress_format">%d/%d</string>
 </resources>

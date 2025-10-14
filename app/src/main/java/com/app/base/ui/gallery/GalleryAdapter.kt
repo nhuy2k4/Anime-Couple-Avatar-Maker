@@ -5,9 +5,8 @@ import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import com.app.base.R
-import com.app.base.database.OutfitEntity
+import com.app.base.database.entity.OutfitEntity
 import com.app.base.databinding.ItemGalleryBinding
-import org.json.JSONObject
 
 class GalleryAdapter(
     private val onPhotoClicked: (OutfitEntity) -> Unit,

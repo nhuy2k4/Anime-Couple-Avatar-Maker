@@ -1,0 +1,62 @@
+[
+  {
+    "id": "bg_1",
+    "name": "School",
+    "image": "background/bg_1.png",
+    "unlockCondition": "default"
+  },
+  {
+    "id": "bg_2",
+    "name": "Stage",
+    "image": "background/bg_2.png",
+    "unlockCondition": "default"
+  },
+  {
+    "id": "bg_3",
+    "name": "Stage 1",
+    "image": "background/bg_3.png",
+    "unlockCondition": "default"
+  },
+  {
+    "id": "bg_4",
+    "name": "Stage 2",
+    "image": "background/bg_4.png",
+    "unlockCondition": "default"
+  },
+  {
+    "id": "bg_5",
+    "name": "Stage 3",
+    "image": "background/bg_5.png",
+    "unlockCondition": "default"
+  },
+  {
+    "id": "bg_6",
+    "name": "Garden",
+    "image": "background/bg_6.png",
+    "unlockCondition": "default"
+  },
+  {
+    "id": "bg_7",
+    "name": "Beach",
+    "image": "background/bg_7.png",
+    "unlockCondition": "default"
+  },
+  {
+    "id": "bg_8",
+    "name": "Night City",
+    "image": "background/bg_8.png",
+    "unlockCondition": "premium"
+  },
+  {
+    "id": "bg_9",
+    "name": "Beach 2",
+    "image": "background/bg_9.png",
+    "unlockCondition": "default"
+  },
+  {
+    "id": "bg_10",
+    "name": "Beach 3",
+    "image": "background/bg_10.png",
+    "unlockCondition": "default"
+  }
+]

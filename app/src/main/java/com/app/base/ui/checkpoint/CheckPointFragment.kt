@@ -6,6 +6,7 @@ import com.app.base.R
 import com.app.base.core.helper.LayerSetupHelper
 import com.app.base.database.AppDatabase
 import com.app.base.databinding.FragmentCheckPointBinding
+import com.app.base.utils.PlayerManager
 import com.brally.mobile.base.activity.BaseFragment
 import com.brally.mobile.base.activity.navigate
 import kotlinx.coroutines.launch
@@ -14,13 +15,74 @@ import org.json.JSONObject
 class CheckPointFragment : BaseFragment<FragmentCheckPointBinding, CheckPointViewModel>() {
 
     private lateinit var layerHelper: LayerSetupHelper
-    private var sourceMode: String? = null // "C" hoặc "Battle"
+    private lateinit var playerManager: PlayerManager
+    private var sourceMode: String? = null // "C", "Battle", etc.
 
     override fun initView() {
         layerHelper = LayerSetupHelper(binding.photoContainer, binding.photoEditorView, requireContext())
+        playerManager = PlayerManager.getInstance(requireContext())
 
-        // Lấy mode được truyền vào (nếu có)
+        // Get mode and battle result from arguments
         sourceMode = arguments?.getString("sourceMode")
+
+        // Handle battle result display
+        handleBattleResult()
+
+        // Update diamond count
+        updateDiamondCount()
+    }
+
+    private fun handleBattleResult() {
+        val battleResult = arguments?.getString("battleResult")
+        val playerScore = arguments?.getInt("playerScore", 0) ?: 0
+        val botScore = arguments?.getInt("botScore", 0) ?: 0
+        val botName = arguments?.getString("botName", "Bot")
+
+        when (sourceMode) {
+            "Battle" -> {
+                when (battleResult) {
+                    "Victory" -> {
+                        binding.tvResult.text = "VICTORY!"
+                        binding.tvResult.setTextColor(resources.getColor(android.R.color.holo_green_light, null))
+                        // Could add victory celebration effects here
+                    }
+                    "Defeat" -> {
+                        binding.tvResult.text = "DEFEAT"
+                        binding.tvResult.setTextColor(resources.getColor(android.R.color.holo_red_light, null))
+                        // Could add defeat effects here
+                    }
+                    else -> {
+                        binding.tvResult.text = "BATTLE END"
+                        binding.tvResult.setTextColor(resources.getColor(android.R.color.white, null))
+                    }
+                }
+
+                // You could also display scores somewhere in the UI if needed
+                // For now, we'll keep the main result display simple
+
+            }
+            "C" -> {
+                // Mode C result
+                binding.tvResult.text = "COMPLETE!"
+                binding.tvResult.setTextColor(resources.getColor(android.R.color.holo_blue_light, null))
+            }
+            else -> {
+                // Default case
+                binding.tvResult.text = "TRY AGAIN"
+                binding.tvResult.setTextColor(resources.getColor(android.R.color.white, null))
+            }
+        }
+    }
+
+    private fun updateDiamondCount() {
+        lifecycleScope.launch {
+            try {
+                val diamonds = playerManager.getPlayerDiamonds()
+                binding.tvDiamondCount.text = diamonds.toString()
+            } catch (e: Exception) {
+                e.printStackTrace()
+            }
+        }
     }
 
     override fun initData() {
@@ -43,11 +105,11 @@ class CheckPointFragment : BaseFragment<FragmentCheckPointBinding, CheckPointVie
 
     private fun loadRewardOutfits() {
         viewModel.outfitLiveData.observe(viewLifecycleOwner) { (maleJson, femaleJson) ->
-            // Khởi tạo lại layer manager
+            // Initialize layer manager
             layerHelper.initLayerManager()
 
             if (sourceMode == "C") {
-                // 🎯 Trường hợp từ Mode C → chỉ hiển thị 1 nhân vật (ưu tiên female)
+                // Mode C: display single character (prioritize female)
                 val mainCharacter = when {
                     femaleJson != null -> "female"
                     maleJson != null -> "male"
@@ -62,7 +124,7 @@ class CheckPointFragment : BaseFragment<FragmentCheckPointBinding, CheckPointVie
                 layerHelper.applyFeaturesToLayers()
 
             } else {
-                // 🎭 Trường hợp bình thường (hiển thị cả 2 nhân vật)
+                // Normal case: display both characters
                 layerHelper.setupInitialLayers(
                     listOf("male", "female"),
                     offsetsX = mapOf("male" to -140f, "female" to 150f)

@@ -6,6 +6,7 @@ import androidx.recyclerview.widget.GridLayoutManager
 import androidx.navigation.fragment.findNavController
 import com.app.base.databinding.FragmentGalleryBinding
 import com.app.base.ui.photograph.PhotographFragmentDirections
+import com.app.base.utils.MissionTracker
 import com.brally.mobile.base.activity.BaseFragment
 import com.brally.mobile.base.activity.popBackStack
 import com.brally.mobile.utils.singleClick

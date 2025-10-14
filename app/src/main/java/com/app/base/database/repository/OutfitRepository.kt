@@ -1,10 +1,12 @@
-package com.app.base.database
+package com.app.base.database.repository
 
 import android.content.Context
+import com.app.base.database.AppDatabase
+import com.app.base.database.entity.OutfitEntity
 
 class OutfitRepository(context: Context) {
 
-    private val outfitDao = AppDatabase.getInstance(context).outfitDao()
+    private val outfitDao = AppDatabase.Companion.getInstance(context).outfitDao()
     suspend fun insertOutfit(outfit: OutfitEntity): Long {
         return outfitDao.insert(outfit)
     }

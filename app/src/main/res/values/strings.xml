@@ -35,4 +35,16 @@
     <string name="vibrate">Vibrate</string>
     <!-- TODO: Remove or change this placeholder text -->
     <string name="hello_blank_fragment">Hello blank fragment</string>
+
+    <!-- Added strings for task/item layout -->
+    <string name="desc_reward_icon">Reward icon</string>
+    <string name="default_reward_amount">x50</string>
+    <string name="go_now">Go Now</string>
+    <string name="sample_task_desc">Save 1 Photo</string>
+    <string name="default_task_progress">0/1</string>
+
+    <!-- Mission progress format string -->
+    <string name="mission_progress_format">%d/%d</string>
+    <string name="plus_prefix">+%d</string>
+    <string name="score_value">%d</string>
 </resources>

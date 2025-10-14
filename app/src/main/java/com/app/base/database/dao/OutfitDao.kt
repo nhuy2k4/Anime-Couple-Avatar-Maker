@@ -1,10 +1,11 @@
-package com.app.base.database
+package com.app.base.database.dao
 
 import androidx.room.Dao
 import androidx.room.Insert
 import androidx.room.OnConflictStrategy
 import androidx.room.Query
 import androidx.room.Update
+import com.app.base.database.entity.OutfitEntity
 
 @Dao
 interface OutfitDao {
@@ -22,7 +23,8 @@ interface OutfitDao {
 
     @Update
     suspend fun update(outfit: OutfitEntity)
-
+    @Insert(onConflict = OnConflictStrategy.Companion.IGNORE)
+    suspend fun insertAll(outfits: List<OutfitEntity>) // ← thêm cái này
     // 👉 Outfit mới nhất
     @Query("SELECT * FROM outfits ORDER BY id DESC LIMIT 1")
     suspend fun getLatestOutfit(): OutfitEntity?

@@ -6,6 +6,7 @@ plugins {
     id("kotlin-kapt")
     id("kotlin-parcelize")
     id("androidx.navigation.safeargs.kotlin")
+    id("com.google.dagger.hilt.android") version "2.57.1" apply false
 }
 
 android {
@@ -68,6 +69,8 @@ android {
 
 dependencies {
     val room_version = "2.8.0"
+    implementation("com.google.dagger:hilt-android:2.57.1")
+    kapt("com.google.dagger:hilt-android-compiler:2.57.1")
     implementation("com.burhanrashid52:photoeditor:3.0.2")
     implementation("com.google.code.gson:gson:2.10.1")
     implementation("androidx.room:room-runtime:$room_version")

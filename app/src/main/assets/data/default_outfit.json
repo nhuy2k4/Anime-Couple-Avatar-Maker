@@ -1,0 +1,26 @@
+[
+  {
+    "id": "scene_001",
+    "name": "Beach Date",
+    "background": "bg_1",
+    "characters": [
+      {
+        "id": "char_male_001",
+        "gender": "male",
+        "outfit": {
+          "frontHair": "frontHair_m_3",
+          "eyes": "eyes_m_3"
+        }
+      },
+      {
+        "id": "char_female_001",
+        "gender": "female",
+        "outfit": {
+          "frontHair": "frontHair_f_1",
+          "eyes": "eyes_f_1"
+        }
+      }
+    ]
+  }
+]
+

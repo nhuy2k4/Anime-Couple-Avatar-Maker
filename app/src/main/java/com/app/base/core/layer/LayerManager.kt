@@ -88,10 +88,10 @@ class LayerManager(private val container: FrameLayout, private val context: Cont
         Log.d("LayerManager", "After setLayer $key, children=${container.childCount}")
     }
 
-    // Set layer using an image stored in assets (path relative to assets/)
-    fun setLayerFromAsset(
+    // Overloaded setLayer method to accept a Bitmap directly
+    fun setLayer(
         key: String,
-        assetPath: String,
+        bitmap: Bitmap,
         widthRatio: Float = 1f,
         heightRatio: Float = 1f,
         leftMarginRatio: Float = 0f,
@@ -102,9 +102,10 @@ class LayerManager(private val container: FrameLayout, private val context: Cont
         scaleY: Float = 1f,
         offsetX: Float = 0f,
         offsetY: Float = 0f,
-        followBody: String? = null
+        followBody: String? = null,
+        index: Int? = null // thêm index tùy chọn
     ) {
-        Log.d("LayerManager", "Before setLayerFromAsset $key, children=${container.childCount}")
+        Log.d("LayerManager", "Before setLayer $key, children=${container.childCount}")
 
         layers[key]?.let {
             container.removeView(it)
@@ -115,17 +116,7 @@ class LayerManager(private val container: FrameLayout, private val context: Cont
             layerFollowBody.remove(key)
         }
 
-        val bitmap: Bitmap? = try {
-            context.assets.open(assetPath).use { BitmapFactory.decodeStream(it) }
-        } catch (e: Exception) {
-            Log.w("LayerManager", "Failed to load asset $assetPath: ${e.message}")
-            null
-        }
-
-        if (bitmap == null) return
-
         layerBitmaps[key] = bitmap
-        layerResIds.remove(key)
         layerFollowBody[key] = followBody
 
         val containerWidth = container.width
@@ -156,12 +147,102 @@ class LayerManager(private val container: FrameLayout, private val context: Cont
             this.translationX = finalOffsetX
             this.translationY = finalOffsetY
         }
+        if (index != null) {
+            container.addView(view, index)
+        } else {
+            container.addView(view)
+        }
 
-        container.addView(view)
         layers[key] = view
         layerKeys[view] = key
 
-        Log.d("LayerManager", "After setLayerFromAsset $key, children=${container.childCount}")
+        Log.d("LayerManager", "After setLayer $key, children=${container.childCount}")
+    }
+
+    // Set layer using an image stored in assets (path relative to assets/)
+    fun setLayerFromAsset(
+        key: String,
+        assetPath: String,
+        widthRatio: Float = 1f,
+        heightRatio: Float = 1f,
+        leftMarginRatio: Float = 0f,
+        topMarginRatio: Float = 0f,
+        rightMarginRatio: Float = 0f,
+        gravity: Int = Gravity.TOP or Gravity.START,
+        scaleX: Float = 1f,
+        scaleY: Float = 1f,
+        offsetX: Float = 0f,
+        offsetY: Float = 0f
+    ) {
+        try {
+            Log.d("LayerManager", "Attempting to load asset: $assetPath for key: $key")
+
+            // Check if the file exists in the assets directory
+            val assetManager = context.assets
+            val files = try {
+                assetManager.list(assetPath.substringBeforeLast('/'))?.toList() ?: emptyList()
+            } catch (e: Exception) {
+                Log.e("LayerManager", "Cannot list directory for $assetPath: ${e.message}")
+                emptyList()
+            }
+
+            Log.d("LayerManager", "Available files in directory: $files")
+            Log.d("LayerManager", "Looking for file: ${assetPath.substringAfterLast('/')}")
+
+            val inputStream = assetManager.open(assetPath)
+            val bitmap = BitmapFactory.decodeStream(inputStream)
+
+            if (bitmap != null) {
+                Log.d("LayerManager", "Successfully loaded asset: $assetPath")
+                setLayer(key, bitmap, widthRatio, heightRatio, leftMarginRatio, topMarginRatio, rightMarginRatio, gravity, scaleX, scaleY, offsetX, offsetY)
+            } else {
+                Log.e("LayerManager", "Failed to create bitmap from asset: $assetPath")
+            }
+            inputStream.close()
+        } catch (e: Exception) {
+            Log.e("LayerManager", "Exception loading asset $assetPath: ${e.message}")
+            e.printStackTrace()
+
+// ✅ Try smart alternative paths based on feature folder structure
+            val baseName = assetPath.substringAfterLast('/')
+            val folderName = when {
+                baseName.startsWith("frontHair") -> "frontHair"
+                baseName.startsWith("backHair") -> "backHair"
+                baseName.startsWith("eyes") -> "eyes"
+                baseName.startsWith("shirt") -> "shirt"
+                baseName.startsWith("pants") -> "pants"
+                baseName.startsWith("dress") -> "dress"
+                baseName.startsWith("shoes") -> "shoes"
+                baseName.startsWith("hat") -> "hat"
+                baseName.startsWith("accessory") -> "accessory"
+                else -> ""
+            }
+
+            val alternativePaths = buildList {
+                add("features/$folderName/$baseName.png")
+                add("features/$folderName/$baseName")
+            }
+
+
+            for (altPath in alternativePaths) {
+                try {
+                    Log.d("LayerManager", "Trying alternative path: $altPath")
+                    val inputStream = context.assets.open(altPath)
+                    val bitmap = BitmapFactory.decodeStream(inputStream)
+                    if (bitmap != null) {
+                        Log.d("LayerManager", "Success with alternative path: $altPath")
+                        setLayer(key, bitmap, widthRatio, heightRatio, leftMarginRatio, topMarginRatio, rightMarginRatio, gravity, scaleX, scaleY, offsetX, offsetY)
+                        inputStream.close()
+                        return
+                    }
+                    inputStream.close()
+                } catch (ex: Exception) {
+                    Log.d("LayerManager", "Alternative path $altPath also failed: ${ex.message}")
+                }
+            }
+
+            Log.e("LayerManager", "All paths failed for asset: $assetPath")
+        }
     }
 
     fun getKeyForLayerView(view: ImageView): String? = layerKeys[view]

@@ -17,36 +17,58 @@ class ScoreEffectHelper(
     private val topBonusContainer: View
 ) {
     private val handler = Handler(Looper.getMainLooper())
-    private lateinit var loopRunnable: Runnable
+    private var loopRunnable: Runnable? = null
+    private var isLoopRunning = false
 
     /**
      * Loop hiển thị điểm + tim, cập nhật topBonusScore và tvTop
      * tvTopScore: TextView để hiển thị +N
      * topBonusScore: TextView hiển thị điểm bonus (chỉ số hiện thị)
      * tvTop: TextView hiển thị label (Bonus, Pretty, Gorgeous, Perfect)
+     *
+     * Added speedMultiplier: float >0. Values >1 make the loop faster (shorter interval).
      */
-    fun startLoop(tvTopScore: TextView, topBonusScore: TextView, tvTop: TextView, interval: Long = 2500L) {
+    fun startLoop(tvTopScore: TextView, topBonusScore: TextView, tvTop: TextView, interval: Long = 2500L, speedMultiplier: Float = 1.0f) {
+        if (isLoopRunning) {
+            stopLoop()
+        }
+
+        // compute effective interval based on speedMultiplier; protect against zero/negative
+        val safeMultiplier = if (speedMultiplier <= 0f) 1.0f else speedMultiplier
+        val effectiveInterval = maxOf(100L, (interval.toFloat() / safeMultiplier).toLong())
+
+        isLoopRunning = true
         loopRunnable = object : Runnable {
             override fun run() {
+                if (!isLoopRunning) return
+
                 val points = generateRandomBonus(tvTop) // random + set label
-                topBonusScore.text = "+$points"        // cập nhật topBonusScore
+                // use string resource for "+N"
+                topBonusScore.text = container.context.getString(R.string.plus_prefix, points)
                 showTopBonusOnce(tvTopScore)
                 showScoreBonus(tvTopScore, points)
-                handler.postDelayed(this, interval)
+
+                if (isLoopRunning) {
+                    handler.postDelayed(this, effectiveInterval)
+                }
             }
         }
-        handler.postDelayed(loopRunnable, interval)
+
+        // Start the loop immediately
+        handler.post(loopRunnable!!)
     }
 
     fun stopLoop() {
-        if (::loopRunnable.isInitialized) handler.removeCallbacks(loopRunnable)
+        isLoopRunning = false
+        loopRunnable?.let { handler.removeCallbacks(it) }
+        loopRunnable = null
     }
 
     /** +N bay lên trên tvTopScore */
     fun showScoreBonus(tvTopScore: TextView, bonusValue: Int) {
         Handler(Looper.getMainLooper()).postDelayed({
             val plusOne = TextView(container.context).apply {
-                text = "+$bonusValue"
+                text = container.context.getString(R.string.plus_prefix, bonusValue)
                 textSize = 20f
                 setTextColor(tvTopScore.currentTextColor)
                 x = tvTopScore.x + tvTopScore.width / 2f - 20f
@@ -62,7 +84,7 @@ class ScoreEffectHelper(
                 .start()
 
             val current = tvTopScore.text.toString().replace("+", "").toIntOrNull() ?: 0
-            tvTopScore.text = "${current + bonusValue}"
+            tvTopScore.text = container.context.getString(R.string.score_value, current + bonusValue)
         }, 200) // delay 200ms
     }
 
@@ -79,7 +101,7 @@ class ScoreEffectHelper(
 
         // +N bay lên
         val plusOne = TextView(container.context).apply {
-            text = "+$bonusValue"
+            text = container.context.getString(R.string.plus_prefix, bonusValue)
             textSize = 20f
             setTextColor(tvTopScore.currentTextColor)
             x = startX
@@ -112,7 +134,7 @@ class ScoreEffectHelper(
         animateHeart(heart, startX, startY, endX, endY) {
             // Cập nhật score khi tim bay xong
             val current = tvTopScore.text.toString().replace("+", "").toIntOrNull() ?: 0
-            tvTopScore.text = "${current + bonusValue}"
+            tvTopScore.text = container.context.getString(R.string.score_value, current + bonusValue)
         }
         // Inside showClickBonus
         Log.d("ScoreEffectHelper", "Heart startX: $startX, startY: $startY")
